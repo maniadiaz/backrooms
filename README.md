@@ -2,11 +2,11 @@
 
 Proyecto de mod de terror y exploración para Minecraft Java 1.20.1 con Forge 47.4.28.
 
-Estado actual: versión 0.5.0 con ambiente sonoro original, pisadas húmedas, goteos, fallos de fluorescentes y niebla tenue. Conserva cordura, suministros, loot, votaciones y cámaras. Véase [estado y pruebas de la etapa 5](docs/ETAPA-5-ATMOSFERA.md).
+Estado actual: versión 0.6.0 con el Sabueso: mirada, ruido, persecución, búsqueda, apariciones raras y audio espacial original. Conserva el ambiente, la cordura y las partidas cooperativas. Véase [estado y pruebas de la etapa 6A](docs/ETAPA-6A-SABUESO.md).
 
 El alcance, las reglas propuestas y los criterios de aceptación están en [Etapa 1 — Alcance](docs/ETAPA-1-ALCANCE.md).
 
-El diseño de Smiler, Bacteria y Hound está en el [bestiario](docs/BESTIARIO.md). Sus entidades todavía no están implementadas; la siguiente entrega será el Hound (etapa 6A).
+El diseño de Smiler, Bacteria y Hound está en el [bestiario](docs/BESTIARIO.md). Hound ya está implementado; siguen Smiler (etapa 6B) y Bacteria (etapa 6C).
 
 Repositorio: [maniadiaz/bedroom-mod](https://github.com/maniadiaz/bedroom-mod).
 
@@ -30,7 +30,7 @@ En este equipo se descargó un JDK 17 en `.tools/java` (ignorado por Git). El sc
 .\scripts\gradle.ps1 runGameTestServer
 ```
 
-El jar se genera en `build/libs/bedroom-0.5.0.jar`. Instalar la misma versión en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Los mundos de 0.3.0 conservan su generador; para mundos anteriores con el generador plano, crear un mundo nuevo.
+El jar se genera en `build/libs/bedroom-0.6.0.jar`. Instalar la misma versión en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Los mundos de 0.3.0 conservan su generador; para mundos anteriores con el generador plano, crear un mundo nuevo.
 
 ## Probar una partida
 
@@ -49,7 +49,7 @@ El panel izquierdo muestra `BEDROOM: ACTIVE` encima de las muertes, además de l
 
 ## Jugar mediante Essential
 
-El dueño comparte el mundo usando Essential; Bedroom utiliza el servidor integrado de Minecraft y sus paquetes Forge, sin una dependencia directa de Essential. Todos deben instalar las mismas versiones de mods, incluido `bedroom-0.5.0.jar`, y una versión de Essential para Forge 1.20.1. Véase la [guía oficial de hosting de Essential](https://essential.gg/wiki/start-hosting).
+El dueño comparte el mundo usando Essential; Bedroom utiliza el servidor integrado de Minecraft y sus paquetes Forge, sin una dependencia directa de Essential. Todos deben instalar las mismas versiones de mods, incluido `bedroom-0.6.0.jar`, y una versión de Essential para Forge 1.20.1. Véase la [guía oficial de hosting de Essential](https://essential.gg/wiki/start-hosting).
 
 Los invitados que llegan tarde permanecen en el lobby hasta el siguiente inicio. Para incorporarlos antes, el grupo vota reiniciar y después vuelve a pulsar el botón de inicio. El límite sigue siendo cuatro participantes. La compatibilidad práctica con Essential está pendiente de una sesión real con amigos; las pruebas automatizadas se ejecutaron con Forge.
 

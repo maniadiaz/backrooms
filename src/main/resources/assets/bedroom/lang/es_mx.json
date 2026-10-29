@@ -25,5 +25,12 @@
   "subtitles.bedroom.ceiling_drip": "Goteo del techo",
   "subtitles.bedroom.buzz_click": "Fallo eléctrico",
   "subtitles.bedroom.sanity_whisper": "Susurro",
-  "subtitles.bedroom.sanity_steps": "Pasos inquietantes"
+  "subtitles.bedroom.sanity_steps": "Pasos inquietantes",
+  "entity.bedroom.hound": "Sabueso",
+  "subtitles.bedroom.hound_steps": "Garras húmedas",
+  "subtitles.bedroom.hound_breath": "Jadeo del sabueso",
+  "subtitles.bedroom.hound_lure": "Lamento extraño",
+  "subtitles.bedroom.hound_growl": "Gruñido del sabueso",
+  "subtitles.bedroom.hound_charge": "El sabueso carga",
+  "subtitles.bedroom.hound_attack": "Aullido desgarrador"
 }

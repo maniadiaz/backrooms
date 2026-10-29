@@ -73,5 +73,59 @@
         "attenuation_distance": 16
       }
     ]
+  },
+  "hound_steps": {
+    "subtitle": "subtitles.bedroom.hound_steps",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/hound_steps",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "hound_breath": {
+    "subtitle": "subtitles.bedroom.hound_breath",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/hound_breath",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "hound_lure": {
+    "subtitle": "subtitles.bedroom.hound_lure",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/hound_lure",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "hound_growl": {
+    "subtitle": "subtitles.bedroom.hound_growl",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/hound_growl",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "hound_charge": {
+    "subtitle": "subtitles.bedroom.hound_charge",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/hound_charge",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "hound_attack": {
+    "subtitle": "subtitles.bedroom.hound_attack",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/hound_attack",
+        "attenuation_distance": 24
+      }
+    ]
   }
 }

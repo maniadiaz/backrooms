@@ -131,6 +131,9 @@ sounds = {key: {'subtitle': f'subtitles.bedroom.{key}',
           for key, (name, distance) in events.items()}
 sounds['wet_step'] = {'subtitle': 'subtitles.bedroom.wet_step',
                       'sounds': [{'name': f'bedroom:ambient/wet_step_{i}', 'attenuation_distance': 16} for i in range(1, 5)]}
+manifest = ROOT / 'sounds.json'
+if manifest.exists():
+    sounds = {**json.loads(manifest.read_text(encoding='utf-8')), **sounds}
 (ROOT / 'sounds.json').write_text(json.dumps(sounds, indent=2) + '\n', encoding='utf-8', newline='\n')
 
 labels = {

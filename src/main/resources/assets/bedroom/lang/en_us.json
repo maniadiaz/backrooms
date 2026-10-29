@@ -25,5 +25,12 @@
   "subtitles.bedroom.ceiling_drip": "Ceiling drip",
   "subtitles.bedroom.buzz_click": "Electrical fault",
   "subtitles.bedroom.sanity_whisper": "Whisper",
-  "subtitles.bedroom.sanity_steps": "Unsettling footsteps"
+  "subtitles.bedroom.sanity_steps": "Unsettling footsteps",
+  "entity.bedroom.hound": "Hound",
+  "subtitles.bedroom.hound_steps": "Wet claws",
+  "subtitles.bedroom.hound_breath": "Hound panting",
+  "subtitles.bedroom.hound_lure": "Strange lament",
+  "subtitles.bedroom.hound_growl": "Hound growl",
+  "subtitles.bedroom.hound_charge": "Hound charges",
+  "subtitles.bedroom.hound_attack": "Piercing howl"
 }
