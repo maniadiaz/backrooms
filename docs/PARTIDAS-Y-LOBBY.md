@@ -1,6 +1,6 @@
 # Partidas, lobby y progresión
 
-Estado: diseño actualizado; estos sistemas todavía no están implementados. Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
+Estado: diseño de referencia. El prototipo 0.2.1 implementa el gestor de partidas con salas provisionales; véase [implementación, pruebas y pendientes](ETAPA-2.1-PARTIDAS.md). Cordura, misiones y victoria de campaña siguen pendientes. Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
 
 ## Reglas confirmadas
 

@@ -42,7 +42,7 @@ No hay lobby de partidas, limbo, espectadores gestionados, cordura, equipo inici
 
 El regreso exacto presupone que no se haya obstruido el punto original. El rescate usa el spawn del Overworld definido por el administrador. Estas herramientas son de desarrollo; las transiciones de supervivencia necesitarán validación de destinos.
 
-La propuesta anterior de un objeto de acceso y su receta queda descartada: el usuario definió entrada desde un lobby para 1–4 jugadores mediante botón. El nuevo gestor de partidas se desarrollará en la etapa 2.1; los comandos actuales permanecen como herramientas de desarrollo.
+La propuesta anterior de un objeto de acceso y su receta queda descartada: el usuario definió entrada desde un lobby para 1–4 jugadores mediante botón. El gestor se incorpora en el [prototipo de etapa 2.1](ETAPA-2.1-PARTIDAS.md); los comandos de esta entrega permanecen como herramientas de desarrollo.
 
 ## Procedencia
 

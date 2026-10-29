@@ -25,14 +25,18 @@ public final class DevelopmentCommands {
 
     public static void register(RegisterCommandsEvent event) {
         if (!BedroomConfig.DEVELOPMENT_COMMANDS.get()) return;
-        event.getDispatcher().register(Commands.literal("bedroom").requires(source -> source.hasPermission(2))
-                .then(Commands.literal("enter").executes(context -> enter(context.getSource())))
-                .then(Commands.literal("exit").executes(context -> exit(context.getSource())))
-                .then(Commands.literal("rescue").executes(context -> rescue(context.getSource()))));
+        event.getDispatcher().register(Commands.literal("bedroom")
+                .then(Commands.literal("enter").requires(source -> source.hasPermission(2)).executes(context -> enter(context.getSource())))
+                .then(Commands.literal("exit").requires(source -> source.hasPermission(2)).executes(context -> exit(context.getSource())))
+                .then(Commands.literal("rescue").requires(source -> source.hasPermission(2)).executes(context -> rescue(context.getSource()))));
     }
 
     private static int enter(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
+        if (MatchController.member(player)) {
+            source.sendFailure(Component.literal("Sal de la partida con /bedroom leave antes de usar comandos de desarrollo."));
+            return 0;
+        }
         ServerLevel level = source.getServer().getLevel(LEVEL_0);
         if (level == null) {
             source.sendFailure(Component.literal("No se encontró bedroom:level_0. Reinicia el servidor con el mod instalado."));
@@ -57,6 +61,7 @@ public final class DevelopmentCommands {
 
     private static int exit(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
+        if (MatchController.member(player)) return MatchController.leave(player);
         if (!player.level().dimension().equals(LEVEL_0) || !player.getPersistentData().contains(RETURN)) {
             source.sendFailure(Component.literal("No hay un regreso guardado desde Nivel 0. Usa /bedroom rescue para volver al spawn."));
             return 0;
@@ -76,6 +81,7 @@ public final class DevelopmentCommands {
 
     private static int rescue(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
+        if (MatchController.member(player)) return MatchController.leave(player);
         ServerLevel target = source.getServer().overworld();
         BlockPos spawn = target.getSharedSpawnPos();
         // Vanilla's shared spawn is the administrator-defined emergency destination.
