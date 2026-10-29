@@ -47,7 +47,7 @@ public final class BedroomNetwork {
     static Hud snapshot(MatchData data, java.util.UUID id) {
         MatchData.Member m = data.members.get(id);
         boolean waiting = data.waiting.containsKey(id);
-        int ticks = m == null ? 0 : m.state == MatchData.State.LIMBO ? m.limboTicks : m.state == MatchData.State.REST ? data.restTicks : 0;
+        int ticks = m == null ? 0 : m.state == MatchData.State.LIMBO ? m.limboTicks : (m.state == MatchData.State.REST||m.state==MatchData.State.VICTORY) ? data.restTicks : 0;
         var p = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer() == null ? null
                 : net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(id);
         var lamp = p == null ? net.minecraft.world.item.ItemStack.EMPTY : FlashlightSystem.held(p);

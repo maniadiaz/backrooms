@@ -59,6 +59,7 @@ public final class MissionGameTests {
         var level=h.getLevel().getServer().getLevel(DevelopmentCommands.LEVEL_0);var p=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"NoClip"));
         try{
             MatchController.join(p);var d=MatchData.get(p.server);d.start(p.getUUID(),Set.of(p.getUUID()));
+            for(int x=24000;x<=24006;x++)for(int z=24002;z<=24006;z++)for(int y=65;y<=67;y++)level.setBlock(new BlockPos(x,y,z),net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),3);
             for(int y=65;y<=67;y++)level.setBlock(new BlockPos(24004,y,24004),Bedroom.EXIT.get().defaultBlockState(),3);
             p.setPos(24003.69,65,24004.5);p.setYRot(-90);p.setXRot(0);p.getFoodData().setFoodLevel(20);
             h.assertTrue(NoClipSystem.contact(p)!=null,"Body contact plus forward ray identifies glitch wall");

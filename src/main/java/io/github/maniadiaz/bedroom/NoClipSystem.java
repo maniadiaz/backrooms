@@ -22,11 +22,13 @@ public final class NoClipSystem {
             return ++ticks>=REQUIRED;
         }
     }
-    private static final class Input { boolean pressing; int received; final Charge charge=new Charge(); }
+    private static final class Input { boolean pressing; int received,round=-1,level=-1; final Charge charge=new Charge(); }
     private static final Map<UUID,Input> inputs=new HashMap<>();
     static void input(ServerPlayer p,boolean pressing) {
         if(!SurvivalSystem.active(p)||!Campaign.dungeon(p.level().dimension()))return;
-        var input=inputs.computeIfAbsent(p.getUUID(),id->new Input()); input.pressing=pressing; input.received=p.server.getTickCount();
+        var input=inputs.computeIfAbsent(p.getUUID(),id->new Input());var d=MatchData.get(p.server);
+        if(input.round!=d.round||input.level!=d.level){input.charge.advance(null,false);input.round=d.round;input.level=d.level;}
+        input.pressing=pressing; input.received=p.server.getTickCount();
         if(!pressing)input.charge.advance(null,false);
     }
     static int charge(UUID id) { var in=inputs.get(id);return in==null?0:Math.min(REQUIRED,in.charge.ticks); }
@@ -43,22 +45,25 @@ public final class NoClipSystem {
     }
     @SubscribeEvent public static void tick(TickEvent.ServerTickEvent event) {
         if(event.phase!=TickEvent.Phase.END)return;
-        var server=event.getServer();var d=MatchData.get(server);
+        var server=event.getServer();Map<UUID,ServerPlayer> players=new LinkedHashMap<>();server.getPlayerList().getPlayers().forEach(p->players.put(p.getUUID(),p));step(server,players);
+    }
+    static void step(net.minecraft.server.MinecraftServer server,Map<UUID,ServerPlayer> players){
+        var d=MatchData.get(server);
         if(d.phase!=MatchData.Phase.ACTIVE){inputs.clear();return;}
         if(d.exitDelay>0) {
             if(--d.exitDelay==0) {
-                var actor=server.getPlayerList().getPlayers().stream().filter(SurvivalSystem::active).findFirst().orElse(null);
-                if(actor!=null&&d.mission.ready())MatchController.complete(actor,false);
+                var actor=players.values().stream().filter(SurvivalSystem::active).findFirst().orElse(null);
+                if(actor!=null&&d.mission.ready())MatchController.complete(actor,false,players);
             }
             return;
         }
-        inputs.entrySet().removeIf(entry->{var p=server.getPlayerList().getPlayer(entry.getKey());return p==null||!SurvivalSystem.active(p);});
+        inputs.entrySet().removeIf(entry->{var p=players.get(entry.getKey());return p==null||!SurvivalSystem.active(p);});
         for(var entry:inputs.entrySet()) {
-            var p=server.getPlayerList().getPlayer(entry.getKey());var in=entry.getValue();
-            if(p!=null&&advance(p,in.charge,in.pressing&&server.getTickCount()-in.received<=15)) {
+            var p=players.get(entry.getKey());var in=entry.getValue();
+            if(p!=null&&advance(p,in.charge,in.pressing&&in.round==d.round&&in.level==d.level&&server.getTickCount()-in.received<=15)) {
                 d.exitDelay=20;
                 for(var member:d.members.values()) {
-                    var other=server.getPlayerList().getPlayer(member.id);if(other!=null)BedroomNetwork.blackout(other);
+                    var other=players.get(member.id);if(other!=null)BedroomNetwork.blackout(other);
                 }
                 break;
             }

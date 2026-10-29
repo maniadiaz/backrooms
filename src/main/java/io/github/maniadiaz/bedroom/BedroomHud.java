@@ -37,6 +37,7 @@ public final class BedroomHud {
             String detail = switch (hud.state()) {
                 case "LIMBO" -> "SALIDA: " + timer(hud.seconds());
                 case "REST" -> "DESCANSO: " + timer(hud.seconds());
+                case "VICTORY" -> "¡VICTORIA!  "+timer(hud.seconds());
                 case "WAITING" -> "ESPERANDO UN PUESTO";
                 case "SPECTATING", "OBSERVING" -> "CAMARAS: [ / ]";
                 case "LOBBY" -> "GRUPO: " + hud.players() + " / 4";

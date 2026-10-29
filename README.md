@@ -2,7 +2,7 @@
 
 Proyecto de mod de terror y exploración para Minecraft Java 1.20.1 con Forge 47.4.28.
 
-Estado actual: versión 0.8.0 con Nivel 0 y Nivel 1, Zona de Carga, unidos por descanso de noventa segundos y recuperación del equipo. El segundo nivel utiliza tres relés y compuerta anómala. Véase [etapa 8](docs/ETAPA-8-NIVEL-1.md); la etapa siguiente incorpora el festejo final.
+Estado actual: versión 0.9.0 con campaña de dos niveles, descanso, recuperación del equipo y lobby de victoria con fuegos artificiales. Véanse [Nivel 1](docs/ETAPA-8-NIVEL-1.md) y [final de campaña](docs/ETAPA-9-VICTORIA.md). Continúa el cierre de pruebas y empaquetado.
 
 El alcance, las reglas propuestas y los criterios de aceptación están en [Etapa 1 — Alcance](docs/ETAPA-1-ALCANCE.md).
 

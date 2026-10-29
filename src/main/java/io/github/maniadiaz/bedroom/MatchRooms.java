@@ -16,6 +16,7 @@ final class MatchRooms {
     static BlockPos spawn(int x) { return new BlockPos(x + 2, 65, 2); }
 
     static void ensure(ServerLevel level, int x, boolean white, boolean maze) {
+        if(x==Celebration.ROOM){Celebration.ensure(level);return;}
         if (level.getBlockState(new BlockPos(x, 64, 0)).is(Blocks.BEDROCK)) return;
         Block wall = white ? Blocks.WHITE_CONCRETE : Bedroom.WALL.get();
         for (int dx = 0; dx <= 20; dx++) for (int z = 0; z <= 20; z++) {

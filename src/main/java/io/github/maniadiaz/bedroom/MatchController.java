@@ -350,11 +350,13 @@ public final class MatchController {
             p.setHealth(p.getMaxHealth());
             if (m.state == MatchData.State.REST) move(p, MatchRooms.REST, false, false);
             else moveArena(p, d);
+        } else if(m.state==MatchData.State.VICTORY){
+            p.getInventory().clearContent();Celebration.ensure(dimension(p.server));move(p,Celebration.ROOM,false,false);
         } else {
             p.getInventory().clearContent();
             move(p, m.state == MatchData.State.LOBBY ? MatchRooms.LOBBY : MatchRooms.WHITE + m.slot * 32, true, m.state == MatchData.State.LIMBO);
         }
-        if (m.state == MatchData.State.LOBBY || m.state == MatchData.State.REST) {
+        if (m.state == MatchData.State.LOBBY || m.state == MatchData.State.REST || m.state==MatchData.State.VICTORY) {
             p.getFoodData().setFoodLevel(20); p.getFoodData().setSaturation(5);
         }
         if (m.state == MatchData.State.LOBBY) {
@@ -390,16 +392,16 @@ public final class MatchController {
             ServerPlayer player = players.get(m.id);
             if (player != null && m.state == MatchData.State.ACTIVE) m.inventory = snapshot(player);
         });
-        boolean advance=successor||d.level==0;
-        if (!d.complete(p.getUUID(), advance)) return false;
+        boolean advance=d.level==0;
+        if (!(advance?d.complete(p.getUUID(),true):d.win(p.getUUID()))) return false;
         for (MatchData.Member m : d.members.values()) {
             ServerPlayer player = players.get(m.id);
             if (player != null) {
                 apply(player, d, m, true);
-                MatchAnnouncements.show(player, "NIVEL SUPERADO", advance ? "Equipo reunido. Próximo destino: Zona de Carga." : "Todos al lobby. Lo lograron.", net.minecraft.ChatFormatting.GREEN);
+                MatchAnnouncements.show(player, advance?"NIVEL SUPERADO":"¡ESCAPARON!", advance ? "Equipo reunido. Próximo destino: Zona de Carga." : "Campaña completa. Los dos niveles superados.", net.minecraft.ChatFormatting.GREEN);
             }
         }
-        tell(p,advance?"Nivel superado. Descanso de 90 segundos antes de Zona de Carga.":"Zona de Carga superada. Regreso al lobby.");
+        tell(p,advance?"Nivel superado. Descanso de 90 segundos antes de Zona de Carga.":"¡Victoria! Celebren: regreso al lobby en 20 segundos o con el botón.");
         return true;
     }
 
@@ -419,7 +421,9 @@ public final class MatchController {
                 handled = true;
                 tell(p,d.mission.ready()?"Mantén avance y carrera contra esta pared durante 2 segundos.":"La pared no responde. Repara los tres paneles primero.");
             } else
-            if (m.state == MatchData.State.LOBBY && event.getPos().equals(MatchRooms.button(MatchRooms.LOBBY))) {
+            if(m.state==MatchData.State.VICTORY&&event.getPos().equals(MatchRooms.button(Celebration.ROOM))){
+                handled=true;if(p.getUUID().equals(d.host))restart(p.server);
+            }else if (m.state == MatchData.State.LOBBY && event.getPos().equals(MatchRooms.button(MatchRooms.LOBBY))) {
                 handled = true;
                 if (!(dimension(p.server).getChunkSource().getGenerator() instanceof Level0Generator)) {
                     tell(p, "Este mundo conserva el generador antiguo. Crea un mundo nuevo para jugar al Nivel 0 procedural.");

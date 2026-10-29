@@ -12,8 +12,8 @@ import net.minecraft.world.level.saveddata.SavedData;
 
 /** Persistent server-authoritative rules, independent of teleportation and rendering. */
 public final class MatchData extends SavedData {
-    enum Phase { LOBBY, ACTIVE, REST }
-    enum State { LOBBY, ACTIVE, LIMBO, SPECTATING, REST }
+    enum Phase { LOBBY, ACTIVE, REST, VICTORY }
+    enum State { LOBBY, ACTIVE, LIMBO, SPECTATING, REST, VICTORY }
     static final int LIMBO_TICKS = 600;
     static final int REST_TICKS = 1800;
     final Map<UUID, Member> members = new LinkedHashMap<>();
@@ -120,6 +120,13 @@ public final class MatchData extends SavedData {
         setDirty();
         return true;
     }
+    boolean win(UUID actor){
+        var member=members.get(actor);
+        if(phase!=Phase.ACTIVE||level!=1||member==null||member.state!=State.ACTIVE)return false;
+        phase=Phase.VICTORY;restTicks=400;exitDelay=0;vote.clear();cameras.clear();observers.clear();
+        members.values().forEach(m->{m.state=State.VICTORY;m.deaths=0;m.limboTicks=0;m.survival=new SurvivalState();m.inventory=new CompoundTag();});
+        setDirty();return true;
+    }
 
     void reset() {
         mission = new MissionState(); exitDelay=0;
@@ -167,6 +174,9 @@ public final class MatchData extends SavedData {
                 restTicks = 0;
                 members.values().forEach(m -> m.state = State.ACTIVE);
             }
+            setDirty();
+        } else if(phase==Phase.VICTORY){
+            if(--restTicks<=0)reset();
             setDirty();
         }
     }

@@ -23,6 +23,7 @@ final class MatchAnnouncements {
             case LIMBO -> show(p, "NO ES EL FINAL", "30 segundos. Encuentra la salida.", ChatFormatting.WHITE);
             case SPECTATING -> show(p, "SIN RETORNO", "Tu equipo aún puede salvarte.", ChatFormatting.RED);
             case REST -> show(p, "UN RESPIRO", "90 segundos o pulsa para continuar.", ChatFormatting.AQUA);
+            case VICTORY -> show(p,"¡ESCAPARON!","Nivel 0 y Zona de Carga completados.",ChatFormatting.GOLD);
         }
     }
     private MatchAnnouncements() {}
