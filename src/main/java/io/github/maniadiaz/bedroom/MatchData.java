@@ -18,6 +18,7 @@ public final class MatchData extends SavedData {
     static final int REST_TICKS = 1800;
     final Map<UUID, Member> members = new LinkedHashMap<>();
     final Map<UUID, CompoundTag> pendingReturns = new LinkedHashMap<>();
+    final Map<UUID, CompoundTag> waiting = new LinkedHashMap<>();
     Phase phase = Phase.LOBBY;
     UUID host;
     int round;
@@ -180,6 +181,11 @@ public final class MatchData extends SavedData {
             CompoundTag t = new CompoundTag(); t.putUUID("id", id); t.put("external", external.copy()); returns.add(t);
         });
         tag.put("pendingReturns", returns);
+        ListTag queue = new ListTag();
+        waiting.forEach((id, external) -> {
+            CompoundTag t = new CompoundTag(); t.putUUID("id", id); t.put("external", external.copy()); queue.add(t);
+        });
+        tag.put("waiting", queue);
         return tag;
     }
 
@@ -208,6 +214,11 @@ public final class MatchData extends SavedData {
         for (int i = 0; i < returns.size(); i++) {
             CompoundTag t = returns.getCompound(i);
             data.pendingReturns.put(t.getUUID("id"), t.getCompound("external").copy());
+        }
+        ListTag queue = tag.getList("waiting", Tag.TAG_COMPOUND);
+        for (int i = 0; i < queue.size(); i++) {
+            CompoundTag t = queue.getCompound(i);
+            data.waiting.put(t.getUUID("id"), t.getCompound("external").copy());
         }
         return data;
     }

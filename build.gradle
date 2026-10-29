@@ -20,7 +20,10 @@ minecraft {
         }
         client {}
         server { args '--nogui' }
-        gameTestServer { property 'forge.enabledGameTestNamespaces', 'bedroom' }
+        gameTestServer {
+            workingDirectory project.file('run-gametest')
+            property 'forge.enabledGameTestNamespaces', 'bedroom'
+        }
     }
 }
 
@@ -31,3 +34,15 @@ tasks.named('processResources', ProcessResources).configure {
     filesMatching('META-INF/mods.toml') { expand version: project.version }
 }
 tasks.named('jar', Jar).configure { finalizedBy 'reobfJar' }
+
+// Integration fixtures must not reuse chunks made by an older generator.
+def gameTestWorld = layout.projectDirectory.dir('run-gametest/world').asFile
+def cleanGameTestWorld = tasks.register('cleanGameTestWorld', Delete) {
+    doFirst {
+        if (!gameTestWorld.canonicalFile.toPath().startsWith(projectDir.canonicalFile.toPath())) {
+            throw new GradleException('GameTest world must stay inside the project')
+        }
+    }
+    delete gameTestWorld
+}
+tasks.matching { it.name == 'runGameTestServer' }.configureEach { dependsOn cleanGameTestWorld }

@@ -11,7 +11,7 @@ final class MatchRooms {
     static final int LOBBY = 64;
     static final int REST = 104;
     static final int WHITE = 200;
-    static int arena(MatchData data) { return 1024 + data.round * 512 + data.level * 32; }
+    static int arena(MatchData data) { return 1048576 + data.round * 512 + data.level * 32; }
     static BlockPos button(int x) { return new BlockPos(x + 18, 66, 19); }
     static BlockPos spawn(int x) { return new BlockPos(x + 2, 65, 2); }
 

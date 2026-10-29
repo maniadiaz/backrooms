@@ -1,10 +1,11 @@
 # Partidas, lobby y progresión
 
-Estado: diseño de referencia. El prototipo 0.2.1 implementa el gestor de partidas con salas provisionales; véase [implementación, pruebas y pendientes](ETAPA-2.1-PARTIDAS.md). Cordura, misiones y victoria de campaña siguen pendientes. Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
+Estado: diseño de referencia. El prototipo 0.2.1 introdujo el gestor de partidas; 0.3.0 incorpora entrada automática, espera en lobby y generación del Nivel 0. Véanse [base de partidas](ETAPA-2.1-PARTIDAS.md) y [estado actual](ETAPA-3-NIVEL-0.md). Cordura, misiones y victoria de campaña siguen pendientes. Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
 
 ## Reglas confirmadas
 
 - Una partida admite de uno a cuatro jugadores y se inicia presionando un botón en el lobby.
+- Al entrar al mundo o servidor se llega automáticamente al lobby. Las reconexiones conservan el estado de una partida existente. Nuevas llegadas con grupo lleno o partida activa esperan en el lobby, sin incorporarse a esa partida.
 - No se pueden romper ni colocar bloques. Solo se pueden colocar objetos específicos de misiones.
 - Primera y segunda muerte de cada nivel: traslado a un laberinto blanco llamado limbo, con 30 segundos para encontrar la salida.
 - Tercera muerte del mismo nivel: espectador directo, sin nuevo limbo. Esta interpretación fue confirmada expresamente por el usuario.

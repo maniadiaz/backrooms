@@ -1,1 +1,7 @@
-{"variants":{"":{"model":"bedroom:block/wallpaper"}}}
+{
+  "variants": {
+    "": {
+      "model": "bedroom:block/wallpaper"
+    }
+  }
+}

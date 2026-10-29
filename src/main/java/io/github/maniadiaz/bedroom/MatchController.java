@@ -34,7 +34,10 @@ import net.minecraftforge.fml.common.Mod;
 public final class MatchController {
     private MatchController() {}
 
-    static boolean member(ServerPlayer player) { return MatchData.get(player.server).members.containsKey(player.getUUID()); }
+    static boolean member(ServerPlayer player) {
+        MatchData d = MatchData.get(player.server);
+        return d.members.containsKey(player.getUUID()) || d.waiting.containsKey(player.getUUID());
+    }
     private static Set<UUID> online(MinecraftServer server) {
         return server.getPlayerList().getPlayers().stream().map(ServerPlayer::getUUID).collect(Collectors.toSet());
     }
@@ -49,7 +52,7 @@ public final class MatchController {
                     ServerPlayer p = c.getSource().getPlayerOrException();
                     MatchData d = MatchData.get(p.server);
                     MatchData.Member m = d.members.get(p.getUUID());
-                    tell(p, "Partida: " + d.phase + " | Jugadores: " + d.members.size() + "/4" + (m == null ? "" : " | " + m.state + " | Muertes: " + m.deaths));
+                    tell(p, "Partida: " + d.phase + " | Jugadores: " + d.members.size() + "/4 | En espera: " + d.waiting.size() + (m == null ? "" : " | " + m.state + " | Muertes: " + m.deaths));
                     return 1;
                 }))
                 .then(Commands.literal("testdeath").requires(s -> s.hasPermission(2) && BedroomConfig.DEVELOPMENT_COMMANDS.get()).executes(c -> {
@@ -66,13 +69,18 @@ public final class MatchController {
         MatchData d = MatchData.get(p.server);
         if (dimension(p.server) == null) { tell(p, "La dimensión Bedroom no está disponible."); return 0; }
         if (d.members.containsKey(p.getUUID())) { tell(p, "Ya perteneces a la partida. Usa /bedroom status."); return 0; }
-        if (!d.join(p.getUUID())) { tell(p, "Lobby lleno o partida en curso. Máximo cuatro jugadores."); return 0; }
+        CompoundTag external = d.waiting.get(p.getUUID());
+        if (external == null) external = externalSnapshot(p);
+        if (!d.join(p.getUUID())) {
+            d.waiting.put(p.getUUID(), external);
+            d.setDirty();
+            waitingLobby(p);
+            tell(p, "Estás en el lobby de espera. Entrarás al grupo cuando haya puesto libre y no haya partida en curso.");
+            return 1;
+        }
         MatchData.Member m = d.members.get(p.getUUID());
-        m.external = snapshot(p);
-        m.external.putString("dimension", p.level().dimension().location().toString());
-        m.external.putDouble("x", p.getX()); m.external.putDouble("y", p.getY()); m.external.putDouble("z", p.getZ());
-        m.external.putFloat("yaw", p.getYRot()); m.external.putFloat("pitch", p.getXRot());
-        m.external.putInt("mode", p.gameMode.getGameModeForPlayer().getId());
+        m.external = external;
+        d.waiting.remove(p.getUUID());
         d.setDirty();
         p.getInventory().clearContent();
         p.experienceLevel = 0; p.totalExperience = 0; p.experienceProgress = 0;
@@ -84,7 +92,11 @@ public final class MatchController {
     static int leave(ServerPlayer p) {
         MatchData d = MatchData.get(p.server);
         MatchData.Member m = d.members.get(p.getUUID());
-        if (m == null) return 0;
+        if (m == null) {
+            CompoundTag external = d.waiting.remove(p.getUUID());
+            if (external == null) return 0;
+            returnExternal(p, external); d.setDirty(); return 1;
+        }
         returnExternal(p, m.external);
         d.remove(p.getUUID());
         tell(p, "Saliste de Bedroom. Inventario externo restaurado.");
@@ -105,6 +117,23 @@ public final class MatchController {
     private static CompoundTag snapshot(ServerPlayer p) {
         p.closeContainer();
         return inventorySnapshot(p);
+    }
+
+    private static CompoundTag externalSnapshot(ServerPlayer p) {
+        CompoundTag t = snapshot(p);
+        t.putString("dimension", p.level().dimension().location().toString());
+        t.putDouble("x", p.getX()); t.putDouble("y", p.getY()); t.putDouble("z", p.getZ());
+        t.putFloat("yaw", p.getYRot()); t.putFloat("pitch", p.getXRot());
+        t.putInt("mode", p.gameMode.getGameModeForPlayer().getId());
+        return t;
+    }
+
+    private static void waitingLobby(ServerPlayer p) {
+        p.closeContainer(); p.getInventory().clearContent(); p.removeAllEffects(); p.clearFire();
+        p.setGameMode(GameType.ADVENTURE); p.setHealth(p.getMaxHealth());
+        p.getFoodData().setFoodLevel(20); p.getFoodData().setSaturation(5);
+        p.experienceLevel = 0; p.totalExperience = 0; p.experienceProgress = 0;
+        move(p, MatchRooms.LOBBY, true, false);
     }
 
     private static CompoundTag inventorySnapshot(ServerPlayer p) {
@@ -149,6 +178,16 @@ public final class MatchController {
         p.setDeltaMovement(0, 0, 0);
     }
 
+    private static void moveArena(ServerPlayer p, MatchData data) {
+        ServerLevel level = dimension(p.server);
+        if (level == null) return;
+        int x = MatchRooms.arena(data) + 8;
+        level.getChunkAt(new BlockPos(x, 65, 8));
+        p.setCamera(p);
+        p.teleportTo(level, x + 0.5, 65, 8.5, 0, 0);
+        p.fallDistance = 0; p.setDeltaMovement(0, 0, 0);
+    }
+
     private static CompoundTag location(ServerPlayer p) {
         CompoundTag t = new CompoundTag();
         t.putDouble("x", p.getX()); t.putDouble("y", p.getY()); t.putDouble("z", p.getZ());
@@ -164,7 +203,8 @@ public final class MatchController {
         if (m.state == MatchData.State.ACTIVE || m.state == MatchData.State.REST) {
             if (restoreInventory) restore(p, m.inventory);
             p.setHealth(p.getMaxHealth());
-            move(p, m.state == MatchData.State.REST ? MatchRooms.REST : MatchRooms.arena(d), false, false);
+            if (m.state == MatchData.State.REST) move(p, MatchRooms.REST, false, false);
+            else moveArena(p, d);
         } else {
             p.getInventory().clearContent();
             move(p, m.state == MatchData.State.LOBBY ? MatchRooms.LOBBY : MatchRooms.WHITE + m.slot * 32, true, m.state == MatchData.State.LIMBO);
@@ -211,12 +251,23 @@ public final class MatchController {
         if (!(event.getEntity() instanceof ServerPlayer p)) return;
         MatchData d = MatchData.get(p.server);
         MatchData.Member m = d.members.get(p.getUUID());
-        if (m == null) return;
+        if (m == null) {
+            if (d.waiting.containsKey(p.getUUID())) {
+                event.setCanceled(true); event.setCancellationResult(InteractionResult.SUCCESS);
+            }
+            return;
+        }
         boolean handled = false;
         if (p.level().dimension().equals(DevelopmentCommands.LEVEL_0) && p.distanceToSqr(event.getPos().getCenter()) <= 25) {
+            if (m.state == MatchData.State.ACTIVE && p.level().getBlockState(event.getPos()).is(Bedroom.EXIT.get())) {
+                handled = true;
+                complete(p, false);
+            } else
             if (m.state == MatchData.State.LOBBY && event.getPos().equals(MatchRooms.button(MatchRooms.LOBBY))) {
                 handled = true;
-                if (d.start(p.getUUID(), online(p.server))) {
+                if (!(dimension(p.server).getChunkSource().getGenerator() instanceof Level0Generator)) {
+                    tell(p, "Este mundo conserva el generador antiguo. Crea un mundo nuevo para jugar al Nivel 0 procedural.");
+                } else if (d.start(p.getUUID(), online(p.server))) {
                     for (MatchData.Member other : d.members.values()) {
                         ServerPlayer player = p.server.getPlayerList().getPlayer(other.id);
                         if (player != null) { player.getInventory().clearContent(); apply(player, d, other, false); }
@@ -255,7 +306,7 @@ public final class MatchController {
     @SubscribeEvent public static void hurt(LivingHurtEvent event) {
         if (event.getEntity() instanceof ServerPlayer p) {
             MatchData.Member m = MatchData.get(p.server).members.get(p.getUUID());
-            if (m != null && m.state != MatchData.State.ACTIVE) event.setCanceled(true);
+            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && m.state != MatchData.State.ACTIVE)) event.setCanceled(true);
         }
     }
 
@@ -272,7 +323,7 @@ public final class MatchController {
     @SubscribeEvent public static void itemUse(PlayerInteractEvent.RightClickItem event) {
         if (event.getEntity() instanceof ServerPlayer p) {
             MatchData.Member m = MatchData.get(p.server).members.get(p.getUUID());
-            if (m != null && (m.state != MatchData.State.ACTIVE || p.getItemInHand(event.getHand()).getItem() instanceof net.minecraft.world.item.BucketItem)) event.setCanceled(true);
+            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && (m.state != MatchData.State.ACTIVE || p.getItemInHand(event.getHand()).getItem() instanceof net.minecraft.world.item.BucketItem))) event.setCanceled(true);
         }
     }
 
@@ -295,7 +346,7 @@ public final class MatchController {
             if (pending != null) {
                 returnExternal(p, pending);
                 d.setDirty();
-                tell(p, "Tu partida terminó mientras estabas desconectado. Inventario externo restaurado; usa /bedroom lobby para volver.");
+                if (BedroomConfig.AUTO_LOBBY.get()) join(p);
                 return;
             }
             MatchData.Member m = d.members.get(p.getUUID());
@@ -304,14 +355,17 @@ public final class MatchController {
                 apply(p, d, m, true);
                 int room = m.state == MatchData.State.LIMBO ? MatchRooms.WHITE + m.slot * 32 : MatchRooms.arena(d);
                 double x = last.getDouble("x"), y = last.getDouble("y"), z = last.getDouble("z");
+                boolean withinArea = m.state == MatchData.State.ACTIVE ? Math.abs(x) < 29000000 && Math.abs(z) < 29000000
+                        : x > room && x < room + 20 && z > 0 && z < 20;
                 if ((m.state == MatchData.State.ACTIVE || m.state == MatchData.State.LIMBO)
-                        && x > room && x < room + 20 && z > 0 && z < 20 && y >= 65 && y < 68
+                        && withinArea && y >= 65 && y < 68
                         && dimension(p.server).getBlockState(BlockPos.containing(x, y, z)).isAir()
                         && dimension(p.server).getBlockState(BlockPos.containing(x, y + 1, z)).isAir()) {
                     p.teleportTo(dimension(p.server), x, y, z, last.getFloat("yaw"), last.getFloat("pitch"));
                     m.location = location(p);
                 }
-            }
+            } else if (d.waiting.containsKey(p.getUUID())) waitingLobby(p);
+            else if (BedroomConfig.AUTO_LOBBY.get()) join(p);
         }
     }
 
@@ -326,6 +380,10 @@ public final class MatchController {
         }
     }
 
+    @SubscribeEvent public static void respawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer p && BedroomConfig.AUTO_LOBBY.get() && !member(p)) join(p);
+    }
+
     @SubscribeEvent public static void stopping(net.minecraftforge.event.server.ServerStoppingEvent event) {
         MatchData data = MatchData.get(event.getServer());
         data.stopping = true;
@@ -335,14 +393,14 @@ public final class MatchController {
     @SubscribeEvent public static void pickup(net.minecraftforge.event.entity.player.EntityItemPickupEvent event) {
         if (event.getEntity() instanceof ServerPlayer p) {
             MatchData.Member m = MatchData.get(p.server).members.get(p.getUUID());
-            if (m != null && m.state != MatchData.State.ACTIVE) event.setCanceled(true);
+            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && m.state != MatchData.State.ACTIVE)) event.setCanceled(true);
         }
     }
 
     @SubscribeEvent public static void toss(net.minecraftforge.event.entity.item.ItemTossEvent event) {
         if (event.getPlayer() instanceof ServerPlayer p) {
             MatchData.Member m = MatchData.get(p.server).members.get(p.getUUID());
-            if (m != null && m.state != MatchData.State.ACTIVE) {
+            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && m.state != MatchData.State.ACTIVE)) {
                 p.getInventory().placeItemBackInInventory(event.getEntity().getItem());
                 event.setCanceled(true);
             }
@@ -353,7 +411,7 @@ public final class MatchController {
         if (event.phase != TickEvent.Phase.END) return;
         MinecraftServer server = event.getServer();
         MatchData d = MatchData.get(server);
-        if (d.members.isEmpty() || d.stopping) return;
+        if ((d.members.isEmpty() && d.waiting.isEmpty()) || d.stopping) return;
         Set<UUID> connected = online(server);
         if (d.awaitingPlayers) {
             if (d.members.keySet().stream().noneMatch(connected::contains)) return;
@@ -364,6 +422,12 @@ public final class MatchController {
         Map<UUID, MatchData.State> before = new HashMap<>();
         d.members.values().forEach(m -> before.put(m.id, m.state));
         d.tick(connected);
+        for (UUID id : java.util.List.copyOf(d.waiting.keySet())) {
+            ServerPlayer player = server.getPlayerList().getPlayer(id);
+            if (player == null) continue;
+            if (d.phase == MatchData.Phase.LOBBY && d.members.size() < 4) join(player);
+            else if (server.getTickCount() % 20 == 0) player.displayClientMessage(Component.literal("Lobby: esperando un puesto para la siguiente partida (" + d.members.size() + "/4)"), true);
+        }
         for (MatchData.Member m : d.members.values()) {
             ServerPlayer p = server.getPlayerList().getPlayer(m.id);
             if (p == null) continue;

@@ -216,4 +216,62 @@ public final class MatchGameTests {
         h.assertTrue(level.getBlockState(MatchRooms.button(x)).is(net.minecraft.world.level.block.Blocks.STONE_BUTTON), "Limbo must have a physical exit button");
         h.succeed();
     }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void automaticLobbyAndWaiting(GameTestHelper h) {
+        var players = new java.util.ArrayList<FakePlayer>();
+        try {
+            for (int i = 0; i < 5; i++) {
+                FakePlayer p = new FakePlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "Arrival" + i));
+                players.add(p); p.getInventory().setItem(0, new ItemStack(Items.EMERALD, i + 1));
+                MatchController.login(new net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(p));
+                h.assertTrue(p.level().dimension().equals(DevelopmentCommands.LEVEL_0), "Every arrival must reach lobby");
+            }
+            MatchData data = MatchData.get(h.getLevel().getServer());
+            h.assertTrue(data.members.size() == 4 && data.waiting.size() == 1, "Fifth arrival waits without joining active roster");
+            FakePlayer fifth = players.get(4);
+            MatchData restored = MatchData.load(data.save(new CompoundTag()));
+            h.assertTrue(restored.waiting.containsKey(fifth.getUUID()), "Queue and external inventory survive restart");
+            MatchController.login(new net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(fifth));
+            h.assertTrue(data.waiting.size() == 1 && fifth.getInventory().isEmpty(), "Reconnect cannot duplicate queue or replace external snapshot");
+            MatchController.leave(players.get(0));
+            h.assertTrue(MatchController.join(fifth) == 1 && data.members.containsKey(fifth.getUUID()) && data.waiting.isEmpty(), "Waiting player can fill a free lobby slot");
+            data.start(data.host, data.members.keySet());
+            FakePlayer late = new FakePlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "LateArrival"));
+            players.add(late);
+            MatchController.login(new net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(late));
+            h.assertTrue(data.waiting.containsKey(late.getUUID()) && data.members.size() == 4, "Midgame arrival cannot enter active match");
+            h.succeed();
+        } finally {
+            for (int i = 0; i < players.size(); i++) {
+                FakePlayer p = players.get(i);
+                if (MatchController.member(p)) MatchController.leave(p);
+                if (i < 5) h.assertTrue(p.getInventory().getItem(0).is(Items.EMERALD) && p.getInventory().getItem(0).getCount() == i + 1,
+                        "Each external inventory must be restored exactly after waiting/promotion");
+                p.discard();
+            }
+        }
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void respawnAndLimboReconnect(GameTestHelper h) {
+        FakePlayer p = new FakePlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "RespawnTest"));
+        p.getInventory().setItem(0, new ItemStack(Items.IRON_INGOT, 4));
+        try {
+            MatchController.respawn(new net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent(p, false));
+            MatchData data = MatchData.get(p.server);
+            h.assertTrue(data.members.containsKey(p.getUUID()) && p.level().dimension().equals(DevelopmentCommands.LEVEL_0), "Normal respawn must route to lobby");
+            data.start(p.getUUID(), Set.of(p.getUUID()));
+            MatchController.death(p);
+            MatchData.Member m = data.members.get(p.getUUID());
+            m.limboTicks = 321;
+            MatchController.login(new net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(p));
+            h.assertTrue(m.state == MatchData.State.LIMBO && m.limboTicks == 321 && m.deaths == 1, "Reconnect must preserve limbo and deaths instead of joining lobby");
+            h.succeed();
+        } finally {
+            if (MatchController.member(p)) MatchController.leave(p);
+            h.assertTrue(p.getInventory().getItem(0).is(Items.IRON_INGOT) && p.getInventory().getItem(0).getCount() == 4, "Respawn routing preserves external snapshot");
+            p.discard();
+        }
+    }
 }

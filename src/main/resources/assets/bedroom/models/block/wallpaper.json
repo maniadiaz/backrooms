@@ -1,1 +1,6 @@
-{"parent":"minecraft:block/cube_all","textures":{"all":"minecraft:block/yellow_terracotta"}}
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "bedroom:block/wallpaper"
+  }
+}

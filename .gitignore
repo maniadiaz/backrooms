@@ -2,6 +2,7 @@
 .gradle/
 .tools/
 run-data/
+run-gametest/
 build/
 out/
 bin/

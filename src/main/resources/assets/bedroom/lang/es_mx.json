@@ -1,1 +1,10 @@
-{"block.bedroom.wallpaper":"Papel tapiz (provisional)"}
+{
+  "block.bedroom.wallpaper": "Papel tapiz desgastado",
+  "block.bedroom.wall_panel": "Panel de papel tapiz",
+  "block.bedroom.damp_carpet": "Moqueta húmeda",
+  "block.bedroom.wet_carpet": "Moqueta empapada",
+  "block.bedroom.ceiling_tile": "Panel de techo",
+  "block.bedroom.fluorescent": "Fluorescente",
+  "block.bedroom.broken_fluorescent": "Fluorescente fundido",
+  "block.bedroom.transition_wall": "Pared anómala (salida provisional)"
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "bedroom:block/wall_panel_x"
+    },
+    "axis=y": {
+      "model": "bedroom:block/wall_panel_y"
+    },
+    "axis=z": {
+      "model": "bedroom:block/wall_panel_z"
+    }
+  }
+}

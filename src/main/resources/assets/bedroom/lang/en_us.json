@@ -1,1 +1,10 @@
-{"block.bedroom.wallpaper":"Wallpaper (placeholder)"}
+{
+  "block.bedroom.wallpaper": "Worn wallpaper",
+  "block.bedroom.wall_panel": "Wallpaper panel",
+  "block.bedroom.damp_carpet": "Damp carpet",
+  "block.bedroom.wet_carpet": "Soaked carpet",
+  "block.bedroom.ceiling_tile": "Ceiling tile",
+  "block.bedroom.fluorescent": "Fluorescent light",
+  "block.bedroom.broken_fluorescent": "Burnt-out fluorescent",
+  "block.bedroom.transition_wall": "Anomalous wall (temporary exit)"
+}
