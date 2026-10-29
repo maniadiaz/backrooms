@@ -41,5 +41,8 @@
   "subtitles.bedroom.bacteria_drag": "Arrastre húmedo",
   "subtitles.bedroom.bacteria_metal": "Cables rozando",
   "subtitles.bedroom.bacteria_alert": "Grito de Bacteria",
-  "subtitles.bedroom.bacteria_attack": "Golpe de Bacteria"
+  "subtitles.bedroom.bacteria_attack": "Golpe de Bacteria",
+  "block.bedroom.fuse_cache": "Estuche de fusible",
+  "block.bedroom.fuse_panel": "Panel eléctrico",
+  "item.bedroom.mission_fuse": "Fusible de misión"
 }

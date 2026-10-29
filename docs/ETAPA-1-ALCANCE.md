@@ -160,7 +160,7 @@ V1 incluye solo el Nivel 0 y retorno provisional al lobby. El sistema de progres
 ## 4. Fuera del alcance de V1
 
 - Otros niveles completos, especies adicionales a las tres del bestiario, barras de jefe y combate especializado.
-- Campaña narrativa, misiones, voces y cinemáticas extensas.
+- Campaña narrativa, cadenas extensas de misiones, voces y cinemáticas extensas. La misión básica de tres fusibles fue confirmada e incorporada en la etapa 7.
 - Portales con vista en tiempo real y geometría no euclidiana general.
 - Destrucción o construcción libre en Nivel 0.
 - Compatibilidad garantizada con todos los shaders, mods gráficos y otros mods de dimensiones.

@@ -26,7 +26,7 @@ public final class BedroomHud {
                 graphics.fill(i, i, width - i, i + 1, color); graphics.fill(i, height - i - 1, width - i, height - i, color);
                 graphics.fill(i, i, i + 1, height - i, color); graphics.fill(width - i - 1, i, width - i, height - i, color);
             }
-            int x = 12, y = Math.max(12, height / 2 - 52), w = 174, h = hud.voteSeconds() > 0 ? 132 : 102;
+            int x = 12, y = Math.max(12, height / 2 - 62), w = 190, h = hud.voteSeconds() > 0 ? 162 : 132;
             graphics.fill(x, y, x + w, y + h, 0xBD11110E);
             graphics.fill(x, y, x + 2, y + h, 0xFFE0C46E);
             graphics.fill(x + 8, y + 23, x + w - 8, y + 24, 0x665B5138);
@@ -45,18 +45,23 @@ public final class BedroomHud {
             graphics.drawString(mc.font, detail, x + 10, y + 56, 0xFFB9B3A5, false);
             graphics.drawString(mc.font, "CORDURA  " + Math.round(hud.sanity()) + "%", x + 10, y + 71, hud.sanity() < 25 ? 0xFFFF7777 : 0xFFE0C46E, false);
             graphics.drawString(mc.font, hud.battery() < 0 ? "LINTERNA APAGADA" : "BATERIA  " + hud.battery() + "%", x + 10, y + 85, 0xFFB9B3A5, false);
+            if(hud.state().equals("ACTIVE")||hud.state().equals("SPECTATING")||hud.state().equals("OBSERVING")) {
+                graphics.drawString(mc.font,"PANELES  "+hud.panels()+" / 3",x+10,y+100,0xFFE0C46E,false);
+                graphics.drawString(mc.font,hud.panels()==3?(hud.charge()>0?"NO-CLIP  "+hud.charge()*100/40+"%":"SALIDA HABILITADA"):"BUSCA LOS TRES FUSIBLES",x+10,y+115,0xFF80DBCE,false);
+            }
             if (hud.voteSeconds() > 0) {
-                graphics.drawString(mc.font, "REINICIO " + hud.voteYes() + "/" + hud.voteRequired() + " | " + hud.voteSeconds() + "s", x + 10, y + 103, 0xFF80DBCE, false);
-                graphics.drawString(mc.font, "/bedroom vote ...", x + 10, y + 117, 0xFFB9B3A5, false);
+                graphics.drawString(mc.font, "REINICIO " + hud.voteYes() + "/" + hud.voteRequired() + " | " + hud.voteSeconds() + "s", x + 10, y + 133, 0xFF80DBCE, false);
+                graphics.drawString(mc.font, "/bedroom vote ...", x + 10, y + 147, 0xFFB9B3A5, false);
             }
         });
+        event.registerAboveAll("noclip_blackout",(gui,graphics,partial,width,height)->{if(NoClipClient.black())graphics.fill(0,0,width,height,0xFF000000);});
     }
 
     private static String timer(int seconds) { return String.format(java.util.Locale.ROOT, "%02d:%02d", seconds / 60, seconds % 60); }
 
     @Mod.EventBusSubscriber(modid = Bedroom.MOD_ID, value = Dist.CLIENT)
     public static final class Lifecycle {
-        @SubscribeEvent public static void logout(ClientPlayerNetworkEvent.LoggingOut event) { current = null; }
+        @SubscribeEvent public static void logout(ClientPlayerNetworkEvent.LoggingOut event) { current = null;NoClipClient.reset(); }
     }
 
     private BedroomHud() {}

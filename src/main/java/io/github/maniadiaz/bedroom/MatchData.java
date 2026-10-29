@@ -27,6 +27,8 @@ public final class MatchData extends SavedData {
     int round;
     int level;
     int restTicks;
+    MissionState mission = new MissionState();
+    int exitDelay;
     boolean stopping;
     boolean awaitingPlayers;
 
@@ -66,6 +68,7 @@ public final class MatchData extends SavedData {
         if (phase != Phase.LOBBY || !actor.equals(host) || members.isEmpty()
                 || !online.containsAll(members.keySet())) return false;
         round++;
+        mission = new MissionState(); exitDelay=0;
         level = 0;
         phase = Phase.ACTIVE;
         members.values().forEach(m -> { m.state = State.ACTIVE; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); m.ambient = new AmbientSchedule(); });
@@ -101,6 +104,7 @@ public final class MatchData extends SavedData {
             phase = Phase.REST;
             restTicks = REST_TICKS;
             level++;
+            mission = new MissionState(); exitDelay=0;
             vote.clear();
             members.values().forEach(p -> { p.state = State.REST; p.deaths = 0; p.limboTicks = 0; p.survival.sanity = 100; p.survival.quietTicks = 0; p.ambient = new AmbientSchedule(); });
             setDirty();
@@ -118,6 +122,7 @@ public final class MatchData extends SavedData {
     }
 
     void reset() {
+        mission = new MissionState(); exitDelay=0;
         vote.clear(); observers.clear(); cameras.clear();
         awaitingPlayers = false;
         phase = Phase.LOBBY;
@@ -172,6 +177,7 @@ public final class MatchData extends SavedData {
         tag.putInt("round", round);
         tag.putInt("level", level);
         tag.putInt("restTicks", restTicks);
+        tag.put("mission",mission.save());
         ListTag list = new ListTag();
         members.values().forEach(m -> {
             CompoundTag t = new CompoundTag();
@@ -208,6 +214,7 @@ public final class MatchData extends SavedData {
         data.round = tag.getInt("round");
         data.level = tag.getInt("level");
         data.restTicks = tag.getInt("restTicks");
+        data.mission = MissionState.load(tag.getCompound("mission"));
         ListTag list = tag.getList("members", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             CompoundTag t = list.getCompound(i);

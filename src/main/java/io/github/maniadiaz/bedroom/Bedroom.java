@@ -31,6 +31,9 @@ public final class Bedroom {
     public static final RegistryObject<Item> BATTERY = ITEMS.register("battery", () -> new SurvivalItems.Supply(SurvivalItems.Kind.BATTERY));
     public static final RegistryObject<Item> FLASHLIGHT = ITEMS.register("flashlight", () -> new SurvivalItems.Supply(SurvivalItems.Kind.FLASHLIGHT));
     public static final RegistryObject<Item> ANOMALOUS_COMPASS = ITEMS.register("anomalous_compass", () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FUSE = ITEMS.register("mission_fuse", () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Block> FUSE_CACHE = BLOCKS.register("fuse_cache",MissionSystem.Node::new);
+    public static final RegistryObject<Block> FUSE_PANEL = BLOCKS.register("fuse_panel",MissionSystem.Node::new);
     public static final RegistryObject<Block> CARDBOARD_BOX = block("cardboard_box", () -> new SupplyContainer(false));
     public static final RegistryObject<Block> FILING_CABINET = block("filing_cabinet", () -> new SupplyContainer(true));
     public static final RegistryObject<Block> BEAM_LIGHT = BLOCKS.register("beam_light", FlashlightSystem.BeamLight::new);

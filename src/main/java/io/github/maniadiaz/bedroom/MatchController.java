@@ -404,13 +404,14 @@ public final class MatchController {
         if (p.level().dimension().equals(DevelopmentCommands.LEVEL_0) && p.distanceToSqr(event.getPos().getCenter()) <= 25) {
             if (m.state == MatchData.State.ACTIVE && p.level().getBlockState(event.getPos()).is(Bedroom.EXIT.get())) {
                 handled = true;
-                complete(p, false);
+                tell(p,d.mission.ready()?"Mantén avance y carrera contra esta pared durante 2 segundos.":"La pared no responde. Repara los tres paneles primero.");
             } else
             if (m.state == MatchData.State.LOBBY && event.getPos().equals(MatchRooms.button(MatchRooms.LOBBY))) {
                 handled = true;
                 if (!(dimension(p.server).getChunkSource().getGenerator() instanceof Level0Generator)) {
                     tell(p, "Este mundo conserva el generador antiguo. Crea un mundo nuevo para jugar al Nivel 0 procedural.");
                 } else if (d.start(p.getUUID(), online(p.server))) {
+                    MissionSystem.prepare(p.server,d);
                     for (MatchData.Member other : d.members.values()) {
                         ServerPlayer player = p.server.getPlayerList().getPlayer(other.id);
                         if (player != null) {
@@ -432,16 +433,18 @@ public final class MatchController {
                 }
             } else if (m.state == MatchData.State.ACTIVE && event.getPos().equals(MatchRooms.button(MatchRooms.arena(d)))) {
                 handled = true;
-                complete(p, false);
+                tell(p,"La salida ahora requiere tres paneles reparados y atravesar la pared anómala.");
             } else if (m.state == MatchData.State.REST && event.getPos().equals(MatchRooms.button(MatchRooms.REST))) {
                 handled = true;
-                if (d.resume(p.getUUID())) for (MatchData.Member other : d.members.values()) {
+                if (d.resume(p.getUUID())) { MissionSystem.prepare(p.server,d); for (MatchData.Member other : d.members.values()) {
                     ServerPlayer player = p.server.getPlayerList().getPlayer(other.id);
                     if (player != null) apply(player, d, other, false);
                 }
+                }
             }
         }
-        // No placement/containers in non-active states; all mission placements remain denied until registered.
+        if(!handled)handled=MissionSystem.interact(p,event.getPos(),event.getHand());
+        // Mission inserts are validated here; ordinary placement remains denied.
         if (!handled && m.state == MatchData.State.ACTIVE && (p.getItemInHand(event.getHand()).isEdible() || p.getItemInHand(event.getHand()).getItem() instanceof SurvivalItems.Supply)
                 && !p.level().getBlockState(event.getPos()).is(net.minecraft.tags.BlockTags.create(
                         ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID, "containers")))) {
@@ -465,7 +468,7 @@ public final class MatchController {
     @SubscribeEvent public static void hurt(LivingHurtEvent event) {
         if (event.getEntity() instanceof ServerPlayer p) {
             MatchData.Member m = MatchData.get(p.server).members.get(p.getUUID());
-            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && m.state != MatchData.State.ACTIVE)) event.setCanceled(true);
+            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && (m.state != MatchData.State.ACTIVE||MatchData.get(p.server).exitDelay>0))) event.setCanceled(true);
         }
     }
 
@@ -568,7 +571,7 @@ public final class MatchController {
     @SubscribeEvent public static void toss(net.minecraftforge.event.entity.item.ItemTossEvent event) {
         if (event.getPlayer() instanceof ServerPlayer p) {
             MatchData.Member m = MatchData.get(p.server).members.get(p.getUUID());
-            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && m.state != MatchData.State.ACTIVE)) {
+            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && (m.state != MatchData.State.ACTIVE||event.getEntity().getItem().is(Bedroom.FUSE.get())))) {
                 p.getInventory().placeItemBackInInventory(event.getEntity().getItem());
                 event.setCanceled(true);
             }
@@ -595,6 +598,7 @@ public final class MatchController {
         MatchData.Phase previousPhase = d.phase;
         d.members.values().forEach(m -> before.put(m.id, m.state));
         d.tick(connected);
+        if(previousPhase==MatchData.Phase.REST&&d.phase==MatchData.Phase.ACTIVE)MissionSystem.prepare(server,d);
         for (UUID id : java.util.List.copyOf(d.waiting.keySet())) {
             ServerPlayer player = server.getPlayerList().getPlayer(id);
             if (player == null) continue;

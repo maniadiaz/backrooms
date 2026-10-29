@@ -41,5 +41,8 @@
   "subtitles.bedroom.bacteria_drag": "Wet dragging",
   "subtitles.bedroom.bacteria_metal": "Scraping wires",
   "subtitles.bedroom.bacteria_alert": "Bacteria shriek",
-  "subtitles.bedroom.bacteria_attack": "Bacteria strike"
+  "subtitles.bedroom.bacteria_attack": "Bacteria strike",
+  "block.bedroom.fuse_cache": "Fuse case",
+  "block.bedroom.fuse_panel": "Electrical panel",
+  "item.bedroom.mission_fuse": "Mission fuse"
 }

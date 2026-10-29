@@ -1,6 +1,6 @@
 # Partidas, lobby y progresión
 
-Estado: diseño de referencia. El prototipo 0.2.1 introdujo el gestor de partidas; 0.3.0 incorpora entrada automática, espera en lobby y generación del Nivel 0. Véanse [base de partidas](ETAPA-2.1-PARTIDAS.md) y [estado actual](ETAPA-3-NIVEL-0.md). La etapa 4 incorpora cordura y suministros; misiones y victoria de campaña siguen pendientes. Véase [etapa 4](ETAPA-4-SUPERVIVENCIA.md). Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
+Estado: diseño de referencia, actualizado hasta 0.7.0. El gestor, entrada automática, laberinto, cordura, suministros y entidades están implementados. La primera misión requiere tres fusibles y tres paneles; habilita la salida por No-Clip y retorno provisional al lobby. Véanse [base de partidas](ETAPA-2.1-PARTIDAS.md) y [etapa actual](ETAPA-7-MISION-Y-NOCLIP.md). Nivel 1 y victoria final de campaña siguen pendientes. Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
 
 ## Reglas confirmadas
 
@@ -86,7 +86,7 @@ Se mantienen viñeta y susurros bajo 50; lentitud, ceguera intermitente y pasos 
 
 Bloquear rotura y colocación en las zonas del modo de juego, incluidos lobby, limbo y descanso. Las excepciones administrativas no deben permitir a jugadores normales eludir estas reglas.
 
-Los objetos de misión se validarán en el servidor mediante una lista explícita de objetos, objetivo, nivel y ubicación permitidos. No basta con nombrar un objeto como objeto de misión. Una colocación exitosa actualiza el objetivo de forma atómica, sin duplicar ni consumir dos veces el objeto. Las misiones y sus objetos concretos siguen pendientes de diseño; esta excepción no agrega todavía una campaña de misiones a V1.
+Los objetos de misión se validan en el servidor mediante objeto, objetivo, ronda, nivel y ubicación permitidos. No basta con nombrar un objeto como objeto de misión. Una colocación exitosa actualiza el objetivo de forma atómica, sin duplicar ni consumir dos veces el objeto. En 0.7.0 esta excepción permite insertar tres fusibles numerados en sus paneles; no habilita la construcción libre ni una campaña narrativa. Los fusibles perdidos pueden recuperarse de sus estuches, invalidando las copias sustituidas.
 
 ## Nueva etapa 2.1
 

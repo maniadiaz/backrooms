@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "bedroom:block/fuse_cache_1_0"
+  }
+}
