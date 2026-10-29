@@ -32,6 +32,10 @@ def png(name, base, style):
                 d = -35 if x in (0, 31) or y in (0, 31) else rng.randint(-7, 2)
             elif style == 'lamp':
                 d = -65 if x < 3 or x > 28 or y < 3 or y > 28 else (-30 if x % 7 < 2 else 10)
+            elif style == 'box':
+                d = 22 if 14 <= x <= 17 else (-24 if x in (0, 31) or y in (0, 31) else 0)
+            elif style == 'cabinet':
+                d = -55 if y % 16 < 2 else (35 if 12 <= x <= 20 and y % 16 in (6, 7) else 0)
             data.extend(max(0, min(255, c + noise + d)) for c in base)
     def chunk(kind, content):
         return struct.pack('>I', len(content)) + kind + content + struct.pack('>I', zlib.crc32(kind + content) & 0xffffffff)
@@ -101,3 +105,78 @@ path = ROOT / 'textures/item/nutrition_bar.png'
 path.parent.mkdir(parents=True, exist_ok=True)
 path.write_bytes(icon)
 write_json(ROOT / 'models/item/nutrition_bar.json', {'parent': 'minecraft:item/generated', 'textures': {'layer0': 'bedroom:item/nutrition_bar'}})
+
+def item_icon(name, frame=0):
+    rows = bytearray()
+    for y in range(16):
+        rows.append(0)
+        for x in range(16):
+            color = (0, 0, 0, 0)
+            if name == 'almond_water':
+                if 4 <= x <= 11 and 4 <= y <= 14: color = (217, 208, 177, 255)
+                if 6 <= x <= 9 and 1 <= y <= 4: color = (94, 90, 77, 255)
+                if 5 <= x <= 10 and 8 <= y <= 11: color = (151, 134, 85, 255)
+            elif name == 'energy_drink':
+                if 5 <= x <= 10 and 2 <= y <= 13: color = (87, 98, 85, 255)
+                if 6 <= x <= 9 and 5 <= y <= 11: color = (169, 222, 61, 255)
+                if 5 <= x <= 10 and y in (2, 13): color = (199, 202, 191, 255)
+            elif name == 'bandage':
+                r = math.hypot(x - 7.5, y - 7.5)
+                if r <= 6: color = (192, 184, 160, 255) if int(r) % 2 else (230, 224, 201, 255)
+                if r < 2: color = (105, 101, 86, 255)
+            elif name == 'battery':
+                if (3 <= x <= 6 or 9 <= x <= 12) and 4 <= y <= 13: color = (131, 132, 123, 255)
+                if (3 <= x <= 6 or 9 <= x <= 12) and 10 <= y <= 13: color = (84, 90, 66, 255)
+                if x in (4, 5, 10, 11) and y == 3: color = (207, 205, 187, 255)
+            elif name == 'flashlight':
+                if 6 <= x <= 9 and 5 <= y <= 14: color = (96, 101, 94, 255)
+                if 4 <= x <= 11 and 2 <= y <= 5: color = (164, 168, 154, 255)
+                if 5 <= x <= 10 and y in (2, 3): color = (237, 229, 171, 255)
+            else:
+                r = math.hypot(x - 7.5, y - 7.5)
+                if r <= 6.8: color = (156, 139, 83, 255) if r > 5.4 else (48, 49, 41, 255)
+                angle = frame * math.pi / 8
+                along = (x - 7.5) * math.sin(angle) - (y - 7.5) * math.cos(angle)
+                across = (x - 7.5) * math.cos(angle) + (y - 7.5) * math.sin(angle)
+                if abs(across) < 1 and abs(along) < 5: color = (211, 87, 71, 255) if along > 0 else (222, 217, 186, 255)
+            rows.extend(color)
+    content = b'\x89PNG\r\n\x1a\n' + icon_chunk(b'IHDR', struct.pack('>IIBBBBB', 16, 16, 8, 6, 0, 0, 0))
+    content += icon_chunk(b'IDAT', zlib.compress(bytes(rows))) + icon_chunk(b'IEND', b'')
+    target = f'anomalous_compass_{frame}' if name == 'anomalous_compass' else name
+    (ROOT / f'textures/item/{target}.png').write_bytes(content)
+    write_json(ROOT / f'models/item/{target}.json', {'parent': 'minecraft:item/generated', 'textures': {'layer0': f'bedroom:item/{target}'}})
+
+for item in ('almond_water', 'energy_drink', 'bandage', 'battery', 'flashlight'):
+    item_icon(item)
+for frame in range(16): item_icon('anomalous_compass', frame)
+write_json(ROOT / 'models/item/anomalous_compass.json', {
+    'parent': 'minecraft:item/generated', 'textures': {'layer0': 'bedroom:item/anomalous_compass_0'},
+    'overrides': [{'predicate': {'bedroom:angle': frame / 16}, 'model': f'bedroom:item/anomalous_compass_{frame}'} for frame in range(16)]})
+
+for name, base, style, height in (('cardboard_box', (157, 128, 78), 'box', 12), ('filing_cabinet', (127, 134, 124), 'cabinet', 16)):
+    png(name, base, style)
+    for opened in (False, True):
+        suffix = 'open' if opened else 'closed'
+        elements = [{'from': [2, 0, 2], 'to': [14, height, 14], 'faces': faces}]
+        if opened:
+            elements = [{'from': [2, 0, 2], 'to': [14, height - 2, 14], 'faces': faces},
+                        {'from': [1, height - 1, 1], 'to': [15, height, 3], 'faces': faces}]
+        write_json(ROOT / f'models/block/{name}_{suffix}.json', {'textures': {'all': f'bedroom:block/{name}', 'particle': f'bedroom:block/{name}'}, 'elements': elements})
+    write_json(ROOT / f'blockstates/{name}.json', {'variants': {f'opened={str(value).lower()}': {'model': f'bedroom:block/{name}_{"open" if value else "closed"}'} for value in (False, True)}})
+    write_json(ROOT / f'models/item/{name}.json', {'parent': f'bedroom:block/{name}_closed'})
+write_json(ROOT / 'blockstates/beam_light.json', {'variants': {'': {'model': 'bedroom:block/beam_light'}}})
+write_json(ROOT / 'models/block/beam_light.json', {'textures': {'particle': 'minecraft:block/glass'}, 'elements': []})
+
+for language in names:
+    path = ROOT / f'lang/{language}.json'
+    labels = json.loads(path.read_text(encoding='utf-8'))
+    es = language == 'es_mx'
+    for key, a, b in [('almond_water', 'Agua de Almendras', 'Almond water'), ('energy_drink', 'Bebida energética Juice', 'Juice energy drink'),
+                      ('bandage', 'Vendas', 'Bandages'), ('battery', 'Pilas AAA', 'AAA batteries'), ('flashlight', 'Linterna', 'Flashlight'),
+                      ('anomalous_compass', 'Brújula anómala', 'Anomalous compass')]:
+        labels[f'item.bedroom.{key}'] = a if es else b
+    labels.update({'block.bedroom.cardboard_box': 'Caja de cartón' if es else 'Cardboard box',
+                   'block.bedroom.filing_cabinet': 'Archivador metálico' if es else 'Filing cabinet',
+                   'key.categories.bedroom': 'Bedroom', 'key.bedroom.next_camera': 'Siguiente cámara' if es else 'Next spectator camera',
+                   'key.bedroom.previous_camera': 'Cámara anterior' if es else 'Previous spectator camera'})
+    write_json(path, labels)

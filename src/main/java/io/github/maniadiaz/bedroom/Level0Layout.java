@@ -5,13 +5,15 @@ final class Level0Layout {
     private final long seed;
     Level0Layout(long seed) { this.seed = seed; }
 
-    private long hash(int x, int z, int salt) {
+    long hash(int x, int z, int salt) {
         long n = seed ^ ((long) x * 0x632be59bd9b4e019L) ^ ((long) z * 0x9e3779b97f4a7c15L) ^ salt;
         n = (n ^ (n >>> 30)) * 0xbf58476d1ce4e5b9L;
         n = (n ^ (n >>> 27)) * 0x94d049bb133111ebL;
         return n ^ (n >>> 31);
     }
     int template(int cellX, int cellZ) { return Math.floorMod(hash(cellX, cellZ, 37), 5); }
+    boolean supplyCell(int cellX, int cellZ) { return Math.floorMod(cellX, 12) == 5 + Math.floorMod(hash(Math.floorDiv(cellX, 12), cellZ, 89), 3); }
+    boolean supply(int x, int z) { return Math.floorMod(x, 16) == 3 && Math.floorMod(z, 16) == 11 && supplyCell(Math.floorDiv(x, 16), Math.floorDiv(z, 16)); }
     boolean exit(int x, int z) { return Math.floorMod(x, 128) == 115 && Math.floorMod(z, 128) == 115; }
     boolean wet(int x, int z) {
         // Coherent patches near boundaries, rather than independently random pixels.
@@ -32,6 +34,7 @@ final class Level0Layout {
         // Cross corridors remain open in every template. Other rooms add finite panels or columns.
         if ((dx >= 7 && dx <= 8) || (dz >= 7 && dz <= 8)) return false;
         if (Math.floorMod(cx, 8) == 7 && Math.floorMod(cz, 8) == 7) return false;
+        if (supplyCell(cx, cz)) return false;
         return switch (template(cx, cz)) {
             case 0 -> false; // open room
             case 1 -> dx == 4 && dz == 4; // isolated column

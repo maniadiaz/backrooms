@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "opened=false": {
+      "model": "bedroom:block/filing_cabinet_closed"
+    },
+    "opened=true": {
+      "model": "bedroom:block/filing_cabinet_open"
+    }
+  }
+}

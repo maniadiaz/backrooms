@@ -46,6 +46,7 @@ public final class Level0Generator extends FlatLevelSource {
         if (y == 0) return Blocks.BEDROCK.defaultBlockState();
         if (y == 64) return (layout.wet(x, z) ? Bedroom.WET_CARPET.get() : Bedroom.CARPET.get()).defaultBlockState();
         if (y == 68) return (layout.lamp(x, z) ? (layout.deadLamp(x, z) ? Bedroom.DEAD_LIGHT.get() : Bedroom.LIGHT.get()) : Bedroom.CEILING.get()).defaultBlockState();
+        if (y == 65 && layout.supply(x, z)) return (layout.hash(x, z, 90) % 2 == 0 ? Bedroom.CARDBOARD_BOX.get() : Bedroom.FILING_CABINET.get()).defaultBlockState();
         if (y >= 65 && y <= 67 && layout.wall(x, z)) {
             if (layout.exit(x, z)) return Bedroom.EXIT.get().defaultBlockState();
             int dx = Math.floorMod(x, 16), dz = Math.floorMod(z, 16);
@@ -65,6 +66,12 @@ public final class Level0Generator extends FlatLevelSource {
             int x = chunk.getPos().getMinBlockX() + dx, z = chunk.getPos().getMinBlockZ() + dz;
             chunk.setBlockState(pos.set(x, 0, z), Blocks.BEDROCK.defaultBlockState(), false);
             for (int y = 64; y <= 68; y++) chunk.setBlockState(pos.set(x, y, z), stateAt(x, y, z), false);
+            if (layout.supply(x, z)) {
+                net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+                tag.putString("id", "bedroom:supply_container"); tag.putInt("x", x); tag.putInt("y", 65); tag.putInt("z", z);
+                tag.putString("LootTable", "bedroom:chests/supplies"); tag.putLong("LootTableSeed", layout.hash(x, z, 91));
+                chunk.setBlockEntityNbt(tag);
+            }
         }
         Heightmap.primeHeightmaps(chunk, Set.of(Heightmap.Types.WORLD_SURFACE_WG, Heightmap.Types.OCEAN_FLOOR_WG));
         return CompletableFuture.completedFuture(chunk);

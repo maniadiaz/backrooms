@@ -12,17 +12,18 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 /** HUD state travels to every remote client, including friends on an integrated server. */
 public final class BedroomNetwork {
-    private static final String PROTOCOL = "1";
+    private static final String PROTOCOL = "2";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID, "match"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
 
-    public record Hud(boolean visible, String state, int deaths, int seconds, int level, int players) {
+    public record Hud(boolean visible, String state, int deaths, int seconds, int level, int players, float sanity, int battery, int voteYes, int voteRequired, int voteSeconds) {
         static Hud decode(FriendlyByteBuf buffer) {
-            return new Hud(buffer.readBoolean(), buffer.readUtf(24), buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt());
+            return new Hud(buffer.readBoolean(), buffer.readUtf(24), buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt(), buffer.readFloat(), buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt());
         }
         void encode(FriendlyByteBuf buffer) {
             buffer.writeBoolean(visible); buffer.writeUtf(state, 24); buffer.writeVarInt(deaths);
             buffer.writeVarInt(seconds); buffer.writeVarInt(level); buffer.writeVarInt(players);
+            buffer.writeFloat(sanity); buffer.writeVarInt(battery); buffer.writeVarInt(voteYes); buffer.writeVarInt(voteRequired); buffer.writeVarInt(voteSeconds);
         }
     }
 
@@ -38,8 +39,13 @@ public final class BedroomNetwork {
         MatchData.Member m = data.members.get(id);
         boolean waiting = data.waiting.containsKey(id);
         int ticks = m == null ? 0 : m.state == MatchData.State.LIMBO ? m.limboTicks : m.state == MatchData.State.REST ? data.restTicks : 0;
-        return new Hud(m != null || waiting, m == null ? "WAITING" : m.state.name(), m == null ? 0 : m.deaths,
-                (ticks + 19) / 20, data.level, data.members.size());
+        var p = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer() == null ? null
+                : net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(id);
+        var lamp = p == null ? net.minecraft.world.item.ItemStack.EMPTY : FlashlightSystem.held(p);
+        return new Hud(m != null || waiting, m == null ? (data.observers.contains(id) ? "OBSERVING" : "WAITING") : m.state.name(), m == null ? 0 : m.deaths,
+                (ticks + 19) / 20, data.level, data.members.size(), m == null ? 100 : (float) m.survival.sanity,
+                lamp.isEmpty() ? -1 : SurvivalItems.charge(lamp) * 100 / SurvivalItems.FULL_CHARGE,
+                data.vote.yes(), data.vote.voters.size() / 2 + 1, (data.vote.ticks + 19) / 20);
     }
 
     static void sync(ServerPlayer player) {

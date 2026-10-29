@@ -19,6 +19,9 @@ public final class MatchData extends SavedData {
     final Map<UUID, Member> members = new LinkedHashMap<>();
     final Map<UUID, CompoundTag> pendingReturns = new LinkedHashMap<>();
     final Map<UUID, CompoundTag> waiting = new LinkedHashMap<>();
+    final java.util.Set<UUID> observers = new java.util.HashSet<>();
+    final Map<UUID, UUID> cameras = new LinkedHashMap<>();
+    final RestartVote vote = new RestartVote();
     Phase phase = Phase.LOBBY;
     UUID host;
     int round;
@@ -36,6 +39,7 @@ public final class MatchData extends SavedData {
         CompoundTag external = new CompoundTag();
         CompoundTag inventory = new CompoundTag();
         CompoundTag location = new CompoundTag();
+        SurvivalState survival = new SurvivalState();
         Member(UUID id) { this.id = id; }
     }
 
@@ -63,7 +67,7 @@ public final class MatchData extends SavedData {
         round++;
         level = 0;
         phase = Phase.ACTIVE;
-        members.values().forEach(m -> { m.state = State.ACTIVE; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); });
+        members.values().forEach(m -> { m.state = State.ACTIVE; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); });
         setDirty();
         return true;
     }
@@ -82,6 +86,7 @@ public final class MatchData extends SavedData {
         Member m = members.get(id);
         if (phase != Phase.ACTIVE || m == null || m.state != State.LIMBO || m.limboTicks <= 0) return false;
         m.state = State.ACTIVE;
+        m.survival.sanity = Math.max(30, m.survival.sanity);
         m.limboTicks = 0;
         setDirty();
         return true;
@@ -95,7 +100,8 @@ public final class MatchData extends SavedData {
             phase = Phase.REST;
             restTicks = REST_TICKS;
             level++;
-            members.values().forEach(p -> { p.state = State.REST; p.deaths = 0; p.limboTicks = 0; });
+            vote.clear();
+            members.values().forEach(p -> { p.state = State.REST; p.deaths = 0; p.limboTicks = 0; p.survival.sanity = 100; p.survival.quietTicks = 0; });
             setDirty();
         }
         return true;
@@ -111,15 +117,17 @@ public final class MatchData extends SavedData {
     }
 
     void reset() {
+        vote.clear(); observers.clear(); cameras.clear();
         awaitingPlayers = false;
         phase = Phase.LOBBY;
         level = 0;
         restTicks = 0;
-        members.values().forEach(m -> { m.state = State.LOBBY; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); });
+        members.values().forEach(m -> { m.state = State.LOBBY; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); });
         setDirty();
     }
 
     void remove(UUID id) {
+        cameras.remove(id); observers.remove(id);
         members.remove(id);
         if (id.equals(host)) host = members.keySet().stream().findFirst().orElse(null);
         if (members.isEmpty()) reset();
@@ -174,6 +182,7 @@ public final class MatchData extends SavedData {
             t.put("external", m.external.copy());
             t.put("inventory", m.inventory.copy());
             t.put("location", m.location.copy());
+            t.put("survival", m.survival.save());
             list.add(t);
         });
         tag.put("members", list);
@@ -209,6 +218,7 @@ public final class MatchData extends SavedData {
             m.external = t.getCompound("external").copy();
             m.inventory = t.getCompound("inventory").copy();
             m.location = t.getCompound("location").copy();
+            m.survival = SurvivalState.load(t.getCompound("survival"));
             data.members.put(m.id, m);
         }
         ListTag returns = tag.getList("pendingReturns", Tag.TAG_COMPOUND);

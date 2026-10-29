@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bedroom:item/anomalous_compass_6"
+  }
+}

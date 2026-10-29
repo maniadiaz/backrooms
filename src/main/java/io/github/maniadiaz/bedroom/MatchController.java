@@ -49,8 +49,19 @@ public final class MatchController {
                 .then(Commands.literal("lobby").executes(c -> join(c.getSource().getPlayerOrException())))
                 .then(Commands.literal("leave").executes(c -> leave(c.getSource().getPlayerOrException())))
                 .then(Commands.literal("restart").requires(s -> s.hasPermission(2)
-                        || (s.getEntity() instanceof ServerPlayer p && canRestart(p)))
-                        .executes(c -> { restart(c.getSource().getServer()); return 1; }))
+                        || (s.getEntity() instanceof ServerPlayer p && (canRestart(p) || (MatchData.get(p.server).phase != MatchData.Phase.LOBBY && MatchData.get(p.server).members.containsKey(p.getUUID())))))
+                        .executes(c -> {
+                            if (c.getSource().getEntity() instanceof ServerPlayer p && MatchData.get(p.server).phase != MatchData.Phase.LOBBY) requestVote(p.server);
+                            else restart(c.getSource().getServer());
+                            return 1;
+                        }))
+                .then(Commands.literal("vote")
+                        .then(Commands.literal("restart").executes(c -> ballot(c.getSource().getPlayerOrException(), true)))
+                        .then(Commands.literal("continue").executes(c -> ballot(c.getSource().getPlayerOrException(), false))))
+                .then(Commands.literal("spectate").executes(c -> spectate(c.getSource().getPlayerOrException(), 1))
+                        .then(Commands.literal("next").executes(c -> spectate(c.getSource().getPlayerOrException(), 1)))
+                        .then(Commands.literal("previous").executes(c -> spectate(c.getSource().getPlayerOrException(), -1)))
+                        .then(Commands.literal("off").executes(c -> stopWatching(c.getSource().getPlayerOrException()))))
                 .then(Commands.literal("status").executes(c -> {
                     ServerPlayer p = c.getSource().getPlayerOrException();
                     MatchData d = MatchData.get(p.server);
@@ -84,6 +95,8 @@ public final class MatchController {
         MatchData.Member m = d.members.get(p.getUUID());
         m.external = external;
         d.waiting.remove(p.getUUID());
+        d.observers.remove(p.getUUID());
+        d.cameras.remove(p.getUUID());
         d.setDirty();
         p.getInventory().clearContent();
         p.experienceLevel = 0; p.totalExperience = 0; p.experienceProgress = 0;
@@ -93,10 +106,12 @@ public final class MatchController {
     }
 
     static int leave(ServerPlayer p) {
+        FlashlightSystem.clear(p);
         MatchData d = MatchData.get(p.server);
         MatchData.Member m = d.members.get(p.getUUID());
         if (m == null) {
             CompoundTag external = d.waiting.remove(p.getUUID());
+            d.observers.remove(p.getUUID()); d.cameras.remove(p.getUUID());
             if (external == null) return 0;
             returnExternal(p, external); d.setDirty(); BedroomNetwork.sync(p); return 1;
         }
@@ -133,6 +148,7 @@ public final class MatchController {
     }
 
     private static void waitingLobby(ServerPlayer p) {
+        FlashlightSystem.clear(p);
         p.closeContainer(); p.getInventory().clearContent(); p.removeAllEffects(); p.clearFire();
         p.setGameMode(GameType.ADVENTURE); p.setHealth(p.getMaxHealth());
         p.getFoodData().setFoodLevel(20); p.getFoodData().setSaturation(5);
@@ -145,6 +161,87 @@ public final class MatchController {
     static boolean canRestart(ServerPlayer p) {
         return p.hasPermissions(2) || p.server.isSingleplayerOwner(p.getGameProfile())
                 || p.getUUID().equals(MatchData.get(p.server).host);
+    }
+
+    static void requestVote(MinecraftServer server) {
+        MatchData d = MatchData.get(server);
+        if (d.phase == MatchData.Phase.LOBBY) return;
+        Set<UUID> eligible = online(server); eligible.retainAll(d.members.keySet());
+        if (!d.vote.start(eligible)) return;
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) if (member(player)) {
+            MatchAnnouncements.show(player, "¿VOLVEMOS?", "Voten: reiniciar o continuar sin él.", net.minecraft.ChatFormatting.GOLD);
+            if (eligible.contains(player.getUUID())) {
+                player.sendSystemMessage(Component.literal("¿Reiniciar la partida? ")
+                        .append(Component.literal("[REINICIAR] ").withStyle(style -> style.withColor(net.minecraft.ChatFormatting.GREEN)
+                                .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/bedroom vote restart"))))
+                        .append(Component.literal("[SEGUIR]").withStyle(style -> style.withColor(net.minecraft.ChatFormatting.AQUA)
+                                .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/bedroom vote continue")))));
+            }
+        }
+    }
+
+    private static int ballot(ServerPlayer p, boolean restart) {
+        MatchData d = MatchData.get(p.server);
+        if (!d.vote.cast(p.getUUID(), restart)) { tell(p, "No tienes una votación disponible."); return 0; }
+        tell(p, restart ? "Votaste reiniciar." : "Votaste seguir.");
+        resolveVote(p.server, d.vote.result());
+        return 1;
+    }
+
+    private static boolean resolveVote(MinecraftServer server, RestartVote.Result result) {
+        if (result == RestartVote.Result.PENDING) return false;
+        MatchData d = MatchData.get(server); d.vote.clear();
+        if (result == RestartVote.Result.RESTART) { restart(server); return true; }
+        for (ServerPlayer p : server.getPlayerList().getPlayers()) if (member(p))
+            MatchAnnouncements.show(p, "SEGUIMOS", "La partida continúa. No te rindas.", net.minecraft.ChatFormatting.AQUA);
+        return false;
+    }
+
+    private static java.util.List<ServerPlayer> cameraTargets(ServerPlayer p, MatchData d) {
+        return d.members.values().stream().filter(m -> m.state == MatchData.State.ACTIVE)
+                .map(m -> p.server.getPlayerList().getPlayer(m.id)).filter(java.util.Objects::nonNull).toList();
+    }
+
+    private static int spectate(ServerPlayer p, int direction) {
+        MatchData d = MatchData.get(p.server);
+        MatchData.Member m = d.members.get(p.getUUID());
+        if (!d.waiting.containsKey(p.getUUID()) && (m == null || m.state != MatchData.State.SPECTATING)) return 0;
+        var targets = cameraTargets(p, d);
+        if (targets.isEmpty()) { tell(p, "No hay compañeros activos para observar."); return 0; }
+        UUID selected = nextCamera(targets.stream().map(ServerPlayer::getUUID).toList(), d.cameras.get(p.getUUID()), direction);
+        ServerPlayer target = targets.stream().filter(t -> t.getUUID().equals(selected)).findFirst().orElseThrow();
+        if (d.waiting.containsKey(p.getUUID())) d.observers.add(p.getUUID());
+        d.cameras.put(p.getUUID(), target.getUUID());
+        followCamera(p, d); BedroomNetwork.sync(p);
+        tell(p, "Observando a " + target.getScoreboardName() + ". Cambia con /bedroom spectate next o previous.");
+        return 1;
+    }
+
+    static UUID nextCamera(java.util.List<UUID> targets, UUID current, int direction) {
+        if (targets.isEmpty()) return null;
+        int index = targets.indexOf(current);
+        return targets.get(Math.floorMod(index < 0 ? 0 : index + direction, targets.size()));
+    }
+
+    private static int stopWatching(ServerPlayer p) {
+        MatchData d = MatchData.get(p.server);
+        if (!d.waiting.containsKey(p.getUUID())) return 0;
+        d.observers.remove(p.getUUID()); d.cameras.remove(p.getUUID()); waitingLobby(p); return 1;
+    }
+
+    private static void followCamera(ServerPlayer p, MatchData d) {
+        var targets = cameraTargets(p, d);
+        ServerPlayer target = targets.stream().filter(t -> t.getUUID().equals(d.cameras.get(p.getUUID())))
+                .findFirst().orElse(targets.isEmpty() ? null : targets.get(0));
+        p.setGameMode(GameType.SPECTATOR);
+        if (target != null) {
+            d.cameras.put(p.getUUID(), target.getUUID());
+            if (p.level() != target.level()) p.teleportTo(target.serverLevel(), target.getX(), target.getY(), target.getZ(), target.getYRot(), target.getXRot());
+            else p.setPos(target.getX(), target.getY(), target.getZ());
+            p.setCamera(target);
+        } else {
+            p.setCamera(p); p.teleportTo(dimension(p.server), MatchRooms.LOBBY + 2.5, 65, 2.5, 0, 0);
+        }
     }
 
     static void restart(MinecraftServer server) {
@@ -233,6 +330,7 @@ public final class MatchController {
     }
 
     private static void apply(ServerPlayer p, MatchData d, MatchData.Member m, boolean restoreInventory) {
+        FlashlightSystem.clear(p);
         p.removeAllEffects();
         p.clearFire();
         p.setHealth(p.getMaxHealth());
@@ -315,6 +413,8 @@ public final class MatchController {
                         if (player != null) {
                             player.getInventory().clearContent();
                             player.getInventory().add(new net.minecraft.world.item.ItemStack(Bedroom.NUTRITION_BAR.get(), 3));
+                            player.getInventory().add(new net.minecraft.world.item.ItemStack(Bedroom.ALMOND_WATER.get()));
+                            player.getInventory().add(new net.minecraft.world.item.ItemStack(Bedroom.FLASHLIGHT.get()));
                             apply(player, d, other, false);
                         }
                     }
@@ -339,7 +439,7 @@ public final class MatchController {
             }
         }
         // No placement/containers in non-active states; all mission placements remain denied until registered.
-        if (!handled && m.state == MatchData.State.ACTIVE && p.getItemInHand(event.getHand()).isEdible()
+        if (!handled && m.state == MatchData.State.ACTIVE && (p.getItemInHand(event.getHand()).isEdible() || p.getItemInHand(event.getHand()).getItem() instanceof SurvivalItems.Supply)
                 && !p.level().getBlockState(event.getPos()).is(net.minecraft.tags.BlockTags.create(
                         ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID, "containers")))) {
             // Deny the wall/floor interaction while allowing the normal food-use fallback.
@@ -403,23 +503,16 @@ public final class MatchController {
                 returnExternal(p, pending);
                 d.setDirty();
                 if (BedroomConfig.AUTO_LOBBY.get()) join(p);
+                if (d.phase != MatchData.Phase.LOBBY) requestVote(p.server);
                 return;
             }
             MatchData.Member m = d.members.get(p.getUUID());
             if (m != null) {
-                CompoundTag last = m.location.copy();
-                apply(p, d, m, true);
-                int room = m.state == MatchData.State.LIMBO ? MatchRooms.WHITE + m.slot * 32 : MatchRooms.arena(d);
-                double x = last.getDouble("x"), y = last.getDouble("y"), z = last.getDouble("z");
-                boolean withinArea = m.state == MatchData.State.ACTIVE ? Math.abs(x) < 29000000 && Math.abs(z) < 29000000
-                        : x > room && x < room + 20 && z > 0 && z < 20;
-                if ((m.state == MatchData.State.ACTIVE || m.state == MatchData.State.LIMBO)
-                        && withinArea && y >= 65 && y < 68
-                        && dimension(p.server).getBlockState(BlockPos.containing(x, y, z)).isAir()
-                        && dimension(p.server).getBlockState(BlockPos.containing(x, y + 1, z)).isAir()) {
-                    p.teleportTo(dimension(p.server), x, y, z, last.getFloat("yaw"), last.getFloat("pitch"));
-                    m.location = location(p);
-                }
+                // Migration of an older saved run: returning never resumes progress.
+                d.waiting.put(p.getUUID(), m.external.copy());
+                d.remove(p.getUUID());
+                join(p);
+                if (d.phase != MatchData.Phase.LOBBY) requestVote(p.server);
             } else if (d.waiting.containsKey(p.getUUID())) waitingLobby(p);
             else if (BedroomConfig.AUTO_LOBBY.get()) join(p);
         }
@@ -427,12 +520,15 @@ public final class MatchController {
 
     @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer p) {
+            FlashlightSystem.clear(p);
             MatchData d = MatchData.get(p.server);
             MatchData.Member m = d.members.get(p.getUUID());
-            if (m != null && (m.state == MatchData.State.ACTIVE || m.state == MatchData.State.REST)) {
-                m.inventory = snapshot(p); d.setDirty();
+            if (m != null) {
+                d.pendingReturns.put(p.getUUID(), m.external.copy());
+                d.remove(p.getUUID());
             }
-            if (m != null) { m.location = location(p); d.setDirty(); }
+            d.observers.remove(p.getUUID()); d.cameras.remove(p.getUUID());
+            d.setDirty();
         }
     }
 
@@ -441,9 +537,20 @@ public final class MatchController {
     }
 
     @SubscribeEvent public static void stopping(net.minecraftforge.event.server.ServerStoppingEvent event) {
+        FlashlightSystem.clearAll();
         MatchData data = MatchData.get(event.getServer());
         data.stopping = true;
         data.setDirty();
+    }
+
+    @SubscribeEvent public static void started(net.minecraftforge.event.server.ServerStartedEvent event) {
+        // A loaded world is a new attempt, never a checkpoint for an interrupted run.
+        if (MatchData.get(event.getServer()).phase != MatchData.Phase.LOBBY) restart(event.getServer());
+    }
+
+    @SubscribeEvent public static void finishedUse(net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Finish event) {
+        if (event.getEntity() instanceof ServerPlayer p && SurvivalSystem.active(p))
+            MatchData.get(p.server).members.get(p.getUUID()).survival.quietTicks = 0;
     }
 
     @SubscribeEvent public static void pickup(net.minecraftforge.event.entity.player.EntityItemPickupEvent event) {
@@ -475,6 +582,10 @@ public final class MatchController {
         }
         // Saving and quitting an integrated server must not resolve the solo game as a defeat.
         if (!server.isDedicatedServer() && connected.isEmpty()) return;
+        if (d.vote.ticks > 0) {
+            Set<UUID> voters = new java.util.HashSet<>(connected); voters.retainAll(d.members.keySet());
+            if (resolveVote(server, d.vote.tick(voters))) return;
+        }
         Map<UUID, MatchData.State> before = new HashMap<>();
         MatchData.Phase previousPhase = d.phase;
         d.members.values().forEach(m -> before.put(m.id, m.state));
@@ -483,26 +594,20 @@ public final class MatchController {
             ServerPlayer player = server.getPlayerList().getPlayer(id);
             if (player == null) continue;
             if (d.phase == MatchData.Phase.LOBBY && d.members.size() < 4) join(player);
-            else if (server.getTickCount() % 20 == 0) BedroomNetwork.sync(player);
+            else {
+                if (!d.observers.contains(id) && player.isSpectator()) waitingLobby(player);
+                if (d.observers.contains(id)) followCamera(player, d);
+                if (server.getTickCount() % 20 == 0) BedroomNetwork.sync(player);
+            }
         }
         for (MatchData.Member m : d.members.values()) {
             ServerPlayer p = server.getPlayerList().getPlayer(m.id);
             if (p == null) continue;
+            SurvivalSystem.tick(p, m, d);
             if (before.get(m.id) != m.state) apply(p, d, m, true);
             if (previousPhase == MatchData.Phase.ACTIVE && d.phase == MatchData.Phase.LOBBY)
                 MatchAnnouncements.show(p, "DERROTA", "Todos cayeron. Vuelvan a intentarlo.", net.minecraft.ChatFormatting.RED);
-            if (m.state == MatchData.State.SPECTATING) {
-                ServerPlayer target = d.members.values().stream().filter(other -> other.state == MatchData.State.ACTIVE)
-                        .map(other -> server.getPlayerList().getPlayer(other.id)).filter(java.util.Objects::nonNull).findFirst().orElse(null);
-                if (target != null) {
-                    if (p.level() != target.level()) p.teleportTo(target.serverLevel(), target.getX(), target.getY(), target.getZ(), target.getYRot(), target.getXRot());
-                    else p.setPos(target.getX(), target.getY(), target.getZ());
-                    p.setCamera(target);
-                } else {
-                    p.setCamera(p);
-                    p.teleportTo(dimension(server), MatchRooms.WHITE + m.slot * 32 + 2.5, 65, 2.5, 0, 0);
-                }
-            }
+            if (m.state == MatchData.State.SPECTATING) followCamera(p, d);
             if (server.getTickCount() % 20 == 0) {
                 m.location = location(p); d.setDirty();
                 if (m.state == MatchData.State.ACTIVE || m.state == MatchData.State.REST) {

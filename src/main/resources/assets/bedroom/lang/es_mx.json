@@ -7,5 +7,16 @@
   "block.bedroom.fluorescent": "Fluorescente",
   "block.bedroom.broken_fluorescent": "Fluorescente fundido",
   "block.bedroom.transition_wall": "Pared anómala (salida provisional)",
-  "item.bedroom.nutrition_bar": "Barra nutritiva"
+  "item.bedroom.nutrition_bar": "Barra nutritiva",
+  "item.bedroom.almond_water": "Agua de Almendras",
+  "item.bedroom.energy_drink": "Bebida energética Juice",
+  "item.bedroom.bandage": "Vendas",
+  "item.bedroom.battery": "Pilas AAA",
+  "item.bedroom.flashlight": "Linterna",
+  "item.bedroom.anomalous_compass": "Brújula anómala",
+  "block.bedroom.cardboard_box": "Caja de cartón",
+  "block.bedroom.filing_cabinet": "Archivador metálico",
+  "key.categories.bedroom": "Bedroom",
+  "key.bedroom.next_camera": "Siguiente cámara",
+  "key.bedroom.previous_camera": "Cámara anterior"
 }

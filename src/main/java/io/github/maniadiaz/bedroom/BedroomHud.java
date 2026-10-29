@@ -12,15 +12,21 @@ import net.minecraftforge.fml.common.Mod;
 public final class BedroomHud {
     private static BedroomNetwork.Hud current;
     public static void update(BedroomNetwork.Hud message) { current = message; }
+    static boolean canCycleCamera() { return current != null && (current.state().equals("SPECTATING") || current.state().equals("OBSERVING")); }
 
     @SubscribeEvent public static void register(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("match_status", (gui, graphics, partialTick, width, height) -> {
             var mc = Minecraft.getInstance();
             var hud = current;
             if (hud == null || !hud.visible() || mc.player == null || mc.options.hideGui) return;
-            int x = 12, y = Math.max(12, height / 2 - 38), w = 164;
-            graphics.fill(x, y, x + w, y + 76, 0xBD11110E);
-            graphics.fill(x, y, x + 2, y + 76, 0xFFE0C46E);
+            if (hud.state().equals("ACTIVE") && hud.sanity() < 50) for (int i = 0; i < 32; i++) {
+                int color = ((int) ((1 - i / 32F) * (1 - hud.sanity() / 50F) * 180)) << 24;
+                graphics.fill(i, i, width - i, i + 1, color); graphics.fill(i, height - i - 1, width - i, height - i, color);
+                graphics.fill(i, i, i + 1, height - i, color); graphics.fill(width - i - 1, i, width - i, height - i, color);
+            }
+            int x = 12, y = Math.max(12, height / 2 - 52), w = 174, h = hud.voteSeconds() > 0 ? 132 : 102;
+            graphics.fill(x, y, x + w, y + h, 0xBD11110E);
+            graphics.fill(x, y, x + 2, y + h, 0xFFE0C46E);
             graphics.fill(x + 8, y + 23, x + w - 8, y + 24, 0x665B5138);
             graphics.drawString(mc.font, "BEDROOM: " + hud.state(), x + 10, y + 9, 0xFFE0C46E, false);
             graphics.drawString(mc.font, "MUERTES  " + hud.deaths() + " / 3", x + 10, y + 32, 0xFFF3EDE0, false);
@@ -30,11 +36,17 @@ public final class BedroomHud {
                 case "LIMBO" -> "SALIDA: " + timer(hud.seconds());
                 case "REST" -> "DESCANSO: " + timer(hud.seconds());
                 case "WAITING" -> "ESPERANDO UN PUESTO";
-                case "SPECTATING" -> "OBSERVANDO AL EQUIPO";
+                case "SPECTATING", "OBSERVING" -> "CAMARAS: [ / ]";
                 case "LOBBY" -> "GRUPO: " + hud.players() + " / 4";
                 default -> "NIVEL " + hud.level() + " | GRUPO " + hud.players() + "/4";
             };
             graphics.drawString(mc.font, detail, x + 10, y + 56, 0xFFB9B3A5, false);
+            graphics.drawString(mc.font, "CORDURA  " + Math.round(hud.sanity()) + "%", x + 10, y + 71, hud.sanity() < 25 ? 0xFFFF7777 : 0xFFE0C46E, false);
+            graphics.drawString(mc.font, hud.battery() < 0 ? "LINTERNA APAGADA" : "BATERIA  " + hud.battery() + "%", x + 10, y + 85, 0xFFB9B3A5, false);
+            if (hud.voteSeconds() > 0) {
+                graphics.drawString(mc.font, "REINICIO " + hud.voteYes() + "/" + hud.voteRequired() + " | " + hud.voteSeconds() + "s", x + 10, y + 103, 0xFF80DBCE, false);
+                graphics.drawString(mc.font, "/bedroom vote ...", x + 10, y + 117, 0xFFB9B3A5, false);
+            }
         });
     }
 

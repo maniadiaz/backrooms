@@ -7,5 +7,16 @@
   "block.bedroom.fluorescent": "Fluorescent light",
   "block.bedroom.broken_fluorescent": "Burnt-out fluorescent",
   "block.bedroom.transition_wall": "Anomalous wall (temporary exit)",
-  "item.bedroom.nutrition_bar": "Nutrition bar"
+  "item.bedroom.nutrition_bar": "Nutrition bar",
+  "item.bedroom.almond_water": "Almond water",
+  "item.bedroom.energy_drink": "Juice energy drink",
+  "item.bedroom.bandage": "Bandages",
+  "item.bedroom.battery": "AAA batteries",
+  "item.bedroom.flashlight": "Flashlight",
+  "item.bedroom.anomalous_compass": "Anomalous compass",
+  "block.bedroom.cardboard_box": "Cardboard box",
+  "block.bedroom.filing_cabinet": "Filing cabinet",
+  "key.categories.bedroom": "Bedroom",
+  "key.bedroom.next_camera": "Next spectator camera",
+  "key.bedroom.previous_camera": "Previous spectator camera"
 }

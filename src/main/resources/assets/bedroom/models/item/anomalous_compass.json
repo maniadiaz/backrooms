@@ -1,0 +1,104 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bedroom:item/anomalous_compass_0"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "bedroom:angle": 0.0
+      },
+      "model": "bedroom:item/anomalous_compass_0"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.0625
+      },
+      "model": "bedroom:item/anomalous_compass_1"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.125
+      },
+      "model": "bedroom:item/anomalous_compass_2"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.1875
+      },
+      "model": "bedroom:item/anomalous_compass_3"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.25
+      },
+      "model": "bedroom:item/anomalous_compass_4"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.3125
+      },
+      "model": "bedroom:item/anomalous_compass_5"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.375
+      },
+      "model": "bedroom:item/anomalous_compass_6"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.4375
+      },
+      "model": "bedroom:item/anomalous_compass_7"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.5
+      },
+      "model": "bedroom:item/anomalous_compass_8"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.5625
+      },
+      "model": "bedroom:item/anomalous_compass_9"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.625
+      },
+      "model": "bedroom:item/anomalous_compass_10"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.6875
+      },
+      "model": "bedroom:item/anomalous_compass_11"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.75
+      },
+      "model": "bedroom:item/anomalous_compass_12"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.8125
+      },
+      "model": "bedroom:item/anomalous_compass_13"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.875
+      },
+      "model": "bedroom:item/anomalous_compass_14"
+    },
+    {
+      "predicate": {
+        "bedroom:angle": 0.9375
+      },
+      "model": "bedroom:item/anomalous_compass_15"
+    }
+  ]
+}

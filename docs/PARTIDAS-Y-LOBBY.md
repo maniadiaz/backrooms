@@ -1,11 +1,11 @@
 # Partidas, lobby y progresión
 
-Estado: diseño de referencia. El prototipo 0.2.1 introdujo el gestor de partidas; 0.3.0 incorpora entrada automática, espera en lobby y generación del Nivel 0. Véanse [base de partidas](ETAPA-2.1-PARTIDAS.md) y [estado actual](ETAPA-3-NIVEL-0.md). Cordura, misiones y victoria de campaña siguen pendientes. Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
+Estado: diseño de referencia. El prototipo 0.2.1 introdujo el gestor de partidas; 0.3.0 incorpora entrada automática, espera en lobby y generación del Nivel 0. Véanse [base de partidas](ETAPA-2.1-PARTIDAS.md) y [estado actual](ETAPA-3-NIVEL-0.md). La etapa 4 incorpora cordura y suministros; misiones y victoria de campaña siguen pendientes. Véase [etapa 4](ETAPA-4-SUPERVIVENCIA.md). Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
 
 ## Reglas confirmadas
 
 - Una partida admite de uno a cuatro jugadores y se inicia presionando un botón en el lobby.
-- Al entrar al mundo o servidor se llega automáticamente al lobby. Las reconexiones conservan el estado de una partida existente. Nuevas llegadas con grupo lleno o partida activa esperan en el lobby, sin incorporarse a esa partida.
+- Al entrar al mundo o servidor se llega automáticamente al lobby. Desconectarse pierde el progreso personal; al reconectar se espera en el lobby y el equipo vota reiniciar o continuar. El que espera puede observar y cambiar de cámara. Nuevas llegadas con grupo lleno o partida activa esperan en el lobby, sin incorporarse a esa partida.
 - No se pueden romper ni colocar bloques. Solo se pueden colocar objetos específicos de misiones.
 - Primera y segunda muerte de cada nivel: traslado a un laberinto blanco llamado limbo, con 30 segundos para encontrar la salida.
 - Tercera muerte del mismo nivel: espectador directo, sin nuevo limbo. Esta interpretación fue confirmada expresamente por el usuario.
@@ -27,8 +27,8 @@ Estas reglas completan casos no especificados. Son la base propuesta de implemen
 | Inicio desde lobby | El anfitrión de la partida usa el botón; se admite comenzar con 1–4 participantes, se congela la lista al iniciar y los clics repetidos no crean partidas duplicadas. |
 | Inicio tras descanso | El anfitrión o un jugador activo designado al desconectarse aquel puede omitir los 90 segundos con el botón. |
 | Entrada tardía | Un jugador que no pertenecía al grupo espera en el lobby; no entra en mitad de un nivel. No se incluye gestión de varias partidas simultáneas en V1. |
-| Desconexión | Guardar el estado; reconectarse no concede vidas ni reinicia temporizadores. En servidor activo, el tiempo del limbo y del descanso sigue corriendo. Un integrante desconectado fuera de limbo no mantiene por sí solo una partida recuperable. |
-| Cierre del servidor | Guardar tiempos restantes; al reabrir se reanuda, sin descontar tiempo fuera de línea. |
+| Desconexión (regla actual del usuario) | Pierde el progreso de partida. Al volver espera en el lobby; los participantes conectados votan reiniciar o seguir sin él. Puede observar con cámaras seleccionables. |
+| Cierre del servidor | La siguiente apertura vuelve a empezar desde el lobby; no se recupera la partida interrumpida. Se protegen los inventarios externos. |
 | Inventario al morir | Guardar inventario de partida sin soltarlo al suelo; queda inaccesible en limbo y espectador y se devuelve al revivir. Evita duplicación y pérdida de objetos obligatorios de misión. |
 | Regreso del limbo | Salud completa, cordura mínima de 30 si estaba por debajo, hambre e inventario conservados; posición segura del nivel. No reiniciar el contador de muertes. |
 | Inicio de otro nivel | Todos activos con salud y cordura al 100%, muertes en cero e inventario conservado. Reiniciar peligros y temporizadores del nivel anterior. No volver a entregar el kit inicial. |

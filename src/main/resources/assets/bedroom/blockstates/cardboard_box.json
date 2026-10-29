@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "opened=false": {
+      "model": "bedroom:block/cardboard_box_closed"
+    },
+    "opened=true": {
+      "model": "bedroom:block/cardboard_box_open"
+    }
+  }
+}

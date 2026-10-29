@@ -266,7 +266,9 @@ public final class MatchGameTests {
             MatchData.Member m = data.members.get(p.getUUID());
             m.limboTicks = 321;
             MatchController.login(new net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent(p));
-            h.assertTrue(m.state == MatchData.State.LIMBO && m.limboTicks == 321 && m.deaths == 1, "Reconnect must preserve limbo and deaths instead of joining lobby");
+            var fresh = data.members.get(p.getUUID());
+            h.assertTrue(data.phase == MatchData.Phase.LOBBY && fresh.state == MatchData.State.LOBBY && fresh.limboTicks == 0 && fresh.deaths == 0,
+                    "Reconnect must lose the old attempt and return solo player to a fresh lobby");
             h.succeed();
         } finally {
             if (MatchController.member(p)) MatchController.leave(p);

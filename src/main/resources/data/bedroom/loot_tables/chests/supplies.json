@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {"rolls": 1, "entries": [
+      {"type":"minecraft:item","name":"bedroom:almond_water","weight":40},
+      {"type":"minecraft:item","name":"bedroom:nutrition_bar","weight":45}
+    ]},
+    {"rolls": 1, "conditions": [{"condition":"minecraft:random_chance","chance":0.5}], "entries": [
+      {"type":"minecraft:item","name":"bedroom:battery","weight":35},
+      {"type":"minecraft:item","name":"bedroom:energy_drink","weight":25},
+      {"type":"minecraft:item","name":"bedroom:flashlight","weight":15}
+    ]},
+    {"rolls": 1, "conditions": [{"condition":"minecraft:random_chance","chance":0.15}], "entries": [
+      {"type":"minecraft:item","name":"bedroom:bandage","weight":20},
+      {"type":"minecraft:item","name":"bedroom:anomalous_compass","weight":5}
+    ]}
+  ]
+}

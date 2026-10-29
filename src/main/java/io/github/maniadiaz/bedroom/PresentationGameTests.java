@@ -25,8 +25,9 @@ public final class PresentationGameTests {
             MatchData d = MatchData.get(host.server);
             h.assertTrue(MatchController.canRestart(host) && !MatchController.canRestart(guest), "Only host/owner/operator can restart");
             var command = host.server.getCommands().getDispatcher().getRoot().getChild("bedroom").getChild("restart");
-            h.assertTrue(command.canUse(host.createCommandSourceStack()) && !command.canUse(guest.createCommandSourceStack()), "Restart command must enforce permission without requiring cheats for host");
+            h.assertTrue(command.canUse(host.createCommandSourceStack()) && !command.canUse(guest.createCommandSourceStack()), "Lobby restart remains limited to the host");
             d.start(host.getUUID(), players.keySet());
+            h.assertTrue(command.canUse(guest.createCommandSourceStack()), "Any active participant may request a vote, without forcing a restart");
             host.getInventory().setItem(0, new ItemStack(Items.DIRT, 64));
             MatchController.death(host);
             FakePlayer late = player(h, "RestartLate", Items.IRON_INGOT, 4);

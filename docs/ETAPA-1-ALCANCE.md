@@ -30,7 +30,7 @@ Las descripciones del usuario y su tabla de objetos constituyen los requisitos d
 | Victoria final | Al completar todos los niveles de la campaña terminada, lobby de festejo y fuegos artificiales. |
 | Hambre y combate | Hambre vanilla; sin aparición natural de criaturas vanilla en Nivel 0. El Sabueso no deja loot. |
 | Camas | No permiten dormir ni establecer reaparición en las zonas de partida. |
-| Guardado | Persistir partida, participantes, muertes, estados, temporizadores, inventarios y cordura; reconectarse no reinicia el limbo ni concede vidas. |
+| Guardado | Proteger inventarios externos y estado necesario del mundo. Desconectarse descarta el progreso personal de partida; al volver se espera en lobby mientras el equipo vota si reiniciar o seguir. Cerrar/reabrir el mundo inicia desde cero. |
 | Administración | Comandos de desarrollo y rescate separados de la progresión normal. |
 
 Las reglas de partida no deben modificar las reglas del resto del mundo. El detalle de estados, casos límite y propuestas pendientes está en [Partidas y lobby](PARTIDAS-Y-LOBBY.md).
