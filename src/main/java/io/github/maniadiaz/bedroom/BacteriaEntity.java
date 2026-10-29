@@ -21,9 +21,11 @@ public final class BacteriaEntity extends Monster {
             .of(BacteriaEntity::new, MobCategory.MONSTER).sized(.75F,1.45F).clientTrackingRange(10).build("bedroom:bacteria"));
     enum State { ROAMING, ALERT, CHASING, SEARCHING }
     private static final EntityDataAccessor<Integer> STATE = SynchedEntityData.defineId(BacteriaEntity.class,EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> CLIMBING=SynchedEntityData.defineId(BacteriaEntity.class,EntityDataSerializers.BOOLEAN);
     static final int ALERT_TICKS = 12, LOST_TICKS = 300, SEARCH_TICKS = 100;
     int round = -1, matchLevel;
     private int lifetime, clock, alertTicks, lostTicks, searchTicks, attackCooldown;
+    private int climbTicks,climbCooldown;
     Vec3 lastKnown;
 
     public BacteriaEntity(EntityType<? extends BacteriaEntity> type, Level level) { super(type,level); xpReward = 0; }
@@ -31,7 +33,18 @@ public final class BacteriaEntity extends Monster {
         event.put(TYPE.get(),Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH,36)
                 .add(Attributes.MOVEMENT_SPEED,.28).add(Attributes.ATTACK_DAMAGE,8).add(Attributes.FOLLOW_RANGE,64).build());
     }
-    @Override protected void defineSynchedData() { super.defineSynchedData(); entityData.define(STATE,0); }
+    @Override protected void defineSynchedData() { super.defineSynchedData(); entityData.define(STATE,0);entityData.define(CLIMBING,false); }
+    @Override public boolean onClimbable(){return entityData.get(CLIMBING)&&getY()<68;}
+    void updateClimbing(){
+        if(climbCooldown>0)climbCooldown--;
+        boolean wants=state()==State.CHASING&&horizontalCollision&&getY()<68&&level().getBlockState(blockPosition().above(2)).isAir();
+        if(!wants&&entityData.get(CLIMBING))climbCooldown=100;
+        boolean climbing=wants&&climbCooldown==0&&climbTicks<30;
+        if(climbing)climbTicks++;
+        else if(climbTicks>=30){climbTicks=0;climbCooldown=100;}
+        else if(!wants)climbTicks=0;
+        entityData.set(CLIMBING,climbing);
+    }
     State state() { return State.values()[entityData.get(STATE)]; }
     private void state(State next) { entityData.set(STATE,next.ordinal()); }
     @Override protected void registerGoals() { }
@@ -62,6 +75,7 @@ public final class BacteriaEntity extends Monster {
         if (data.phase != MatchData.Phase.ACTIVE || data.round != round || data.level != matchLevel
                 || !Campaign.dungeon(level().dimension()) || ++lifetime > 3600) { discard(); return; }
         brain(getServer().getPlayerList().getPlayers());
+        updateClimbing();
     }
     void brain(Collection<ServerPlayer> players) {
         clock++; if (attackCooldown > 0) attackCooldown--;

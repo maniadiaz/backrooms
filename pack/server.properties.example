@@ -1,0 +1,10 @@
+# Optional dedicated-server settings; never replaces your existing configuration.
+max-players=4
+online-mode=true
+view-distance=8
+simulation-distance=6
+spawn-protection=0
+difficulty=normal
+pvp=false
+enable-command-block=false
+motd=The Bedroom - Campana cooperativa

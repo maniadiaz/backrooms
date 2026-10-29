@@ -1,6 +1,6 @@
 # Partidas, lobby y progresión
 
-Estado: diseño de referencia, actualizado hasta 0.7.0. El gestor, entrada automática, laberinto, cordura, suministros y entidades están implementados. La primera misión requiere tres fusibles y tres paneles; habilita la salida por No-Clip y retorno provisional al lobby. Véanse [base de partidas](ETAPA-2.1-PARTIDAS.md) y [etapa actual](ETAPA-7-MISION-Y-NOCLIP.md). Nivel 1 y victoria final de campaña siguen pendientes. Las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
+Estado vigente: 1.0.0, campaña inicial completa de Nivel 0 y Zona de Carga, con descanso y lobby de victoria. Véanse [entrega final](ENTREGA-FINAL.md), [cómo jugar](COMO-JUGAR.md) y [base de partidas](ETAPA-2.1-PARTIDAS.md). Este documento conserva el diseño de referencia y su evolución; las reglas explícitas del usuario sustituyen las propuestas anteriores de acceso por objeto y reaparición libre en Nivel 0.
 
 ## Reglas confirmadas
 

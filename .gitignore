@@ -5,6 +5,7 @@ run-data/
 run-gametest/
 run-hud/
 build/
+dist/
 out/
 bin/
 *.class

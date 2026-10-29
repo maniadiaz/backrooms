@@ -6,7 +6,7 @@ modId="bedroom"
 version="${version}"
 displayName="Bedroom"
 authors="maniadiaz"
-description='''Exploración y supervivencia en un laberinto de oficinas. Prototipo del Nivel 0.'''
+description='''Campaña cooperativa de terror para 1–4 jugadores: Nivel 0, Zona de Carga, cordura, entidades, misiones y un final de celebración.'''
 [[dependencies.bedroom]]
 modId="forge"
 mandatory=true

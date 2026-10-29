@@ -139,4 +139,19 @@ public final class BacteriaGameTests {
         }
         h.succeed();
     }
+    @GameTest(template="empty") public static void wallContactProducesRealBoundedClimbing(GameTestHelper h){
+        var server=h.getLevel().getServer();var level=Campaign.level(server,1);var p=player(level,"WallClimb");var entity=BacteriaEntity.TYPE.get().create(level);
+        try{
+            MatchController.join(p);var d=MatchData.get(server);d.start(p.getUUID(),Set.of(p.getUUID()));d.level=1;
+            for(int x=25200;x<=25208;x++)for(int z=25200;z<=25208;z++)for(int y=64;y<=71;y++)level.setBlock(new BlockPos(x,y,z),(y==64||x==25204?Blocks.STONE:Blocks.AIR).defaultBlockState(),3);
+            p.teleportTo(level,25205.5,65,25204.5,0,0);p.setSprinting(true);entity.moveTo(25203.6,65,25204.5,0,0);entity.setOnGround(true);
+            for(int i=0;i<BacteriaEntity.ALERT_TICKS;i++)entity.brain(List.of(p));
+            entity.move(net.minecraft.world.entity.MoverType.SELF,new Vec3(.2,0,0));entity.updateClimbing();
+            h.assertTrue(entity.horizontalCollision&&entity.onClimbable(),"Actual wall collision during chase enables climbing");
+            double initial=entity.getY();
+            for(int i=0;i<12;i++){entity.travel(new Vec3(1,0,0));entity.updateClimbing();}
+            h.assertTrue(entity.getY()>initial+.1&&!entity.noPhysics,"Living-entity movement must lift it along the wall without ghost collision");
+            entity.setPos(entity.getX(),68.2,entity.getZ());entity.updateClimbing();h.assertTrue(!entity.onClimbable(),"Climbing respects height cap");h.succeed();
+        }finally{if(MatchController.member(p))MatchController.leave(p);p.discard();entity.discard();}
+    }
 }

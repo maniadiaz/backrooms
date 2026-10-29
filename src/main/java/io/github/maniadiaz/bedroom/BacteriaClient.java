@@ -52,6 +52,7 @@ public final class BacteriaClient {
             float pace = entity.state() == BacteriaEntity.State.CHASING ? 1.1F : .65F;
             body.y = 11 + Mth.sin(age*(alert?.9F:.12F))*(alert?.65F:.2F);
             body.zRot = Mth.sin(age*(alert?1.3F:.08F))*(alert?.12F:.025F);
+            body.xRot=entity.onClimbable()?-.7F:0;
             head.yRot = yaw*Mth.DEG_TO_RAD*.5F; head.xRot = pitch*Mth.DEG_TO_RAD*.4F+.15F;
             for (int i = 0; i < 4; i++) {
                 limbs[i].xRot = Mth.cos(limb*pace+(i==0||i==3?0:Mth.PI))*amount*.75F;

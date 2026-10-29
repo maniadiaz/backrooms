@@ -1,85 +1,59 @@
-# Bedroom
+# Bedroom 1.0.0
 
-Proyecto de mod de terror y exploración para Minecraft Java 1.20.1 con Forge 47.4.28.
+Campaña cooperativa de terror para **Minecraft Java 1.20.1**, **Forge 47.4.28** y **Java 17**, con uno a cuatro participantes.
 
-Estado actual: versión 0.9.0 con campaña de dos niveles, descanso, recuperación del equipo y lobby de victoria con fuegos artificiales. Véanse [Nivel 1](docs/ETAPA-8-NIVEL-1.md) y [final de campaña](docs/ETAPA-9-VICTORIA.md). Continúa el cierre de pruebas y empaquetado.
+La campaña inicial tiene dos niveles completos: el laberinto amarillo del Nivel 0 y los almacenes de Zona de Carga. Incluye lobby automático, espera/espectadores, votaciones, limbo, cordura individual, consumibles, linterna, loot, tres entidades, misiones cooperativas, salida por No-Clip, descanso y victoria con fuegos artificiales.
 
-El alcance, las reglas propuestas y los criterios de aceptación están en [Etapa 1 — Alcance](docs/ETAPA-1-ALCANCE.md).
+## Jugar e instalar
 
-El diseño de Smiler, Bacteria y Hound está en el [bestiario](docs/BESTIARIO.md). Las tres entidades y la primera misión ya están implementadas; sigue el Nivel 1 y la progresión entre niveles.
+- [Instalación de cliente, Essential y servidor dedicado](docs/INSTALACION.md).
+- [Controles, reglas, objetos y entidades](docs/COMO-JUGAR.md).
+- [Informe de entrega, pruebas y límites de validación](docs/ENTREGA-FINAL.md).
 
-Repositorio: [maniadiaz/bedroom-mod](https://github.com/maniadiaz/bedroom-mod).
+Compilar produce `build/libs/bedroom-1.0.0.jar`. El empaquetador crea `dist/bedroom-1.0.0-client.zip`, `dist/bedroom-1.0.0-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
 
-El flujo de commits y etiquetas por etapa está en [Control de versiones](docs/CONTROL-DE-VERSIONES.md).
+Al entrar se llega al lobby. El anfitrión pulsa el botón del bloque verde. Buscar tres fusibles numerados y reparar sus paneles; mantener avance y carrera dos segundos contra una pared anómala habilitada. Pantalla negra de un segundo, recuperación del equipo y descanso de noventa segundos o botón para salir antes. En Zona de Carga se recuperan tres relés. Su compuerta conduce al atrio de festejo y después al lobby.
 
-## Desarrollo
+Primera y segunda muertes de cada nivel dan treinta segundos de limbo; la tercera, o agotar ese tiempo, elimina hasta completar el nivel. Si todos quedan sin oportunidad, derrota. Desconectarse pierde el intento personal; al volver se espera y el equipo decide mediante voto si reiniciar. No hay checkpoint al cerrar el mundo. El inventario externo se protege y `/bedroom leave` lo restaura.
 
-Usar JDK 17 de 64 bits y ejecutar desde la raíz:
+El Sabueso reacciona a mirada/movimiento, Smiler a observadores válidos y Bacteria a ruido/visión con búsqueda por última posición y trepa limitada. Comparten un presupuesto de encuentros raros. Las cajas y archivadores contienen comida y suministros; los componentes de misión perdidos pueden recuperarse sin dejar la partida bloqueada.
+
+## Comandos
+
+`/bedroom lobby`, `/bedroom status`, `/bedroom leave`, `/bedroom restart`, `/bedroom vote restart`, `/bedroom vote continue`, `/bedroom spectate` y sus variantes `next`, `previous`, `off`. Las cámaras también se cambian con `]` y `[`, reasignables. El HUD permanece a la izquierda con estado encima de muertes.
+
+Los comandos `testdeath`/`testnext` y la sala de desarrollo requieren operador y `developmentCommands=true`; el paquete de distribución los desactiva. Los botones y las misiones normales no requieren operador.
+
+## Desarrollo y comprobaciones
+
+Usar JDK 17 y Gradle wrapper 8.8. En este equipo, `scripts/gradle.ps1` selecciona el JDK local de `.tools/java` si existe.
 
 ```powershell
-.\gradlew.bat build
-.\gradlew.bat runClient
-.\gradlew.bat runServer
+.\scripts\gradle.ps1 build runGameTestServer --console=plain
+python scripts/package_release.py
 ```
 
-En este equipo se descargó un JDK 17 en `.tools/java` (ignorado por Git). El script `scripts/gradle.ps1` lo selecciona automáticamente si existe:
+En Linux/CI: `bash gradlew build runGameTestServer --console=plain`. El empaquetador utiliza Python 3.11 o posterior, biblioteca estándar. Los recursos generados ya están versionados; compilar no requiere herramientas de síntesis de audio.
 
-```powershell
-.\scripts\gradle.ps1 build
-.\scripts\gradle.ps1 runClient
-.\scripts\gradle.ps1 runGameTestServer
-```
+Las 62 pruebas obligatorias verifican reglas, inventarios, geometría, entidades, misiones, red/HUD y una campaña completa con cuatro participantes simulados. Esto no equivale a cuatro clientes ni a una sesión Essential. Quedan pendientes la revisión visual/auditiva de una partida completa y la validación de red con amigos; el informe distingue esas comprobaciones de las automatizadas.
 
-El jar se genera en `build/libs/bedroom-0.7.0.jar`. Instalar la misma versión en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Los mundos de 0.3.0 conservan su generador; para mundos anteriores con el generador plano, crear un mundo nuevo. El protocolo de red cambia en 0.7.0: todos deben actualizar el jar.
+Las pruebas usan exclusivamente `run-gametest/`: cada ejecución borra su mundo de ensayo para evitar geometría antigua. No guardar partidas personales allí. Mundos, logs, caches, `.tools/`, `build/` y `dist/` se excluyen de Git. El workflow de GitHub recompila, ejecuta la suite y empaqueta artefactos; su resultado remoto se revisa por separado del resultado local.
 
-## Probar una partida
+## Recursos y configuración
 
-1. Entrar al mundo o servidor: aparecerás automáticamente en el lobby. Hasta cuatro jugadores forman el grupo; los demás esperan allí para la siguiente oportunidad. `/bedroom lobby` permite volver si saliste del modo de juego y no requiere operador.
-2. El primer participante es el anfitrión. Presiona el botón sobre el bloque verde al fondo del lobby para iniciar.
-3. Buscar los tres estuches numerados de fusibles. Pulsar cada uno con clic derecho, llevar cada fusible al panel de su mismo número y colocarlo con clic derecho. Los tres paneles están juntos cerca de la salida; el HUD muestra el progreso compartido. Repararlos habilita las paredes anómalas oscuras. Mantener avance y carrera contra una de ellas durante dos segundos: pantalla negra de un segundo y regreso provisional de todo el equipo al lobby. Mirarla o pulsarla no completa el nivel. Se necesita comida suficiente para correr; mantener la tecla de correr y avance evita la cancelación de carrera de Minecraft al chocar.
-4. Para probar la muerte, un operador participante puede usar `/bedroom testdeath`. Las primeras dos llevan a un laberinto blanco: encontrar y presionar su botón de salida antes de 30 segundos. La tercera lleva a espectador.
-5. Para probar el avance entre niveles, usar `/bedroom testnext` como operador activo: todos reviven en la sala de descanso. Esperar 90 segundos o presionar el botón como anfitrión. El destino es otro sector del Nivel 0 para pruebas; no representa el Nivel 1.
-6. `/bedroom status` muestra el estado. `/bedroom leave` permite salir y recuperar el inventario, experiencia y modo de juego externos.
-7. Durante una partida, `/bedroom restart` propone una votación: `/bedroom vote restart` o `/bedroom vote continue`, también mediante botones en el chat. Hace falta más de la mitad de los participantes conectados; hay 30 segundos y, sin mayoría, se continúa. En el lobby, anfitrión/dueño/operador pueden reiniciar directamente.
-8. `/bedroom spectate` permite observar desde la espera; `next` y `previous` cambian de compañero y `off` vuelve al lobby. También se puede cambiar de cámara con `]` y `[` (reasignables en Controles).
+Texturas y modelos originales mediante `generate_textures.py`, `generate_mission.py` y `generate_warehouse.py`. Los sonidos mono propios y las pieles de entidades se regeneran con `generate_audio.py`, `generate_hound.py`, `generate_smiler.py` y `generate_bacteria.py`; para estos últimos instalar `scripts/audio-requirements.txt` en desarrollo. Jugar no requiere Python. Los generadores preservan eventos de las otras especies.
 
-Los botones son interacciones normales: no requieren permisos de operador. Si todos quedan eliminados, el equipo vuelve al lobby y el siguiente inicio crea una partida limpia. Mientras alguien conserve tiempo en el limbo, todavía puede rescatar la partida. Cada inicio nuevo entrega tres barras nutritivas: mantener pulsado usar objeto para comer y recuperar cuatro muslos de hambre, además de Regeneración I durante cinco segundos. También se entrega un Agua de Almendras y una linterna cargada. Las cajas y archivadores permiten encontrar más suministros.
+`bedroom-common.toml`: entrada automática, ayuda de compañía, apagones, parpadeo rápido y variante letal de Smiler. `bedroom-client.toml`: volumen del zumbido, niebla y movimiento opcional de cámara. El paquete deja el movimiento de cámara y parpadeo rápido desactivados. Bajar volumen no cambia la cordura; los apagones sí cambian la luz real.
 
-El panel izquierdo muestra `BEDROOM: ACTIVE` encima de las muertes, además de los tiempos de limbo/descanso cuando corresponda. Los anuncios centrales aparecen al entrar, morir, regresar, completar, perder o reiniciar, con entrada y salida gradual.
+[Avisos de recursos y dependencias](THIRD_PARTY_NOTICES.md). Se conserva la licencia `All Rights Reserved` del proyecto.
 
-## Jugar mediante Essential
+## Entregas por fase
 
-El dueño comparte el mundo usando Essential; Bedroom utiliza el servidor integrado de Minecraft y sus paquetes Forge, sin una dependencia directa de Essential. Todos deben instalar las mismas versiones de mods, incluido `bedroom-0.7.0.jar`, y una versión de Essential para Forge 1.20.1. Véase la [guía oficial de hosting de Essential](https://essential.gg/wiki/start-hosting).
+- [Etapa 1: alcance original](docs/ETAPA-1-ALCANCE.md).
+- [Etapa 7: fusibles y No-Clip](docs/ETAPA-7-MISION-Y-NOCLIP.md).
+- [Etapa 8: Nivel 1 y progresión](docs/ETAPA-8-NIVEL-1.md).
+- [Etapa 9: victoria](docs/ETAPA-9-VICTORIA.md).
+- [Etapa 10: cierre 1.0.0](docs/ETAPA-10-ENTREGA.md).
+- [Bestiario](docs/BESTIARIO.md), [partidas y lobby](docs/PARTIDAS-Y-LOBBY.md), [control de versiones](docs/CONTROL-DE-VERSIONES.md).
 
-Los invitados que llegan tarde permanecen en el lobby hasta el siguiente inicio. Para incorporarlos antes, el grupo vota reiniciar y después vuelve a pulsar el botón de inicio. El límite sigue siendo cuatro participantes. La compatibilidad práctica con Essential está pendiente de una sesión real con amigos; las pruebas automatizadas se ejecutaron con Forge.
-
-Desconectarse elimina el progreso personal de la partida. Al volver se espera en el lobby y los que siguen dentro votan reiniciar o continuar; el recién llegado puede observar, pero no recuperar sus objetos de partida ni entrar a mitad de nivel. Cerrar y reabrir un mundo también inicia desde cero. Se conservan los inventarios externos, separados del modo de juego. La entrada automática también se aplica a reapariciones normales fuera de una partida; puede desactivarse con `autoLobby=false` en `config/bedroom-common.toml`.
-
-## Sala de prueba
-
-Crear un mundo con comandos permitidos y ejecutar:
-
-- `/bedroom enter`: construir la sala una sola vez y entrar al Nivel 0.
-- `/bedroom exit`: regresar a la posición y dimensión guardadas antes de entrar.
-- `/bedroom rescue`: volver al spawn del Overworld en caso de emergencia.
-- `/give @s bedroom:wallpaper`: obtener el bloque provisional de pared.
-
-Los comandos requieren permisos de operador de nivel 2. Pueden desactivarse en `run/config/bedroom-common.toml` mediante `developmentCommands=false`, reiniciando después.
-
-Esta sala antigua permanece disponible para desarrollo fuera de una partida. La entrada `enter` se bloquea para participantes; `exit` y `rescue` equivalen a abandonar la partida si perteneces a una. Fuera de ella conservan su comportamiento anterior. El retorno externo presupone que el lugar de origen sigue siendo transitable.
-
-El Nivel 0 usa bloques y texturas originales, con modelos simples. Lobby, limbo y descanso conservan salas provisionales. Solo se permite insertar los fusibles validados en sus paneles; romper y colocar bloques libremente sigue bloqueado. Los contenedores propios pueden abrirse durante una partida activa. Los fusibles no se tiran al suelo: si se pierde uno por eliminación o desconexión, otro participante puede recuperarlo desde su estuche. Las copias sustituidas dejan de servir. El diseño completo está en [Partidas y lobby](docs/PARTIDAS-Y-LOBBY.md).
-
-`python scripts/generate_textures.py` reconstruye las texturas y modelos propios de forma reproducible, sin dependencias externas de Python.
-
-`python scripts/generate_mission.py` reconstruye los estuches y paneles numerados y el icono de fusible, usando solo la biblioteca estándar.
-
-Los sonidos OGG están incluidos en el jar; no hay que instalar herramientas de audio para jugar. Para regenerarlos en desarrollo: `python -m pip install -r scripts/audio-requirements.txt` y `python scripts/generate_audio.py`. Para las entidades: `python scripts/generate_hound.py`, `python scripts/generate_smiler.py` y `python scripts/generate_bacteria.py`. Los generadores preservan los eventos de las otras especies y aceptan las dependencias locales de `.tools/audio-python`.
-
-En `config/bedroom-client.toml` se ajustan `humVolume` (0.35 inicial), `fog`, `fogDistance` (96 bloques) y `cameraRoll` (0, desactivado). En `config/bedroom-common.toml`, el anfitrión controla `lampFailures=true` y `rapidFlicker=false`: por defecto hay apagones breves sin la secuencia rápida. El Smiler usa `smilerLethal=false`: 16 puntos de daño base y cordura a cero; `true` eleva el golpe a 1000 puntos base, conservando el sistema de limbo. La dificultad y las defensas de Minecraft afectan al daño. Bajar el volumen no altera las reglas de cordura; los apagones sí cambian la luz real del mundo.
-
-Las pruebas de integración usan `run-gametest/`, separado del cliente. Cada ejecución borra únicamente el mundo de prueba generado en `run-gametest/world` para no reutilizar chunks de un generador anterior; no guardar partidas personales en esa carpeta.
-
-Para el servidor de desarrollo, revisar el EULA que genera Minecraft y aceptarlo personalmente si se está de acuerdo antes de volver a ejecutar `runServer`.
-
-Referencia técnica: [documentación oficial de Forge 1.20.1](https://docs.minecraftforge.net/en/1.20.1/gettingstarted/).
+Los documentos de etapas anteriores describen sus versiones históricas; el estado vigente es esta entrega y su informe final. La campaña inicial termina tras dos niveles. No incluye navegación de entidades por techos, campaña narrativa extensa, voces de actores ni niveles adicionales no diseñados.

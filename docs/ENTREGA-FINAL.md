@@ -1,0 +1,47 @@
+# Entrega final de la campaña inicial — 1.0.0
+
+## Funcionalidad entregada
+
+| Área | Resultado |
+|---|---|
+| Partida | 1–4 participantes, lobby automático, botón, espera, voto y cámaras |
+| Recuperación | Dos oportunidades de limbo por nivel, tercera muerte elimina, derrota grupal, sin checkpoints |
+| Supervivencia | Cordura individual, drenajes con tope, consumibles, linterna con pilas y brújula |
+| Nivel 0 | Laberinto procedural conectado, paleta amarilla, moqueta, fluorescentes, niebla/audio |
+| Nivel 1 | Dimensión de almacenes, hormigón/acero, cajas, techo alto y lámparas suspendidas |
+| Entidades | Sabueso, Smiler y Bacteria; miradas, ruido, persecución, búsqueda y apariciones compartidas |
+| Objetivos | Tres fusibles y tres relés; paneles numerados, progreso compartido y recuperación de pérdidas |
+| Progresión | No-Clip de dos segundos, transición de uno, revivir al equipo y descanso de noventa segundos |
+| Final | Atrio de victoria, cohetes reales, botón y retorno automático al lobby |
+| Distribución | Jar, ZIP cliente/servidor, configuraciones, manifiestos y SHA-256 |
+
+Las decisiones nuevas para cerrar el alcance fueron una campaña inicial de dos niveles, un Nivel 1 industrial con relés y una celebración de veinte segundos. No se atribuyen al usuario diseños detallados que no proporcionó; se eligieron dentro de su autorización para completar el plan.
+
+## Evidencia automática
+
+- `build runGameTestServer`: **62 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28.
+- Campaña de extremo a extremo con cuatro participantes simulados: recoge componentes mediante interacciones reales, valida las salidas generadas, cuarenta ticks de carga y veinte de transición, descansa, revive y cambia de dimensión, completa el Nivel 1 y llega al festejo.
+- Conexión de pasillos y aproximación a cada objetivo/compuerta; modelos y OGG mono empaquetados.
+- Ataques, cordura, consumibles, inventarios protegidos, limbo, votos, espera, cámaras y recuperación de componentes.
+- Bacteria asciende de verdad en contacto con pared, mediante movimiento con colisión; se verifica su límite de altura. No utiliza teletransporte o `noPhysics`.
+- Los ZIP se vuelven a abrir, pasan CRC, comprueban cada hash interno y excluyen mundos/logs/capturas. Las configuraciones se analizan como TOML antes de empaquetar.
+
+Las pruebas usan perfiles y conexiones de ensayo. No equivalen a cuatro clientes gráficos ni a Essential. No se presenta una medición de FPS, latencia real o dificultad subjetiva como si se hubiera realizado.
+
+## Cliente y límites de la revisión
+
+El cliente 1.0.0 cargó recursos, modelos, recetas y motor de audio sin errores de Bedroom en el registro. Para la revisión visual se copió únicamente el mundo generado por GameTest a una carpeta de ensayo, sin tocar partidas personales. Minecraft mostró el aviso de Experimental Settings antes de abrirlo y no se aceptó. Por ello no se afirma haber comprobado visualmente la partida, la orientación de modelos ni la pantalla negra en el juego.
+
+La habilidad Windows `computer-use` remite a su política de confirmaciones, regla 5.1, para aceptar avisos de terceros: “otherwise confirm right before the action”. Esa restricción detuvo solamente la interacción visual; la compilación, suite, paquetes y cambios de Git continuaron.
+
+Quedan por validar en una sesión real: aspecto/sonido/dificultad, respuesta de controles de No-Clip al chocar y una partida con dos a cuatro clientes mediante Essential. Su [guía oficial](https://essential.gg/en/wiki/start-hosting) exige usar las mismas versiones de mods. No se enviaron invitaciones ni se accedió a cuentas de terceros.
+
+## Alcance de la trepa
+
+Bacteria puede ascender brevemente al colisionar con una pared durante la caza, con espacio superior libre, límite aproximado de tres bloques sobre el suelo y pausa entre intentos. Su navegación general sigue usando rutas terrestres. No recorre techos ni dispone de un buscador de rutas tridimensional para plantas o superficies arbitrarias; eso es una ampliación futura, no una función que se anuncie como implementada.
+
+## Versionado y archivos
+
+Las etapas 8, 9 y 10 se guardan y suben en commits/etiquetas separados. `scripts/package_release.py` reconstruye los paquetes de la versión de `gradle.properties`; los binarios no se agregan al historial Git. GitHub Actions queda configurado para repetir build, pruebas y empaquetado; su estado remoto no se confunde con el resultado local.
+
+La entrega no instala productos externos, no incluye Essential/Forge/Java/Minecraft y no acepta EULAs en nombre del usuario. Las instrucciones usan descargas oficiales. Ver [instalación](INSTALACION.md) y [cómo jugar](COMO-JUGAR.md).

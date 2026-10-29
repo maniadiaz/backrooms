@@ -2,6 +2,8 @@
 
 Estado: diseño actualizado con las reglas del usuario para partidas cooperativas. Los valores de balance identificados como propuestas siguen siendo ajustables. Este documento no representa funcionalidades implementadas.
 
+Nota de cierre: se conserva como alcance histórico. La entrega 1.0.0 amplió la campaña inicial a Nivel 0 y Zona de Carga, con misión por nivel y festejo final. El estado implementado y los límites de validación están en [entrega final](ENTREGA-FINAL.md).
+
 Objetivo técnico: Minecraft Java 1.20.1, Forge 47.4.28.
 
 ## 1. Experiencia objetivo

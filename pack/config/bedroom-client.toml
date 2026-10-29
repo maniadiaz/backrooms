@@ -1,0 +1,4 @@
+humVolume = 0.35
+fog = true
+fogDistance = 96
+cameraRoll = 0.0

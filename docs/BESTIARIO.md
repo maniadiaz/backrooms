@@ -1,6 +1,6 @@
 # Bedroom — bestiario y contratos de implementación
 
-Estado: las tres entidades tienen su primera implementación en el jar 0.6.2. Véanse ETAPA-6A-SABUESO.md, ETAPA-6B-SMILER.md y ETAPA-6C-BACTERIA.md para los valores efectivos, límites y pruebas. La revisión visual, auditiva y cooperativa dentro de una partida sigue pendiente. Los valores indicados como propuestas deben calibrarse jugando; no son requisitos ya confirmados.
+Estado vigente: 1.0.0 con las tres entidades en ambos niveles y trepa limitada de Bacteria con colisión real. Véanse las entregas históricas ETAPA-6A-SABUESO.md, ETAPA-6B-SMILER.md, ETAPA-6C-BACTERIA.md y el informe vigente ENTREGA-FINAL.md. La revisión visual, auditiva y cooperativa dentro de una partida sigue pendiente. Los valores indicados como propuestas deben calibrarse jugando; no son requisitos ya confirmados.
 
 ## Reglas comunes
 
