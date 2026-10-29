@@ -60,7 +60,7 @@ public final class BacteriaEntity extends Monster {
         var data = MatchData.get(getServer());
         if (round < 0) { round = data.round; matchLevel = data.level; }
         if (data.phase != MatchData.Phase.ACTIVE || data.round != round || data.level != matchLevel
-                || !level().dimension().equals(DevelopmentCommands.LEVEL_0) || ++lifetime > 3600) { discard(); return; }
+                || !Campaign.dungeon(level().dimension()) || ++lifetime > 3600) { discard(); return; }
         brain(getServer().getPlayerList().getPlayers());
     }
     void brain(Collection<ServerPlayer> players) {

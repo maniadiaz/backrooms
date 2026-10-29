@@ -47,7 +47,7 @@ public final class BedroomHud {
             graphics.drawString(mc.font, hud.battery() < 0 ? "LINTERNA APAGADA" : "BATERIA  " + hud.battery() + "%", x + 10, y + 85, 0xFFB9B3A5, false);
             if(hud.state().equals("ACTIVE")||hud.state().equals("SPECTATING")||hud.state().equals("OBSERVING")) {
                 graphics.drawString(mc.font,"PANELES  "+hud.panels()+" / 3",x+10,y+100,0xFFE0C46E,false);
-                graphics.drawString(mc.font,hud.panels()==3?(hud.charge()>0?"NO-CLIP  "+hud.charge()*100/40+"%":"SALIDA HABILITADA"):"BUSCA LOS TRES FUSIBLES",x+10,y+115,0xFF80DBCE,false);
+                graphics.drawString(mc.font,hud.panels()==3?(hud.charge()>0?"NO-CLIP  "+hud.charge()*100/40+"%":"SALIDA HABILITADA"):(hud.level()==0?"BUSCA LOS TRES FUSIBLES":"BUSCA LOS TRES RELÉS"),x+10,y+115,0xFF80DBCE,false);
             }
             if (hud.voteSeconds() > 0) {
                 graphics.drawString(mc.font, "REINICIO " + hud.voteYes() + "/" + hud.voteRequired() + " | " + hud.voteSeconds() + "s", x + 10, y + 133, 0xFF80DBCE, false);

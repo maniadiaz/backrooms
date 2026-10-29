@@ -18,7 +18,7 @@ final class MatchAnnouncements {
 
     static void state(ServerPlayer p, MatchData.Member member, int level) {
         switch (member.state) {
-            case ACTIVE -> show(p, "NIVEL " + level, "Busca tres fusibles. Repara los tres paneles.", ChatFormatting.GOLD);
+            case ACTIVE -> show(p, "NIVEL " + level, level==0?"Busca tres fusibles. Repara los tres paneles.":"ZONA DE CARGA: recupera tres relés.", ChatFormatting.GOLD);
             case LOBBY -> show(p, "THE BEDROOM", "Reúne al equipo. Pulsa para empezar.", ChatFormatting.GOLD);
             case LIMBO -> show(p, "NO ES EL FINAL", "30 segundos. Encuentra la salida.", ChatFormatting.WHITE);
             case SPECTATING -> show(p, "SIN RETORNO", "Tu equipo aún puede salvarte.", ChatFormatting.RED);

@@ -19,7 +19,7 @@ public final class EncounterSystem {
         if (event.phase != TickEvent.Phase.END || event.getServer().getTickCount() % 20 != 0) return;
         var server = event.getServer(); var data = MatchData.get(server);
         if (data.phase != MatchData.Phase.ACTIVE) { progress.clear(); return; }
-        var level = server.getLevel(DevelopmentCommands.LEVEL_0);
+        var level = Campaign.level(server,data.level);
         if (level == null) return;
         var active = server.getPlayerList().getPlayers().stream().filter(p -> p.level() == level && SurvivalSystem.active(p) && p.isAlive() && !p.isSpectator()).toList();
         // Preserve cooldown through limbo and reconnections within this round.

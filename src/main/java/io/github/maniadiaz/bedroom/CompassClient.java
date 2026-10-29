@@ -12,7 +12,7 @@ public final class CompassClient {
     @SubscribeEvent public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> ItemProperties.register(Bedroom.ANOMALOUS_COMPASS.get(), ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID, "angle"),
                 (stack, level, entity, seed) -> {
-                    if (level == null || entity == null || !level.dimension().equals(DevelopmentCommands.LEVEL_0)) return .0F;
+                    if (level == null || entity == null || !Campaign.dungeon(level.dimension())) return .0F;
                     int rx = Math.floorDiv(entity.getBlockX(), 128), rz = Math.floorDiv(entity.getBlockZ(), 128);
                     double best = Double.MAX_VALUE, dx = 0, dz = 0;
                     for (int x = rx - 1; x <= rx + 1; x++) for (int z = rz - 1; z <= rz + 1; z++) {

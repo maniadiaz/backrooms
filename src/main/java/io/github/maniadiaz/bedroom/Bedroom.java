@@ -34,6 +34,14 @@ public final class Bedroom {
     public static final RegistryObject<Item> FUSE = ITEMS.register("mission_fuse", () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Block> FUSE_CACHE = BLOCKS.register("fuse_cache",MissionSystem.Node::new);
     public static final RegistryObject<Block> FUSE_PANEL = BLOCKS.register("fuse_panel",MissionSystem.Node::new);
+    public static final RegistryObject<Item> RELAY=ITEMS.register("loading_relay",()->new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Block> RELAY_CACHE=BLOCKS.register("relay_cache",MissionSystem.Node::new);
+    public static final RegistryObject<Block> RELAY_PANEL=BLOCKS.register("relay_panel",MissionSystem.Node::new);
+    public static final RegistryObject<Block> CONCRETE=block("concrete",()->new Block(BlockBehaviour.Properties.of().strength(2).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> WET_CONCRETE=block("wet_concrete",()->new Block(BlockBehaviour.Properties.of().strength(2).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> STEEL=block("corrugated_steel",()->new Block(BlockBehaviour.Properties.of().strength(3).sound(SoundType.METAL)));
+    public static final RegistryObject<Block> LOADING_CRATE=block("loading_crate",()->new Block(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> LOADING_EXIT=BLOCKS.register("loading_exit",()->new Block(BlockBehaviour.Properties.of().strength(-1,3600000).sound(SoundType.METAL)));
     public static final RegistryObject<Block> CARDBOARD_BOX = block("cardboard_box", () -> new SupplyContainer(false));
     public static final RegistryObject<Block> FILING_CABINET = block("filing_cabinet", () -> new SupplyContainer(true));
     public static final RegistryObject<Block> BEAM_LIGHT = BLOCKS.register("beam_light", FlashlightSystem.BeamLight::new);
@@ -51,6 +59,7 @@ public final class Bedroom {
             DeferredRegister.create(net.minecraft.core.registries.Registries.CHUNK_GENERATOR, MOD_ID);
     public static final RegistryObject<com.mojang.serialization.Codec<? extends net.minecraft.world.level.chunk.ChunkGenerator>> LEVEL_0_GENERATOR =
             GENERATORS.register("level_0", () -> Level0Generator.CODEC);
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends net.minecraft.world.level.chunk.ChunkGenerator>> LEVEL_1_GENERATOR = GENERATORS.register("level_1",()->Level1Generator.CODEC);
 
     private static RegistryObject<Block> block(String name, java.util.function.Supplier<Block> factory) {
         RegistryObject<Block> block = BLOCKS.register(name, factory);

@@ -58,7 +58,7 @@ public final class HoundEntity extends Monster {
         var data = MatchData.get(getServer());
         if (round < 0) { round = data.round; matchLevel = data.level; }
         if (data.phase != MatchData.Phase.ACTIVE || round != data.round || matchLevel != data.level
-                || !level().dimension().equals(DevelopmentCommands.LEVEL_0) || ++lifetime > 3600) { discard(); return; }
+                || !Campaign.dungeon(level().dimension()) || ++lifetime > 3600) { discard(); return; }
         if (attackCooldown > 0) attackCooldown--;
         if (voiceCooldown > 0) voiceCooldown--;
         ServerPlayer target = getTarget() instanceof ServerPlayer p && valid(p) ? p : null;

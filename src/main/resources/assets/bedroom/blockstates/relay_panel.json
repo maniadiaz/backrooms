@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "index=0,powered=false": {
+      "model": "bedroom:block/relay_panel_0_0"
+    },
+    "index=0,powered=true": {
+      "model": "bedroom:block/relay_panel_0_1"
+    },
+    "index=1,powered=false": {
+      "model": "bedroom:block/relay_panel_1_0"
+    },
+    "index=1,powered=true": {
+      "model": "bedroom:block/relay_panel_1_1"
+    },
+    "index=2,powered=false": {
+      "model": "bedroom:block/relay_panel_2_0"
+    },
+    "index=2,powered=true": {
+      "model": "bedroom:block/relay_panel_2_1"
+    }
+  }
+}

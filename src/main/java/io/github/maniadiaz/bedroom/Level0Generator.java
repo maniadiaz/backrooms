@@ -27,11 +27,11 @@ import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 
-public final class Level0Generator extends FlatLevelSource {
+public class Level0Generator extends FlatLevelSource {
     public static final Codec<Level0Generator> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Biome.CODEC.fieldOf("biome").forGetter(g -> g.settings().getBiome())
     ).apply(instance, Level0Generator::new));
-    private volatile Level0Layout layout = new Level0Layout(0);
+    protected volatile Level0Layout layout = new Level0Layout(0);
 
     public Level0Generator(Holder<Biome> biome) {
         super(new FlatLevelGeneratorSettings(Optional.of(net.minecraft.core.HolderSet.direct(List.of())), biome, List.of()));
@@ -58,6 +58,7 @@ public final class Level0Generator extends FlatLevelSource {
         }
         return Blocks.AIR.defaultBlockState();
     }
+    protected int ceiling(){return 68;}
 
     @Override public CompletableFuture<ChunkAccess> fillFromNoise(Executor executor, Blender blender, RandomState random, StructureManager structures, ChunkAccess chunk) {
         // Each call writes only its own chunk; no shared random state or neighbour mutations.
@@ -65,7 +66,7 @@ public final class Level0Generator extends FlatLevelSource {
         for (int dx = 0; dx < 16; dx++) for (int dz = 0; dz < 16; dz++) {
             int x = chunk.getPos().getMinBlockX() + dx, z = chunk.getPos().getMinBlockZ() + dz;
             chunk.setBlockState(pos.set(x, 0, z), Blocks.BEDROCK.defaultBlockState(), false);
-            for (int y = 64; y <= 68; y++) chunk.setBlockState(pos.set(x, y, z), stateAt(x, y, z), false);
+            for (int y = 64; y <= ceiling(); y++) chunk.setBlockState(pos.set(x, y, z), stateAt(x, y, z), false);
             if (layout.supply(x, z)) {
                 net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
                 tag.putString("id", "bedroom:supply_container"); tag.putInt("x", x); tag.putInt("y", 65); tag.putInt("z", z);
@@ -80,7 +81,7 @@ public final class Level0Generator extends FlatLevelSource {
     @Override public int getGenDepth() { return 128; }
     @Override public int getSeaLevel() { return 0; }
     @Override public int getSpawnHeight(LevelHeightAccessor level) { return 65; }
-    @Override public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level, RandomState random) { return 69; }
+    @Override public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level, RandomState random) { return ceiling()+1; }
     @Override public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor level, RandomState random) {
         BlockState[] column = new BlockState[128];
         for (int y = 0; y < column.length; y++) column[y] = stateAt(x, y, z);

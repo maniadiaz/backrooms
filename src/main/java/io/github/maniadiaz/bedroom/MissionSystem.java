@@ -11,26 +11,30 @@ import net.minecraft.world.level.block.state.*;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 final class MissionSystem {
+    static net.minecraft.world.item.Item item(MatchData d){return d.level==0?Bedroom.FUSE.get():Bedroom.RELAY.get();}
+    static Block cacheBlock(MatchData d){return d.level==0?Bedroom.FUSE_CACHE.get():Bedroom.RELAY_CACHE.get();}
+    static Block panelBlock(MatchData d){return d.level==0?Bedroom.FUSE_PANEL.get():Bedroom.RELAY_PANEL.get();}
+    static String name(MatchData d){return d.level==0?"Fusible":"Relé de carga";}
     static int anchor(MatchData d) { return Math.floorDiv(MatchRooms.arena(d),128)*128; }
     static BlockPos cache(MatchData d,int i) {
         int[] x={23,87,39}, z={23,39,87}; return new BlockPos(anchor(d)+x[i],65,z[i]);
     }
     static BlockPos panel(MatchData d,int i) { return new BlockPos(anchor(d)+103+i*4,65,103); }
     static void prepare(net.minecraft.server.MinecraftServer server,MatchData d) {
-        var level = server.getLevel(DevelopmentCommands.LEVEL_0); if (level==null) return;
+        var level = Campaign.level(server,d.level); if (level==null) return;
         for (int i=0;i<3;i++) {
             level.getChunkAt(cache(d,i)); level.getChunkAt(panel(d,i));
-            level.setBlock(cache(d,i),Bedroom.FUSE_CACHE.get().defaultBlockState().setValue(Node.INDEX,i),3);
-            level.setBlock(panel(d,i),Bedroom.FUSE_PANEL.get().defaultBlockState().setValue(Node.INDEX,i),3);
+            level.setBlock(cache(d,i),cacheBlock(d).defaultBlockState().setValue(Node.INDEX,i),3);
+            level.setBlock(panel(d,i),panelBlock(d).defaultBlockState().setValue(Node.INDEX,i),3);
         }
     }
     static ItemStack fuse(MatchData d,int index,int lease) {
-        ItemStack stack = new ItemStack(Bedroom.FUSE.get()); var tag = stack.getOrCreateTag();
+        ItemStack stack = new ItemStack(item(d)); var tag = stack.getOrCreateTag();
         tag.putInt("Round",d.round); tag.putInt("Level",d.level); tag.putInt("Index",index); tag.putInt("Lease",lease);
-        stack.setHoverName(Component.literal("Fusible "+(index+1)+" / 3")); return stack;
+        stack.setHoverName(Component.literal(name(d)+" "+(index+1)+" / 3")); return stack;
     }
     static boolean valid(ItemStack stack,MatchData d,int index) {
-        var tag = stack.getTag(); return stack.is(Bedroom.FUSE.get()) && tag!=null && tag.contains("Index",Tag.TAG_INT)
+        var tag = stack.getTag(); return stack.is(item(d)) && tag!=null && tag.contains("Index",Tag.TAG_INT)
                 && tag.getInt("Round")==d.round && tag.getInt("Level")==d.level && tag.getInt("Index")==index
                 && tag.getInt("Lease")>0 && tag.getInt("Lease")==d.mission.leases[index];
     }
@@ -49,24 +53,24 @@ final class MissionSystem {
         return true;
     }
     static boolean interact(ServerPlayer p,BlockPos pos,net.minecraft.world.InteractionHand hand) {
-        if(!SurvivalSystem.active(p)||!p.level().dimension().equals(DevelopmentCommands.LEVEL_0)||p.distanceToSqr(pos.getCenter())>25)return false;
+        if(!SurvivalSystem.active(p)||p.serverLevel()!=Campaign.level(p.server,MatchData.get(p.server).level)||p.distanceToSqr(pos.getCenter())>25)return false;
         var d=MatchData.get(p.server);
         for(int i=0;i<3;i++) {
-            if(pos.equals(cache(d,i)) && p.level().getBlockState(pos).is(Bedroom.FUSE_CACHE.get())) {
-                if(d.mission.done(i)) { message(p,"Este fusible ya está instalado."); return true; }
-                if(!recoverable(p,d,i)) { message(p,"El equipo ya lleva este fusible o puede recuperarlo del limbo."); return true; }
+            if(pos.equals(cache(d,i)) && p.level().getBlockState(pos).is(cacheBlock(d))) {
+                if(d.mission.done(i)) { message(p,"Este componente ya está instalado."); return true; }
+                if(!recoverable(p,d,i)) { message(p,"El equipo ya lleva este componente o puede recuperarlo del limbo."); return true; }
                 int lease=d.mission.leases[i]+1;
                 if(p.getInventory().add(fuse(d,i,lease))) {
                     d.mission.leases[i]=lease; d.setDirty();
                     p.level().setBlock(pos,p.level().getBlockState(pos).setValue(BlockStateProperties.POWERED,true),3);
-                    message(p,"Fusible "+(i+1)+" recuperado. Llévalo al panel del mismo número, cerca de la salida.");
+                    message(p,name(d)+" "+(i+1)+" recuperado. Llévalo al panel del mismo número, cerca de la salida.");
                 } else message(p,"Necesitas un espacio libre en el inventario.");
                 return true;
             }
-            if(pos.equals(panel(d,i)) && p.level().getBlockState(pos).is(Bedroom.FUSE_PANEL.get())) {
+            if(pos.equals(panel(d,i)) && p.level().getBlockState(pos).is(panelBlock(d))) {
                 var stack=p.getItemInHand(hand);
                 if(d.mission.done(i)) message(p,"Panel "+(i+1)+" ya reparado.");
-                else if(!valid(stack,d,i)) message(p,"Este panel necesita el fusible "+(i+1)+" de esta partida.");
+                else if(!valid(stack,d,i)) message(p,"Este panel necesita el componente "+(i+1)+" de esta partida.");
                 else if(d.mission.install(i,stack.getTag().getInt("Lease"))) {
                     stack.shrink(1); d.setDirty(); p.level().setBlock(pos,p.level().getBlockState(pos).setValue(BlockStateProperties.POWERED,true),3);
                     for(var m:d.members.values()) {

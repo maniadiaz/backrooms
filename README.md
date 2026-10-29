@@ -2,7 +2,7 @@
 
 Proyecto de mod de terror y exploración para Minecraft Java 1.20.1 con Forge 47.4.28.
 
-Estado actual: versión 0.7.0 con misión cooperativa de tres fusibles y tres paneles, progreso compartido en el HUD y salida por No-Clip. Conserva las tres entidades y el sistema de partidas. Véase [estado y pruebas de la etapa 7](docs/ETAPA-7-MISION-Y-NOCLIP.md).
+Estado actual: versión 0.8.0 con Nivel 0 y Nivel 1, Zona de Carga, unidos por descanso de noventa segundos y recuperación del equipo. El segundo nivel utiliza tres relés y compuerta anómala. Véase [etapa 8](docs/ETAPA-8-NIVEL-1.md); la etapa siguiente incorpora el festejo final.
 
 El alcance, las reglas propuestas y los criterios de aceptación están en [Etapa 1 — Alcance](docs/ETAPA-1-ALCANCE.md).
 

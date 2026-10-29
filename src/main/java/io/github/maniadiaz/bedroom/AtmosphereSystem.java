@@ -31,8 +31,8 @@ final class AtmosphereSystem {
         }
         if (events.drip()) {
             Vec3 floor = nearbyFloor(p, 3, 10);
-            if (floor != null && p.level().getBlockState(BlockPos.containing(floor.x, 68, floor.z)).is(Bedroom.CEILING.get())) {
-                p.serverLevel().sendParticles(ParticleTypes.DRIPPING_WATER, floor.x, 67.95, floor.z, 1, 0, 0, 0, 0);
+            if (floor != null && p.level().getBlockState(BlockPos.containing(floor.x, Campaign.ceiling(p.level()), floor.z)).is(Bedroom.CEILING.get())) {
+                p.serverLevel().sendParticles(ParticleTypes.DRIPPING_WATER, floor.x, Campaign.ceiling(p.level())-.05, floor.z, 1, 0, 0, 0, 0);
                 p.serverLevel().playSound(null, floor.x, 65.05, floor.z, BedroomSounds.DRIP.get(), SoundSource.AMBIENT, .55F, .95F);
                 noteSound(p.serverLevel(), floor, 16, null);
             }
@@ -55,7 +55,7 @@ final class AtmosphereSystem {
         List<BlockPos> lamps = new ArrayList<>();
         int cx = Math.floorDiv(p.getBlockX(), 8) * 8, cz = Math.floorDiv(p.getBlockZ(), 8) * 8;
         for (int dx = -16; dx <= 16; dx += 8) for (int dz = -16; dz <= 16; dz += 8) {
-            BlockPos pos = new BlockPos(cx + dx, 68, cz + dz);
+            BlockPos pos = new BlockPos(cx + dx, Campaign.lampY(p.level()), cz + dz);
             if (!p.level().hasChunkAt(pos)) continue;
             var state = p.level().getBlockState(pos);
             if (!state.is(Bedroom.LIGHT.get())) continue;
@@ -94,7 +94,7 @@ final class AtmosphereSystem {
     }
 
     @SubscribeEvent public static void entitySound(PlayLevelSoundEvent.AtEntity event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !level.dimension().equals(DevelopmentCommands.LEVEL_0)
+        if (!(event.getLevel() instanceof ServerLevel level) || !Campaign.dungeon(level.dimension())
                 || event.getSound() == null || event.getNewVolume() <= 0) return;
         var entity = event.getEntity();
         if (entity instanceof ServerPlayer player && !SurvivalSystem.active(player)) return;
@@ -102,7 +102,7 @@ final class AtmosphereSystem {
     }
 
     @SubscribeEvent public static void positionedSound(PlayLevelSoundEvent.AtPosition event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !level.dimension().equals(DevelopmentCommands.LEVEL_0)
+        if (!(event.getLevel() instanceof ServerLevel level) || !Campaign.dungeon(level.dimension())
                 || event.getSound() == null || event.getNewVolume() <= 0) return;
         var id = event.getSound().value().getLocation();
         if (id.equals(BedroomSounds.HUM.getId())) return;

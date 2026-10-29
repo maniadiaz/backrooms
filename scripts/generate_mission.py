@@ -16,15 +16,15 @@ def png(path,size,pixel):
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_bytes(b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('!2I5B',size,size,8,6,0,0,0))+chunk(b'IDAT',zlib.compress(raw))+chunk(b'IEND',b''))
 digits=[['010','110','010','010','111'],['111','001','111','100','111'],['111','001','111','001','111']]
-for kind in ['fuse_cache','fuse_panel']:
+for kind in ['fuse_cache','fuse_panel','relay_cache','relay_panel']:
     variants={}
     for i in range(3):
         for powered in [False,True]:
             name=f'{kind}_{i}_{int(powered)}'
             def pixel(x,y):
-                base=(102,105,95) if kind=='fuse_panel' else (126,105,63)
+                base=(102,105,95) if kind.endswith('panel') else ((73,102,118) if kind.startswith('relay') else (126,105,63))
                 color=tuple(max(0,c-30) for c in base) if x in (0,15) or y in (0,15) else base
-                if y==2 and 3<=x<=12:color=(84,193,114) if powered else ((169,71,54) if kind=='fuse_panel' else (224,183,72))
+                if y==2 and 3<=x<=12:color=(84,193,114) if powered else ((169,71,54) if kind.endswith('panel') else (224,183,72))
                 dx,dy=(x-5)//2,(y-4)//2
                 if 0<=dx<3 and 0<=dy<5 and digits[i][dy][dx]=='1':color=(231,222,178)
                 return (*color,255)
@@ -39,6 +39,8 @@ def icon(x,y):
     return (0,0,0,0)
 png(ROOT/'textures/item/mission_fuse.png',16,icon)
 write(ROOT/'models/item/mission_fuse.json',{'parent':'minecraft:item/generated','textures':{'layer0':'bedroom:item/mission_fuse'}})
+png(ROOT/'textures/item/loading_relay.png',16,lambda x,y:(83,161,188,255) if 3<=x<=12 and 3<=y<=12 else ((189,178,135,255) if x in (4,7,10) and y in (1,2,13,14) else (0,0,0,0)))
+write(ROOT/'models/item/loading_relay.json',{'parent':'minecraft:item/generated','textures':{'layer0':'bedroom:item/loading_relay'}})
 for lang in ['es_mx','en_us']:
     path=ROOT/f'lang/{lang}.json';values=json.loads(path.read_text(encoding='utf-8'))
     values.update({'block.bedroom.fuse_cache':'Estuche de fusible' if lang=='es_mx' else 'Fuse case',

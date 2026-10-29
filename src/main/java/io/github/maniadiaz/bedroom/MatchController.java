@@ -315,7 +315,7 @@ public final class MatchController {
     }
 
     private static void moveArena(ServerPlayer p, MatchData data) {
-        ServerLevel level = dimension(p.server);
+        ServerLevel level = Campaign.level(p.server,data.level);
         if (level == null) return;
         int x = MatchRooms.arena(data) + 8;
         level.getChunkAt(new BlockPos(x, 65, 8));
@@ -331,7 +331,7 @@ public final class MatchController {
         return t;
     }
 
-    private static void apply(ServerPlayer p, MatchData d, MatchData.Member m, boolean restoreInventory) {
+    static void apply(ServerPlayer p, MatchData d, MatchData.Member m, boolean restoreInventory) {
         AtmosphereSystem.clear(p);
         FlashlightSystem.clear(p);
         p.removeAllEffects();
@@ -340,6 +340,13 @@ public final class MatchController {
         p.setGameMode(m.state == MatchData.State.SPECTATING ? GameType.SPECTATOR : GameType.ADVENTURE);
         if (m.state == MatchData.State.ACTIVE || m.state == MatchData.State.REST) {
             if (restoreInventory) restore(p, m.inventory);
+            for(int slot=0;slot<p.getInventory().getContainerSize();slot++) {
+                var stack=p.getInventory().getItem(slot);
+                if(stack.is(Bedroom.FUSE.get())||stack.is(Bedroom.RELAY.get())) {
+                    var tag=stack.getTag();int index=tag==null?-1:tag.getInt("Index");
+                    if(index<0||index>2||!MissionSystem.valid(stack,d,index))p.getInventory().setItem(slot,net.minecraft.world.item.ItemStack.EMPTY);
+                }
+            }
             p.setHealth(p.getMaxHealth());
             if (m.state == MatchData.State.REST) move(p, MatchRooms.REST, false, false);
             else moveArena(p, d);
@@ -371,22 +378,28 @@ public final class MatchController {
     }
 
     static boolean complete(ServerPlayer p, boolean successor) {
+        Map<UUID,ServerPlayer> players=new java.util.LinkedHashMap<>();
+        p.server.getPlayerList().getPlayers().forEach(player->players.put(player.getUUID(),player));
+        return complete(p,successor,players);
+    }
+    static boolean complete(ServerPlayer p, boolean successor,Map<UUID,ServerPlayer> players) {
         MatchData d = MatchData.get(p.server);
         if (d.phase != MatchData.Phase.ACTIVE || !d.members.containsKey(p.getUUID())
                 || d.members.get(p.getUUID()).state != MatchData.State.ACTIVE) return false;
         d.members.values().forEach(m -> {
-            ServerPlayer player = p.server.getPlayerList().getPlayer(m.id);
+            ServerPlayer player = players.get(m.id);
             if (player != null && m.state == MatchData.State.ACTIVE) m.inventory = snapshot(player);
         });
-        if (!d.complete(p.getUUID(), successor)) return false;
+        boolean advance=successor||d.level==0;
+        if (!d.complete(p.getUUID(), advance)) return false;
         for (MatchData.Member m : d.members.values()) {
-            ServerPlayer player = p.server.getPlayerList().getPlayer(m.id);
+            ServerPlayer player = players.get(m.id);
             if (player != null) {
                 apply(player, d, m, true);
-                MatchAnnouncements.show(player, "NIVEL SUPERADO", successor ? "Equipo reunido. Tomen un respiro." : "Todos al lobby. Lo lograron.", net.minecraft.ChatFormatting.GREEN);
+                MatchAnnouncements.show(player, "NIVEL SUPERADO", advance ? "Equipo reunido. Próximo destino: Zona de Carga." : "Todos al lobby. Lo lograron.", net.minecraft.ChatFormatting.GREEN);
             }
         }
-        tell(p, successor ? "Transición de prueba: descanso de 90 segundos. No es el Nivel 1." : "Nivel 0 completado. Regreso provisional al lobby.");
+        tell(p,advance?"Nivel superado. Descanso de 90 segundos antes de Zona de Carga.":"Zona de Carga superada. Regreso al lobby.");
         return true;
     }
 
@@ -401,8 +414,8 @@ public final class MatchController {
             return;
         }
         boolean handled = false;
-        if (p.level().dimension().equals(DevelopmentCommands.LEVEL_0) && p.distanceToSqr(event.getPos().getCenter()) <= 25) {
-            if (m.state == MatchData.State.ACTIVE && p.level().getBlockState(event.getPos()).is(Bedroom.EXIT.get())) {
+        if (Campaign.dungeon(p.level().dimension()) && p.distanceToSqr(event.getPos().getCenter()) <= 25) {
+            if (m.state == MatchData.State.ACTIVE && Campaign.exit(p.level().getBlockState(event.getPos()))) {
                 handled = true;
                 tell(p,d.mission.ready()?"Mantén avance y carrera contra esta pared durante 2 segundos.":"La pared no responde. Repara los tres paneles primero.");
             } else
@@ -474,12 +487,12 @@ public final class MatchController {
 
     @SubscribeEvent public static void breakBlock(BlockEvent.BreakEvent event) {
         if (event.getPlayer() instanceof ServerPlayer p && (member(p)
-                || (p.level().dimension().equals(DevelopmentCommands.LEVEL_0) && !p.isCreative()))) event.setCanceled(true);
+                || (Campaign.dungeon(p.level().dimension()) && !p.isCreative()))) event.setCanceled(true);
     }
 
     @SubscribeEvent public static void placeBlock(BlockEvent.EntityPlaceEvent event) {
         if (event.getEntity() instanceof ServerPlayer p && (member(p)
-                || (p.level().dimension().equals(DevelopmentCommands.LEVEL_0) && !p.isCreative()))) event.setCanceled(true);
+                || (Campaign.dungeon(p.level().dimension()) && !p.isCreative()))) event.setCanceled(true);
     }
 
     @SubscribeEvent public static void itemUse(PlayerInteractEvent.RightClickItem event) {
@@ -498,7 +511,7 @@ public final class MatchController {
     }
 
     @SubscribeEvent public static void explosions(net.minecraftforge.event.level.ExplosionEvent.Detonate event) {
-        if (event.getLevel().dimension().equals(DevelopmentCommands.LEVEL_0)) event.getAffectedBlocks().clear();
+        if (Campaign.dungeon(event.getLevel().dimension())) event.getAffectedBlocks().clear();
     }
 
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
@@ -571,7 +584,7 @@ public final class MatchController {
     @SubscribeEvent public static void toss(net.minecraftforge.event.entity.item.ItemTossEvent event) {
         if (event.getPlayer() instanceof ServerPlayer p) {
             MatchData.Member m = MatchData.get(p.server).members.get(p.getUUID());
-            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && (m.state != MatchData.State.ACTIVE||event.getEntity().getItem().is(Bedroom.FUSE.get())))) {
+            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && (m.state != MatchData.State.ACTIVE||((event.getEntity().getItem().is(Bedroom.FUSE.get())||event.getEntity().getItem().is(Bedroom.RELAY.get()))||event.getEntity().getItem().is(Bedroom.RELAY.get()))))) {
                 p.getInventory().placeItemBackInInventory(event.getEntity().getItem());
                 event.setCanceled(true);
             }

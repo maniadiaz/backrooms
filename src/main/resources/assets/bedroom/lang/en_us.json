@@ -44,5 +44,13 @@
   "subtitles.bedroom.bacteria_attack": "Bacteria strike",
   "block.bedroom.fuse_cache": "Fuse case",
   "block.bedroom.fuse_panel": "Electrical panel",
-  "item.bedroom.mission_fuse": "Mission fuse"
+  "item.bedroom.mission_fuse": "Mission fuse",
+  "block.bedroom.concrete": "Aged concrete",
+  "block.bedroom.wet_concrete": "Damp concrete",
+  "block.bedroom.corrugated_steel": "Corrugated steel",
+  "block.bedroom.loading_crate": "Loading crate",
+  "block.bedroom.loading_exit": "Anomalous loading gate",
+  "block.bedroom.relay_cache": "Relay case",
+  "block.bedroom.relay_panel": "Loading control",
+  "item.bedroom.loading_relay": "Loading relay"
 }

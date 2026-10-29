@@ -44,5 +44,13 @@
   "subtitles.bedroom.bacteria_attack": "Golpe de Bacteria",
   "block.bedroom.fuse_cache": "Estuche de fusible",
   "block.bedroom.fuse_panel": "Panel eléctrico",
-  "item.bedroom.mission_fuse": "Fusible de misión"
+  "item.bedroom.mission_fuse": "Fusible de misión",
+  "block.bedroom.concrete": "Hormigón envejecido",
+  "block.bedroom.wet_concrete": "Hormigón húmedo",
+  "block.bedroom.corrugated_steel": "Acero corrugado",
+  "block.bedroom.loading_crate": "Caja de carga",
+  "block.bedroom.loading_exit": "Compuerta anómala",
+  "block.bedroom.relay_cache": "Estuche de relé",
+  "block.bedroom.relay_panel": "Control de carga",
+  "item.bedroom.loading_relay": "Relé de carga"
 }

@@ -25,7 +25,7 @@ public final class NoClipSystem {
     private static final class Input { boolean pressing; int received; final Charge charge=new Charge(); }
     private static final Map<UUID,Input> inputs=new HashMap<>();
     static void input(ServerPlayer p,boolean pressing) {
-        if(!SurvivalSystem.active(p)||!p.level().dimension().equals(DevelopmentCommands.LEVEL_0))return;
+        if(!SurvivalSystem.active(p)||!Campaign.dungeon(p.level().dimension()))return;
         var input=inputs.computeIfAbsent(p.getUUID(),id->new Input()); input.pressing=pressing; input.received=p.server.getTickCount();
         if(!pressing)input.charge.advance(null,false);
     }
@@ -34,12 +34,12 @@ public final class NoClipSystem {
         if(!p.isAlive()||p.isSpectator()||p.getAbilities().flying)return null;
         Vec3 from=p.getEyePosition(),to=from.add(p.getLookAngle().scale(2));
         var hit=p.level().clip(new ClipContext(from,to,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p));
-        if(hit.getType()!=HitResult.Type.BLOCK||!p.level().getBlockState(hit.getBlockPos()).is(Bedroom.EXIT.get()))return null;
+        if(hit.getType()!=HitResult.Type.BLOCK||!Campaign.exit(p.level().getBlockState(hit.getBlockPos())))return null;
         return p.getBoundingBox().inflate(.08,0,.08).intersects(new AABB(hit.getBlockPos()))?new BlockPos(hit.getBlockPos().getX(),65,hit.getBlockPos().getZ()):null;
     }
     static boolean advance(ServerPlayer p,Charge charge,boolean intent) {
         var d=MatchData.get(p.server);
-        return charge.advance(contact(p),intent&&SurvivalSystem.active(p)&&p.getFoodData().getFoodLevel()>6&&p.level().dimension().equals(DevelopmentCommands.LEVEL_0)&&d.mission.ready());
+        return charge.advance(contact(p),intent&&SurvivalSystem.active(p)&&p.getFoodData().getFoodLevel()>6&&Campaign.dungeon(p.level().dimension())&&d.mission.ready());
     }
     @SubscribeEvent public static void tick(TickEvent.ServerTickEvent event) {
         if(event.phase!=TickEvent.Phase.END)return;
