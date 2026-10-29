@@ -1,0 +1,13 @@
+{
+  "type": "bedroom:level_0",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "minecraft:the_void",
+      "lakes": false,
+      "features": false,
+      "structure_overrides": [],
+      "layers": [{"height": 1, "block": "minecraft:bedrock"}]
+    }
+  }
+}

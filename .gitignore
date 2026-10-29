@@ -1,5 +1,7 @@
 # Gradle / compilación
 .gradle/
+.tools/
+run-data/
 build/
 out/
 bin/
