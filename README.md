@@ -43,7 +43,7 @@ Los comandos requieren permisos de operador de nivel 2. Pueden desactivarse en `
 
 La sala usa recursos vanilla provisionales. El retorno exacto presupone que el lugar de origen sigue siendo transitable; `rescue` usa el spawn definido por el administrador. Todavía no hay entrada de supervivencia, conservación especial de inventario al morir ni protección de construcción.
 
-Para la futura entrada de supervivencia se propone un objeto de acceso fabricado con un papel y una perla de Ender, mediante receta sin forma. Se implementará después de validar la dimensión y sus reglas de entrada.
+La entrada de juego será desde un lobby para 1–4 jugadores mediante botón. El diseño actualizado incluye limbo de 30 segundos, dos oportunidades de regreso por nivel, espectadores, derrota colectiva y descansos de 90 segundos. Estos sistemas todavía no están implementados: véase [Partidas y lobby](docs/PARTIDAS-Y-LOBBY.md).
 
 Para el servidor de desarrollo, revisar el EULA que genera Minecraft y aceptarlo personalmente si se está de acuerdo antes de volver a ejecutar `runServer`.
 
