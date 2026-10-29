@@ -18,7 +18,12 @@ minecraft {
             property 'forge.logging.console.level', 'info'
             mods { bedroom { source sourceSets.main } }
         }
-        client {}
+        client {
+            if (project.hasProperty('qaWorld')) {
+                workingDirectory project.file('run-hud')
+                args '--quickPlaySingleplayer', project.property('qaWorld').toString()
+            }
+        }
         server { args '--nogui' }
         gameTestServer {
             workingDirectory project.file('run-gametest')

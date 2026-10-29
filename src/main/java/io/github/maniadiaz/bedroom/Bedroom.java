@@ -22,6 +22,9 @@ public final class Bedroom {
     public static final RegistryObject<Block> WALL = BLOCKS.register("wallpaper", () -> new Block(
             BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD)));
     public static final RegistryObject<Item> WALL_ITEM = ITEMS.register("wallpaper", () -> new BlockItem(WALL.get(), new Item.Properties()));
+    public static final RegistryObject<Item> NUTRITION_BAR = ITEMS.register("nutrition_bar", () -> new Item(new Item.Properties().stacksTo(16)
+            .food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(8).saturationMod(.3F)
+                    .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, 100), 1).alwaysEat().build())));
     public static final RegistryObject<Block> PANEL = block("wall_panel", () -> new PanelBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD).noOcclusion()));
     public static final RegistryObject<Block> CARPET = block("damp_carpet", () -> new Block(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOL)));
     public static final RegistryObject<Block> WET_CARPET = block("wet_carpet", () -> new Block(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOL)));
@@ -46,6 +49,7 @@ public final class Bedroom {
         ITEMS.register(bus);
         GENERATORS.register(bus);
         context.registerConfig(ModConfig.Type.COMMON, BedroomConfig.SPEC);
+        BedroomNetwork.register();
         MinecraftForge.EVENT_BUS.addListener(DevelopmentCommands::register);
     }
 }

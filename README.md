@@ -2,7 +2,7 @@
 
 Proyecto de mod de terror y exploración para Minecraft Java 1.20.1 con Forge 47.4.28.
 
-Estado actual: base de la etapa 3, con entrada automática al lobby y laberinto procedural del Nivel 0. Incluye partidas de 1–4 jugadores, cola de espera, limbo, espectadores y descanso. Cordura y consumibles siguen pendientes. Véase [validación y pendientes](docs/ETAPA-3-NIVEL-0.md).
+Estado actual: versión 0.3.1, con HUD fijo a la izquierda, mensajes centrales, reinicio de partida y barras nutritivas. Incluye lobby automático, laberinto procedural, partidas de 1–4 jugadores, cola, limbo y espectadores. Cordura y el resto de consumibles siguen pendientes. Véase [validación y pendientes](docs/ETAPA-3.1-HUD-Y-REINICIO.md).
 
 El alcance, las reglas propuestas y los criterios de aceptación están en [Etapa 1 — Alcance](docs/ETAPA-1-ALCANCE.md).
 
@@ -28,7 +28,7 @@ En este equipo se descargó un JDK 17 en `.tools/java` (ignorado por Git). El sc
 .\scripts\gradle.ps1 runGameTestServer
 ```
 
-El jar se genera en `build/libs/bedroom-0.3.0.jar`. Instalar en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Para esta versión, crear un mundo nuevo: los chunks anteriores no se regeneran y los mundos con el generador plano antiguo no pueden iniciar partidas procedurales.
+El jar se genera en `build/libs/bedroom-0.3.1.jar`. Instalar la misma versión en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Los mundos de 0.3.0 conservan su generador; para mundos anteriores con el generador plano, crear un mundo nuevo.
 
 ## Probar una partida
 
@@ -38,8 +38,17 @@ El jar se genera en `build/libs/bedroom-0.3.0.jar`. Instalar en cliente y servid
 4. Para probar la muerte, un operador participante puede usar `/bedroom testdeath`. Las primeras dos llevan a un laberinto blanco: encontrar y presionar su botón de salida antes de 30 segundos. La tercera lleva a espectador.
 5. Para probar el avance entre niveles, usar `/bedroom testnext` como operador activo: todos reviven en la sala de descanso. Esperar 90 segundos o presionar el botón como anfitrión. El destino es otro sector del Nivel 0 para pruebas; no representa el Nivel 1.
 6. `/bedroom status` muestra el estado. `/bedroom leave` permite salir y recuperar el inventario, experiencia y modo de juego externos.
+7. `/bedroom restart` devuelve al grupo al lobby, limpia la partida y admite a los invitados en espera si hay puestos libres. Lo pueden usar el anfitrión de la partida, el dueño del mundo o un operador, sin depender de los comandos de desarrollo. No inicia automáticamente otra partida.
 
-Los botones son interacciones normales: no requieren permisos de operador. Si todos quedan eliminados, el equipo vuelve al lobby y el siguiente inicio crea una partida limpia. Mientras alguien conserve tiempo en el limbo, todavía puede rescatar la partida. No hay kit inicial hasta implementar sus objetos en la etapa 4.
+Los botones son interacciones normales: no requieren permisos de operador. Si todos quedan eliminados, el equipo vuelve al lobby y el siguiente inicio crea una partida limpia. Mientras alguien conserve tiempo en el limbo, todavía puede rescatar la partida. Cada inicio nuevo entrega tres barras nutritivas: mantener pulsado usar objeto para comer y recuperar cuatro muslos de hambre, además de Regeneración I durante cinco segundos. El resto del kit inicial llegará en etapa 4.
+
+El panel izquierdo muestra `BEDROOM: ACTIVE` encima de las muertes, además de los tiempos de limbo/descanso cuando corresponda. Los anuncios centrales aparecen al entrar, morir, regresar, completar, perder o reiniciar, con entrada y salida gradual.
+
+## Jugar mediante Essential
+
+El dueño comparte el mundo usando Essential; Bedroom utiliza el servidor integrado de Minecraft y sus paquetes Forge, sin una dependencia directa de Essential. Todos deben instalar las mismas versiones de mods, incluido `bedroom-0.3.1.jar`, y una versión de Essential para Forge 1.20.1. Véase la [guía oficial de hosting de Essential](https://essential.gg/wiki/start-hosting).
+
+Los invitados que llegan tarde permanecen en el lobby hasta el siguiente inicio. Para incorporarlos antes, el anfitrión usa `/bedroom restart` y vuelve a pulsar el botón de inicio. El límite sigue siendo cuatro participantes. La compatibilidad práctica con Essential está pendiente de una sesión real con amigos; las pruebas automatizadas se ejecutaron con Forge.
 
 Reconectar durante una partida recupera el estado del jugador, incluido su reloj de limbo. La llegada de alguien nuevo no lo incorpora a una partida activa. La cola y los inventarios externos se guardan. La entrada automática también se aplica a reapariciones normales fuera de una partida; puede desactivarse con `autoLobby=false` en `config/bedroom-common.toml`.
 

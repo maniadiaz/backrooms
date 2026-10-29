@@ -111,6 +111,7 @@ public final class MatchData extends SavedData {
     }
 
     void reset() {
+        awaitingPlayers = false;
         phase = Phase.LOBBY;
         level = 0;
         restTicks = 0;

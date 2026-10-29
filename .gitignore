@@ -3,6 +3,7 @@
 .tools/
 run-data/
 run-gametest/
+run-hud/
 build/
 out/
 bin/

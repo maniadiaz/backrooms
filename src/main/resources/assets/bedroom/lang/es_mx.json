@@ -6,5 +6,6 @@
   "block.bedroom.ceiling_tile": "Panel de techo",
   "block.bedroom.fluorescent": "Fluorescente",
   "block.bedroom.broken_fluorescent": "Fluorescente fundido",
-  "block.bedroom.transition_wall": "Pared anómala (salida provisional)"
+  "block.bedroom.transition_wall": "Pared anómala (salida provisional)",
+  "item.bedroom.nutrition_bar": "Barra nutritiva"
 }

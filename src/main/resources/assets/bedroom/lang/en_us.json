@@ -6,5 +6,6 @@
   "block.bedroom.ceiling_tile": "Ceiling tile",
   "block.bedroom.fluorescent": "Fluorescent light",
   "block.bedroom.broken_fluorescent": "Burnt-out fluorescent",
-  "block.bedroom.transition_wall": "Anomalous wall (temporary exit)"
+  "block.bedroom.transition_wall": "Anomalous wall (temporary exit)",
+  "item.bedroom.nutrition_bar": "Nutrition bar"
 }

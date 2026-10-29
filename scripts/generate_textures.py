@@ -74,4 +74,30 @@ names = {
 }
 ids = ['wallpaper', 'wall_panel', 'damp_carpet', 'wet_carpet', 'ceiling_tile', 'fluorescent', 'broken_fluorescent', 'transition_wall']
 for language, values in names.items():
-    write_json(ROOT / f'lang/{language}.json', {f'block.bedroom.{key}': value for key, value in zip(ids, values)})
+    labels = {f'block.bedroom.{key}': value for key, value in zip(ids, values)}
+    labels['item.bedroom.nutrition_bar'] = 'Barra nutritiva' if language == 'es_mx' else 'Nutrition bar'
+    write_json(ROOT / f'lang/{language}.json', labels)
+
+# Transparent pixel icon for the wrapped nutrition bar.
+data = bytearray()
+for y in range(16):
+    data.append(0)
+    for x in range(16):
+        color = (0, 0, 0, 0)
+        if 1 <= x <= 14 and 5 <= y <= 10:
+            color = (93, 82, 66, 255) if y in (5, 10) else (169, 159, 139, 255)
+            if x in (1, 2, 13, 14):
+                color = (111 if (x + y) % 2 else 191, 108 if (x + y) % 2 else 186, 99 if (x + y) % 2 else 172, 255)
+            elif 6 <= x <= 11 and 6 <= y <= 9:
+                color = (103, 76, 48, 255)
+            if (x, y) in ((7, 7), (7, 8), (8, 8), (9, 7), (9, 8)):
+                color = (219, 204, 159, 255)
+        data.extend(color)
+def icon_chunk(kind, content):
+    return struct.pack('>I', len(content)) + kind + content + struct.pack('>I', zlib.crc32(kind + content) & 0xffffffff)
+icon = b'\x89PNG\r\n\x1a\n' + icon_chunk(b'IHDR', struct.pack('>IIBBBBB', 16, 16, 8, 6, 0, 0, 0))
+icon += icon_chunk(b'IDAT', zlib.compress(bytes(data))) + icon_chunk(b'IEND', b'')
+path = ROOT / 'textures/item/nutrition_bar.png'
+path.parent.mkdir(parents=True, exist_ok=True)
+path.write_bytes(icon)
+write_json(ROOT / 'models/item/nutrition_bar.json', {'parent': 'minecraft:item/generated', 'textures': {'layer0': 'bedroom:item/nutrition_bar'}})
