@@ -35,16 +35,21 @@ public final class EncounterSystem {
             if (!level.getEntitiesOfClass(Monster.class, p.getBoundingBox().inflate(96)).isEmpty()) continue;
             // Failed placement also backs off; low sanity never retries every tick.
             progress.put(p.getUUID(), new Progress(old.round, old.level, rooms, rooms.size() + 30 + p.getRandom().nextInt(11), server.getTickCount() + 6000));
-            boolean chooseSmiler = p.getRandom().nextBoolean();
+            int species = p.getRandom().nextInt(3);
             for (int attempt = 0; attempt < 24; attempt++) {
                 double angle = p.getRandom().nextDouble() * Math.PI * 2;
                 double distance = 28 + p.getRandom().nextInt(17);
                 BlockPos pos = BlockPos.containing(p.getX() + Math.cos(angle) * distance, 65, p.getZ() + Math.sin(angle) * distance);
                 if (pos.getX() < 1000000) continue;
-                Monster threat = chooseSmiler ? smilerCandidate(level, pos, p, active) : candidate(level, pos, p, active);
+                Monster threat = switch (species) {
+                    case 1 -> smilerCandidate(level,pos,p,active);
+                    case 2 -> bacteriaCandidate(level,pos,p,active);
+                    default -> candidate(level,pos,p,active);
+                };
                 if (threat == null) continue;
                 if (threat instanceof HoundEntity hound) { hound.round = data.round; hound.matchLevel = data.level; }
                 if (threat instanceof SmilerEntity smiler) { smiler.round = data.round; smiler.matchLevel = data.level; smiler.beginEncounter(p); }
+                if (threat instanceof BacteriaEntity bacteria) { bacteria.round = data.round; bacteria.matchLevel = data.level; }
                 level.addFreshEntity(threat);
                 for (ServerPlayer other : active) if (other.distanceToSqr(p) < 16384) {
                     Progress q = progress.get(other.getUUID());
@@ -61,6 +66,9 @@ public final class EncounterSystem {
     static SmilerEntity smilerCandidate(net.minecraft.server.level.ServerLevel level, BlockPos pos, ServerPlayer target, List<ServerPlayer> active) {
         if (!level.hasChunkAt(pos) || !SmilerEntity.dark(level, pos.above())) return null;
         return validate(level, pos, target, active, SmilerEntity.TYPE.get().create(level));
+    }
+    static BacteriaEntity bacteriaCandidate(net.minecraft.server.level.ServerLevel level, BlockPos pos, ServerPlayer target, List<ServerPlayer> active) {
+        return validate(level,pos,target,active,BacteriaEntity.TYPE.get().create(level));
     }
     private static <T extends Monster> T validate(net.minecraft.server.level.ServerLevel level, BlockPos pos, ServerPlayer target, List<ServerPlayer> active, T hound) {
         if (hound == null) return null;

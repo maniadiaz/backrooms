@@ -2,11 +2,11 @@
 
 Proyecto de mod de terror y exploración para Minecraft Java 1.20.1 con Forge 47.4.28.
 
-Estado actual: versión 0.6.1 con Sabueso y Smiler, rostro emisivo, mirada cooperativa, avance al perderla y sonido espacial de proximidad. Ambos comparten el presupuesto de encuentros. Véase [estado y pruebas de la etapa 6B](docs/ETAPA-6B-SMILER.md).
+Estado actual: versión 0.6.2 con Sabueso, Smiler y Bacteria. Bacteria añade detección por ruido y visión, alerta, caza, búsqueda local y animación de arrastre con cables. Las tres entidades comparten el presupuesto de encuentros. Véase [estado y pruebas de la etapa 6C](docs/ETAPA-6C-BACTERIA.md).
 
 El alcance, las reglas propuestas y los criterios de aceptación están en [Etapa 1 — Alcance](docs/ETAPA-1-ALCANCE.md).
 
-El diseño de Smiler, Bacteria y Hound está en el [bestiario](docs/BESTIARIO.md). Hound y Smiler ya están implementados; sigue Bacteria (etapa 6C).
+El diseño de Smiler, Bacteria y Hound está en el [bestiario](docs/BESTIARIO.md). Las tres entidades ya tienen su primera implementación; sigue la etapa 7 de misiones y salida por No-Clip.
 
 Repositorio: [maniadiaz/bedroom-mod](https://github.com/maniadiaz/bedroom-mod).
 
@@ -30,7 +30,7 @@ En este equipo se descargó un JDK 17 en `.tools/java` (ignorado por Git). El sc
 .\scripts\gradle.ps1 runGameTestServer
 ```
 
-El jar se genera en `build/libs/bedroom-0.6.1.jar`. Instalar la misma versión en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Los mundos de 0.3.0 conservan su generador; para mundos anteriores con el generador plano, crear un mundo nuevo.
+El jar se genera en `build/libs/bedroom-0.6.2.jar`. Instalar la misma versión en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Los mundos de 0.3.0 conservan su generador; para mundos anteriores con el generador plano, crear un mundo nuevo.
 
 ## Probar una partida
 
@@ -49,7 +49,7 @@ El panel izquierdo muestra `BEDROOM: ACTIVE` encima de las muertes, además de l
 
 ## Jugar mediante Essential
 
-El dueño comparte el mundo usando Essential; Bedroom utiliza el servidor integrado de Minecraft y sus paquetes Forge, sin una dependencia directa de Essential. Todos deben instalar las mismas versiones de mods, incluido `bedroom-0.6.1.jar`, y una versión de Essential para Forge 1.20.1. Véase la [guía oficial de hosting de Essential](https://essential.gg/wiki/start-hosting).
+El dueño comparte el mundo usando Essential; Bedroom utiliza el servidor integrado de Minecraft y sus paquetes Forge, sin una dependencia directa de Essential. Todos deben instalar las mismas versiones de mods, incluido `bedroom-0.6.2.jar`, y una versión de Essential para Forge 1.20.1. Véase la [guía oficial de hosting de Essential](https://essential.gg/wiki/start-hosting).
 
 Los invitados que llegan tarde permanecen en el lobby hasta el siguiente inicio. Para incorporarlos antes, el grupo vota reiniciar y después vuelve a pulsar el botón de inicio. El límite sigue siendo cuatro participantes. La compatibilidad práctica con Essential está pendiente de una sesión real con amigos; las pruebas automatizadas se ejecutaron con Forge.
 
@@ -72,7 +72,7 @@ El Nivel 0 usa bloques y texturas originales, con modelos simples. Lobby, limbo 
 
 `python scripts/generate_textures.py` reconstruye las texturas y modelos propios de forma reproducible, sin dependencias externas de Python.
 
-Los sonidos OGG están incluidos en el jar; no hay que instalar herramientas de audio para jugar. Para regenerarlos en desarrollo: `python -m pip install -r scripts/audio-requirements.txt` y `python scripts/generate_audio.py`. Para las entidades: `python scripts/generate_hound.py` y `python scripts/generate_smiler.py`. Los generadores preservan los eventos de las otras especies y aceptan las dependencias locales de `.tools/audio-python`.
+Los sonidos OGG están incluidos en el jar; no hay que instalar herramientas de audio para jugar. Para regenerarlos en desarrollo: `python -m pip install -r scripts/audio-requirements.txt` y `python scripts/generate_audio.py`. Para las entidades: `python scripts/generate_hound.py`, `python scripts/generate_smiler.py` y `python scripts/generate_bacteria.py`. Los generadores preservan los eventos de las otras especies y aceptan las dependencias locales de `.tools/audio-python`.
 
 En `config/bedroom-client.toml` se ajustan `humVolume` (0.35 inicial), `fog`, `fogDistance` (96 bloques) y `cameraRoll` (0, desactivado). En `config/bedroom-common.toml`, el anfitrión controla `lampFailures=true` y `rapidFlicker=false`: por defecto hay apagones breves sin la secuencia rápida. El Smiler usa `smilerLethal=false`: 16 puntos de daño base y cordura a cero; `true` eleva el golpe a 1000 puntos base, conservando el sistema de limbo. La dificultad y las defensas de Minecraft afectan al daño. Bajar el volumen no altera las reglas de cordura; los apagones sí cambian la luz real del mundo.
 

@@ -154,5 +154,41 @@
         "attenuation_distance": 24
       }
     ]
+  },
+  "bacteria_drag": {
+    "subtitle": "subtitles.bedroom.bacteria_drag",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/bacteria_drag",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "bacteria_metal": {
+    "subtitle": "subtitles.bedroom.bacteria_metal",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/bacteria_metal",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "bacteria_alert": {
+    "subtitle": "subtitles.bedroom.bacteria_alert",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/bacteria_alert",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "bacteria_attack": {
+    "subtitle": "subtitles.bedroom.bacteria_attack",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/bacteria_attack",
+        "attenuation_distance": 24
+      }
+    ]
   }
 }

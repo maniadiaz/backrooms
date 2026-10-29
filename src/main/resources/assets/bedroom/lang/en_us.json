@@ -36,5 +36,10 @@
   "entity.bedroom.smiler": "Smiler",
   "subtitles.bedroom.smiler_hiss": "Smiler hissing",
   "subtitles.bedroom.smiler_laugh": "Distorted laughter",
-  "subtitles.bedroom.smiler_attack": "Smiler strike"
+  "subtitles.bedroom.smiler_attack": "Smiler strike",
+  "entity.bedroom.bacteria": "Bacteria",
+  "subtitles.bedroom.bacteria_drag": "Wet dragging",
+  "subtitles.bedroom.bacteria_metal": "Scraping wires",
+  "subtitles.bedroom.bacteria_alert": "Bacteria shriek",
+  "subtitles.bedroom.bacteria_attack": "Bacteria strike"
 }

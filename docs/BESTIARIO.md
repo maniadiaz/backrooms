@@ -1,6 +1,6 @@
 # Bedroom — bestiario y contratos de implementación
 
-Estado: especificación de las tres entidades aportadas por el usuario. El Sabueso y Smiler están implementados en el jar 0.6.1; Bacteria sigue pendiente. Véanse ETAPA-6A-SABUESO.md y ETAPA-6B-SMILER.md para los valores efectivos y las pruebas. Los valores indicados como propuestas deben calibrarse jugando; no son requisitos ya confirmados.
+Estado: las tres entidades tienen su primera implementación en el jar 0.6.2. Véanse ETAPA-6A-SABUESO.md, ETAPA-6B-SMILER.md y ETAPA-6C-BACTERIA.md para los valores efectivos, límites y pruebas. La revisión visual, auditiva y cooperativa dentro de una partida sigue pendiente. Los valores indicados como propuestas deben calibrarse jugando; no son requisitos ya confirmados.
 
 ## Reglas comunes
 
@@ -120,4 +120,4 @@ La atenuación debe conservar las pistas lejanas y permitir localizar a la criat
 
 Cada entrega debe compilar y cargar en cliente y servidor dedicado. Verificar aparición fuera de salas seguras, rutas por paneles y recodos, transiciones sin spam de audio, mirada con/sin obstáculo y ceguera, contacto/daño con limbo, desconexión del objetivo, límites de encuentros y limpieza al reiniciar. Probar además con dos a cuatro clientes: varias miradas, cambio de objetivo, espectadores sin influencia y localización del sonido al girar.
 
-El catálogo amplía el alcance previo de una sola especie a tres. No se añaden las tres al generador simultáneamente antes de validar y equilibrar cada una. La etapa 5 prepara el ambiente; las etapas 6A y 6B incorporan al Sabueso y Smiler; Bacteria queda para 6C.
+El catálogo amplía el alcance previo de una sola especie a tres. La etapa 5 prepara el ambiente; las etapas 6A, 6B y 6C incorporan sucesivamente al Sabueso, Smiler y Bacteria. Las tres comparten ahora un único presupuesto de aparición. Su equilibrio final requiere una sesión de juego real antes de considerar cerrada la revisión cooperativa.

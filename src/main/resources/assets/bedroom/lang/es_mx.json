@@ -36,5 +36,10 @@
   "entity.bedroom.smiler": "Smiler",
   "subtitles.bedroom.smiler_hiss": "Siseo del Smiler",
   "subtitles.bedroom.smiler_laugh": "Risa distorsionada",
-  "subtitles.bedroom.smiler_attack": "Estallido del Smiler"
+  "subtitles.bedroom.smiler_attack": "Estallido del Smiler",
+  "entity.bedroom.bacteria": "Bacteria",
+  "subtitles.bedroom.bacteria_drag": "Arrastre húmedo",
+  "subtitles.bedroom.bacteria_metal": "Cables rozando",
+  "subtitles.bedroom.bacteria_alert": "Grito de Bacteria",
+  "subtitles.bedroom.bacteria_attack": "Golpe de Bacteria"
 }

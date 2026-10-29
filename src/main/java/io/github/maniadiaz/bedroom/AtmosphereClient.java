@@ -55,7 +55,8 @@ public final class AtmosphereClient {
         if (wasScene) for (var sound : new net.minecraftforge.registries.RegistryObject[] {
                 BedroomSounds.WET_STEP, BedroomSounds.DISTANT_STEPS, BedroomSounds.DRIP, BedroomSounds.BUZZ_CLICK, BedroomSounds.WHISPER, BedroomSounds.FALSE_STEPS,
                 BedroomSounds.HOUND_STEPS, BedroomSounds.HOUND_BREATH, BedroomSounds.HOUND_LURE, BedroomSounds.HOUND_GROWL, BedroomSounds.HOUND_CHARGE, BedroomSounds.HOUND_ATTACK,
-                BedroomSounds.SMILER_LAUGH, BedroomSounds.SMILER_ATTACK }) {
+                BedroomSounds.SMILER_LAUGH, BedroomSounds.SMILER_ATTACK,
+                BedroomSounds.BACTERIA_DRAG, BedroomSounds.BACTERIA_METAL, BedroomSounds.BACTERIA_ALERT, BedroomSounds.BACTERIA_ATTACK }) {
             mc.getSoundManager().stop(sound.getId(), null);
         }
         wasScene = false; wasActive = false;
