@@ -6,6 +6,8 @@ Estado actual: versión 0.4.0 con cordura, siete suministros, cajas y archivador
 
 El alcance, las reglas propuestas y los criterios de aceptación están en [Etapa 1 — Alcance](docs/ETAPA-1-ALCANCE.md).
 
+El diseño de Smiler, Bacteria y Hound está en el [bestiario](docs/BESTIARIO.md). Sus entidades todavía no están implementadas; se incorporarán después de preparar el ambiente sonoro.
+
 Repositorio: [maniadiaz/bedroom-mod](https://github.com/maniadiaz/bedroom-mod).
 
 El flujo de commits y etiquetas por etapa está en [Control de versiones](docs/CONTROL-DE-VERSIONES.md).

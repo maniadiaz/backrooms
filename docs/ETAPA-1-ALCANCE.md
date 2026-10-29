@@ -122,18 +122,18 @@ Cajas de cartón selladas y archivadores metálicos; abrir una caja cambia su ap
 
 Los números de la imagen se interpretan como pesos dentro de cada grupo, no como porcentajes globales. Las tiradas son independientes: resulta una media de 1.65 objetos por contenedor.
 
-### 3.6 Sabueso
+### 3.6 Entidades
 
-Una sola entidad original en V1. Estados: inactivo, acecho, retroceso y caza.
+El catálogo actualizado incluye Hound, Smiler y Bacteria. Se implementarán por entregas, empezando con Hound; sus contratos y propuestas de balance están en el [bestiario](BESTIARIO.md). La siguiente lista describe la base del Hound.
 
 - En generación se reserva aproximadamente un punto potencial cada 30–40 habitaciones; no equivale a una aparición obligatoria.
 - Cordura inferior a 40 permite un encuentro adicional, sujeto a los mismos límites.
 - Nunca aparece dentro del campo visual, en salas seguras ni a menos de 24 bloques de un jugador.
-- Límite inicial: un Sabueso activo por grupo de jugadores cercanos, agrupados a 64 bloques; descanso mínimo de 5 minutos entre encuentros por grupo.
+- Límite inicial propuesto: un encuentro peligroso por grupo de jugadores cercanos, agrupados a 64 bloques, compartido entre las tres especies; descanso mínimo de cinco minutos entre encuentros por grupo.
 - Correr o romper bloques a menos de 15 bloques permite detectarte. La rotura se contempla para creativo, administración o futuras zonas donde esté permitida.
 - Cordura inferior a 30 permite iniciar acecho si ya existe un Sabueso cercano.
 - Mirarlo requiere línea de visión y apuntar hacia su cuerpo dentro de un cono estrecho; no basta con tenerlo en pantalla.
-- Al mirarlo se detiene y gruñe. Mantener la mirada durante 3 segundos continuos provoca caza, como en el diagrama de referencia.
+- Al mirarlo sin desplazarse se detiene, duda y gruñe. La descripción actual del usuario sustituye la regla anterior de cargar tras tres segundos de mirada sostenida.
 - Correr o darle la espalda durante el encuentro también provoca caza.
 - Ataque: 6–8 puntos de daño base antes de armadura y resistencias, con al menos 1.5 segundos entre golpes.
 - La caza termina si pierde detección y línea de visión durante 15 segundos. A continuación vuelve a acechar; no se teletransporta frente al jugador.
@@ -159,7 +159,7 @@ V1 incluye solo el Nivel 0 y retorno provisional al lobby. El sistema de progres
 
 ## 4. Fuera del alcance de V1
 
-- Otros niveles completos, múltiples especies, jefes y combate especializado.
+- Otros niveles completos, especies adicionales a las tres del bestiario, barras de jefe y combate especializado.
 - Campaña narrativa, misiones, voces y cinemáticas extensas.
 - Portales con vista en tiempo real y geometría no euclidiana general.
 - Destrucción o construcción libre en Nivel 0.
@@ -194,7 +194,7 @@ Las pruebas funcionales se ejecutarán tanto en un jugador como con dos clientes
 3. Etapa 3: bloques, biblioteca de habitaciones y generación conectada; laberinto blanco del limbo.
 4. Etapa 4: cordura, objetos, contenedores, persistencia y validación de linterna.
 5. Etapa 5: recursos finales, sonidos, iluminación y efectos de pantalla.
-6. Etapa 6: Sabueso completo y balance del encuentro.
+6. Etapa 6: Hound, Smiler y Bacteria en entregas separadas, con navegación, mirada, audio y balance de encuentros.
 7. Etapa 7: pared de falla, anomalía espacial controlada, transición de equipo y regreso provisional al lobby; victoria final preparada para campaña futura.
 8. Etapa 8: partidas completas, correcciones, rendimiento y empaquetado.
 
