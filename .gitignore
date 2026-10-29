@@ -1,0 +1,44 @@
+# Gradle / compilación
+.gradle/
+build/
+out/
+bin/
+*.class
+
+# Ejecuciones de Minecraft y datos locales
+run/
+runClient/
+runServer/
+runs/
+logs/
+crash-reports/
+saves/
+screenshots/
+eula.txt
+server.properties
+
+# IDE y configuración local
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+local.properties
+
+# Secretos
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Sistema operativo y temporales
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.bak
+*~
+
+# El wrapper Gradle y los recursos del mod sí deben versionarse.
