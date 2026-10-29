@@ -106,6 +106,7 @@ public final class MatchController {
     }
 
     static int leave(ServerPlayer p) {
+        AtmosphereSystem.clear(p);
         FlashlightSystem.clear(p);
         MatchData d = MatchData.get(p.server);
         MatchData.Member m = d.members.get(p.getUUID());
@@ -148,6 +149,7 @@ public final class MatchController {
     }
 
     private static void waitingLobby(ServerPlayer p) {
+        AtmosphereSystem.clear(p);
         FlashlightSystem.clear(p);
         p.closeContainer(); p.getInventory().clearContent(); p.removeAllEffects(); p.clearFire();
         p.setGameMode(GameType.ADVENTURE); p.setHealth(p.getMaxHealth());
@@ -330,6 +332,7 @@ public final class MatchController {
     }
 
     private static void apply(ServerPlayer p, MatchData d, MatchData.Member m, boolean restoreInventory) {
+        AtmosphereSystem.clear(p);
         FlashlightSystem.clear(p);
         p.removeAllEffects();
         p.clearFire();
@@ -520,6 +523,7 @@ public final class MatchController {
 
     @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer p) {
+            AtmosphereSystem.clear(p);
             FlashlightSystem.clear(p);
             MatchData d = MatchData.get(p.server);
             MatchData.Member m = d.members.get(p.getUUID());
@@ -537,6 +541,7 @@ public final class MatchController {
     }
 
     @SubscribeEvent public static void stopping(net.minecraftforge.event.server.ServerStoppingEvent event) {
+        AtmosphereSystem.clearAll();
         FlashlightSystem.clearAll();
         MatchData data = MatchData.get(event.getServer());
         data.stopping = true;

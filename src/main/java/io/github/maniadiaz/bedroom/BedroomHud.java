@@ -13,6 +13,8 @@ public final class BedroomHud {
     private static BedroomNetwork.Hud current;
     public static void update(BedroomNetwork.Hud message) { current = message; }
     static boolean canCycleCamera() { return current != null && (current.state().equals("SPECTATING") || current.state().equals("OBSERVING")); }
+    static boolean activeLevel() { return current != null && current.visible() && current.state().equals("ACTIVE"); }
+    static float sanity() { return current == null ? 100 : current.sanity(); }
 
     @SubscribeEvent public static void register(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("match_status", (gui, graphics, partialTick, width, height) -> {

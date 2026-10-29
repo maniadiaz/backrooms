@@ -78,9 +78,15 @@ names = {
 }
 ids = ['wallpaper', 'wall_panel', 'damp_carpet', 'wet_carpet', 'ceiling_tile', 'fluorescent', 'broken_fluorescent', 'transition_wall']
 for language, values in names.items():
-    labels = {f'block.bedroom.{key}': value for key, value in zip(ids, values)}
+    language_path = ROOT / f'lang/{language}.json'
+    labels = json.loads(language_path.read_text(encoding='utf-8')) if language_path.exists() else {}
+    labels.update({f'block.bedroom.{key}': value for key, value in zip(ids, values)})
     labels['item.bedroom.nutrition_bar'] = 'Barra nutritiva' if language == 'es_mx' else 'Nutrition bar'
     write_json(ROOT / f'lang/{language}.json', labels)
+
+# Preserve the fault properties when rebuilding textures after the audio/lighting stage.
+write_json(ROOT / 'blockstates/fluorescent.json', {'variants': {
+    f'fault={i}': {'model': 'bedroom:block/' + ('fluorescent' if i in (0, 2, 4) else 'broken_fluorescent')} for i in range(5)}})
 
 # Transparent pixel icon for the wrapped nutrition bar.
 data = bytearray()

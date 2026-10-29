@@ -7,6 +7,8 @@ public final class BedroomConfig {
     public static final ForgeConfigSpec.BooleanValue DEVELOPMENT_COMMANDS;
     public static final ForgeConfigSpec.BooleanValue AUTO_LOBBY;
     public static final ForgeConfigSpec.BooleanValue COMPANY_HELPS;
+    public static final ForgeConfigSpec.BooleanValue LAMP_FAILURES;
+    public static final ForgeConfigSpec.BooleanValue RAPID_FLICKER;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -15,6 +17,8 @@ public final class BedroomConfig {
         AUTO_LOBBY = builder.comment("Send arriving players to the lobby; preserve existing match state on reconnect.")
                 .define("autoLobby", true);
         COMPANY_HELPS = builder.comment("Halve monotony sanity drain with an active teammate within 10 blocks.").define("companyHelps", true);
+        LAMP_FAILURES = builder.comment("Allow temporary fluorescent outages during active levels.").define("lampFailures", true);
+        RAPID_FLICKER = builder.comment("Add brief flicker before/after outages. False uses one sustained outage instead.").define("rapidFlicker", false);
         SPEC = builder.build();
     }
 

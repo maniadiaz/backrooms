@@ -1,6 +1,6 @@
 # Bedroom — bestiario y contratos de implementación
 
-Estado: especificación de las tres entidades aportadas por el usuario. No están implementadas en el jar 0.4.0. Los valores indicados como propuestas deben calibrarse jugando; no son requisitos ya confirmados.
+Estado: especificación de las tres entidades aportadas por el usuario. No están implementadas en el jar 0.5.0. Los valores indicados como propuestas deben calibrarse jugando; no son requisitos ya confirmados.
 
 ## Reglas comunes
 
@@ -120,4 +120,4 @@ La atenuación debe conservar las pistas lejanas y permitir localizar a la criat
 
 Cada entrega debe compilar y cargar en cliente y servidor dedicado. Verificar aparición fuera de salas seguras, rutas por paneles y recodos, transiciones sin spam de audio, mirada con/sin obstáculo y ceguera, contacto/daño con limbo, desconexión del objetivo, límites de encuentros y limpieza al reiniciar. Probar además con dos a cuatro clientes: varias miradas, cambio de objetivo, espectadores sin influencia y localización del sonido al girar.
 
-El catálogo amplía el alcance previo de una sola especie a tres. No se añaden las tres al generador simultáneamente antes de validar y equilibrar cada una. El jar 0.4.0 no cambia por registrar esta especificación.
+El catálogo amplía el alcance previo de una sola especie a tres. No se añaden las tres al generador simultáneamente antes de validar y equilibrar cada una. La etapa 5 prepara el ambiente; la aparición de estas criaturas sigue pendiente de las entregas de etapa 6.

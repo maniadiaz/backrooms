@@ -38,10 +38,10 @@ public final class Bedroom {
     public static final RegistryObject<net.minecraft.world.level.block.entity.BlockEntityType<SupplyContainer.Contents>> SUPPLY_ENTITY = BLOCK_ENTITIES.register("supply_container",
             () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(SupplyContainer.Contents::new, CARDBOARD_BOX.get(), FILING_CABINET.get()).build(null));
     public static final RegistryObject<Block> PANEL = block("wall_panel", () -> new PanelBlock(BlockBehaviour.Properties.of().strength(2).sound(SoundType.WOOD).noOcclusion()));
-    public static final RegistryObject<Block> CARPET = block("damp_carpet", () -> new Block(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOL)));
-    public static final RegistryObject<Block> WET_CARPET = block("wet_carpet", () -> new Block(BlockBehaviour.Properties.of().strength(1).sound(SoundType.WOOL)));
+    public static final RegistryObject<Block> CARPET = block("damp_carpet", () -> new Block(BlockBehaviour.Properties.of().strength(1).sound(BedroomSounds.CARPET)));
+    public static final RegistryObject<Block> WET_CARPET = block("wet_carpet", () -> new Block(BlockBehaviour.Properties.of().strength(1).sound(BedroomSounds.CARPET)));
     public static final RegistryObject<Block> CEILING = block("ceiling_tile", () -> new Block(BlockBehaviour.Properties.of().strength(1).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> LIGHT = block("fluorescent", () -> new Block(BlockBehaviour.Properties.of().strength(1).lightLevel(state -> 13).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> LIGHT = block("fluorescent", FluorescentBlock::new);
     public static final RegistryObject<Block> DEAD_LIGHT = block("broken_fluorescent", () -> new Block(BlockBehaviour.Properties.of().strength(1).sound(SoundType.GLASS)));
     public static final RegistryObject<Block> EXIT = block("transition_wall", () -> new Block(BlockBehaviour.Properties.of().strength(-1, 3600000).sound(SoundType.WOOD)));
     public static final DeferredRegister<com.mojang.serialization.Codec<? extends net.minecraft.world.level.chunk.ChunkGenerator>> GENERATORS =
@@ -61,7 +61,9 @@ public final class Bedroom {
         ITEMS.register(bus);
         GENERATORS.register(bus);
         BLOCK_ENTITIES.register(bus);
+        BedroomSounds.SOUNDS.register(bus);
         context.registerConfig(ModConfig.Type.COMMON, BedroomConfig.SPEC);
+        context.registerConfig(ModConfig.Type.CLIENT, AtmosphereClientConfig.SPEC);
         BedroomNetwork.register();
         MinecraftForge.EVENT_BUS.addListener(DevelopmentCommands::register);
     }

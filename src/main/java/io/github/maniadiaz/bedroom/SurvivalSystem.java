@@ -11,7 +11,8 @@ final class SurvivalSystem {
         return m != null && m.state == MatchData.State.ACTIVE && MatchData.get(p.server).phase == MatchData.Phase.ACTIVE;
     }
     static void tick(ServerPlayer p, MatchData.Member m, MatchData d) {
-        if (m.state != MatchData.State.ACTIVE) { FlashlightSystem.clear(p); return; }
+        if (m.state != MatchData.State.ACTIVE) { FlashlightSystem.clear(p); AtmosphereSystem.clear(p); return; }
+        AtmosphereSystem.tick(p, m);
         boolean dark = p.level().getBrightness(LightLayer.BLOCK, p.blockPosition().above()) <= 7;
         boolean threat = !p.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, p.getBoundingBox().inflate(15), e -> e.distanceToSqr(p) < 225).isEmpty();
         boolean company = d.members.values().stream().filter(other -> other.state == MatchData.State.ACTIVE && !other.id.equals(m.id))
@@ -31,8 +32,9 @@ final class SurvivalSystem {
         } else if (s.sanity >= 25) removeOwnEffects(p, s);
         if (s.sanity < 50 && --s.hallucinationTicks <= 0) {
             s.hallucinationTicks = 400 + p.getRandom().nextInt(401);
-            p.playNotifySound(s.sanity < 25 ? net.minecraft.sounds.SoundEvents.WOOL_STEP : net.minecraft.sounds.SoundEvents.AMBIENT_CAVE.value(),
-                    net.minecraft.sounds.SoundSource.AMBIENT, .25F, .8F);
+            var origin = AtmosphereSystem.nearbyFloor(p, 3, 7);
+            AtmosphereSystem.personal(p, s.sanity < 25 ? BedroomSounds.FALSE_STEPS.get() : BedroomSounds.WHISPER.get(),
+                    origin == null ? p.position() : origin, .45F, .85F);
             if (s.sanity < 25 && !p.hasEffect(MobEffects.BLINDNESS)) {
                 p.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20, 0, false, false, true)); s.ownsBlind = true;
             }

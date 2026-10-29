@@ -1,0 +1,26 @@
+package io.github.maniadiaz.bedroom;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
+final class BedroomSounds {
+    static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Bedroom.MOD_ID);
+    static final RegistryObject<SoundEvent> HUM = sound("fluorescent_hum");
+    static final RegistryObject<SoundEvent> WET_STEP = sound("wet_step");
+    static final RegistryObject<SoundEvent> DISTANT_STEPS = sound("distant_steps");
+    static final RegistryObject<SoundEvent> DRIP = sound("ceiling_drip");
+    static final RegistryObject<SoundEvent> BUZZ_CLICK = sound("buzz_click");
+    static final RegistryObject<SoundEvent> WHISPER = sound("sanity_whisper");
+    static final RegistryObject<SoundEvent> FALSE_STEPS = sound("sanity_steps");
+    private static RegistryObject<SoundEvent> sound(String id) {
+        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID, id);
+        return SOUNDS.register(id, () -> SoundEvent.createVariableRangeEvent(location));
+    }
+    static final net.minecraft.world.level.block.SoundType CARPET = new net.minecraftforge.common.util.ForgeSoundType(1.2F, .9F,
+            () -> net.minecraft.sounds.SoundEvents.WOOL_BREAK, WET_STEP, () -> net.minecraft.sounds.SoundEvents.WOOL_PLACE,
+            () -> net.minecraft.sounds.SoundEvents.WOOL_HIT, WET_STEP);
+    private BedroomSounds() {}
+}

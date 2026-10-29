@@ -1,6 +1,18 @@
 {
   "variants": {
-    "": {
+    "fault=0": {
+      "model": "bedroom:block/fluorescent"
+    },
+    "fault=1": {
+      "model": "bedroom:block/broken_fluorescent"
+    },
+    "fault=2": {
+      "model": "bedroom:block/fluorescent"
+    },
+    "fault=3": {
+      "model": "bedroom:block/broken_fluorescent"
+    },
+    "fault=4": {
       "model": "bedroom:block/fluorescent"
     }
   }

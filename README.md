@@ -2,11 +2,11 @@
 
 Proyecto de mod de terror y exploración para Minecraft Java 1.20.1 con Forge 47.4.28.
 
-Estado actual: versión 0.4.0 con cordura, siete suministros, cajas y archivadores con loot, linterna y brújula. Incluye votación de reinicio y cámaras de espectador. Véase [estado y pruebas de la etapa 4](docs/ETAPA-4-SUPERVIVENCIA.md).
+Estado actual: versión 0.5.0 con ambiente sonoro original, pisadas húmedas, goteos, fallos de fluorescentes y niebla tenue. Conserva cordura, suministros, loot, votaciones y cámaras. Véase [estado y pruebas de la etapa 5](docs/ETAPA-5-ATMOSFERA.md).
 
 El alcance, las reglas propuestas y los criterios de aceptación están en [Etapa 1 — Alcance](docs/ETAPA-1-ALCANCE.md).
 
-El diseño de Smiler, Bacteria y Hound está en el [bestiario](docs/BESTIARIO.md). Sus entidades todavía no están implementadas; se incorporarán después de preparar el ambiente sonoro.
+El diseño de Smiler, Bacteria y Hound está en el [bestiario](docs/BESTIARIO.md). Sus entidades todavía no están implementadas; la siguiente entrega será el Hound (etapa 6A).
 
 Repositorio: [maniadiaz/bedroom-mod](https://github.com/maniadiaz/bedroom-mod).
 
@@ -30,7 +30,7 @@ En este equipo se descargó un JDK 17 en `.tools/java` (ignorado por Git). El sc
 .\scripts\gradle.ps1 runGameTestServer
 ```
 
-El jar se genera en `build/libs/bedroom-0.4.0.jar`. Instalar la misma versión en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Los mundos de 0.3.0 conservan su generador; para mundos anteriores con el generador plano, crear un mundo nuevo.
+El jar se genera en `build/libs/bedroom-0.5.0.jar`. Instalar la misma versión en cliente y servidor con Minecraft 1.20.1 y Forge 47.4.28. Los mundos de 0.3.0 conservan su generador; para mundos anteriores con el generador plano, crear un mundo nuevo.
 
 ## Probar una partida
 
@@ -49,7 +49,7 @@ El panel izquierdo muestra `BEDROOM: ACTIVE` encima de las muertes, además de l
 
 ## Jugar mediante Essential
 
-El dueño comparte el mundo usando Essential; Bedroom utiliza el servidor integrado de Minecraft y sus paquetes Forge, sin una dependencia directa de Essential. Todos deben instalar las mismas versiones de mods, incluido `bedroom-0.4.0.jar`, y una versión de Essential para Forge 1.20.1. Véase la [guía oficial de hosting de Essential](https://essential.gg/wiki/start-hosting).
+El dueño comparte el mundo usando Essential; Bedroom utiliza el servidor integrado de Minecraft y sus paquetes Forge, sin una dependencia directa de Essential. Todos deben instalar las mismas versiones de mods, incluido `bedroom-0.5.0.jar`, y una versión de Essential para Forge 1.20.1. Véase la [guía oficial de hosting de Essential](https://essential.gg/wiki/start-hosting).
 
 Los invitados que llegan tarde permanecen en el lobby hasta el siguiente inicio. Para incorporarlos antes, el grupo vota reiniciar y después vuelve a pulsar el botón de inicio. El límite sigue siendo cuatro participantes. La compatibilidad práctica con Essential está pendiente de una sesión real con amigos; las pruebas automatizadas se ejecutaron con Forge.
 
@@ -71,6 +71,10 @@ Esta sala antigua permanece disponible para desarrollo fuera de una partida. La 
 El Nivel 0 usa bloques y texturas originales, con modelos simples. Lobby, limbo y descanso conservan salas provisionales. La colocación de objetos de misiones sigue pendiente; se bloquean las colocaciones y las interacciones no autorizadas. Los contenedores propios ya pueden abrirse durante una partida activa. El diseño completo está en [Partidas y lobby](docs/PARTIDAS-Y-LOBBY.md).
 
 `python scripts/generate_textures.py` reconstruye las texturas y modelos propios de forma reproducible, sin dependencias externas de Python.
+
+Los sonidos OGG están incluidos en el jar; no hay que instalar herramientas de audio para jugar. Para regenerarlos en desarrollo: `python -m pip install -r scripts/audio-requirements.txt` y `python scripts/generate_audio.py`. El script también acepta las dependencias locales de `.tools/audio-python`.
+
+En `config/bedroom-client.toml` se ajustan `humVolume` (0.35 inicial), `fog`, `fogDistance` (96 bloques) y `cameraRoll` (0, desactivado). En `config/bedroom-common.toml`, el anfitrión controla `lampFailures=true` y `rapidFlicker=false`: por defecto hay apagones breves sin la secuencia rápida. Bajar el volumen no altera las reglas de cordura; los apagones sí cambian la luz real del mundo.
 
 Las pruebas de integración usan `run-gametest/`, separado del cliente. Cada ejecución borra únicamente el mundo de prueba generado en `run-gametest/world` para no reutilizar chunks de un generador anterior; no guardar partidas personales en esa carpeta.
 

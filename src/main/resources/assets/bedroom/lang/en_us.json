@@ -18,5 +18,12 @@
   "block.bedroom.filing_cabinet": "Filing cabinet",
   "key.categories.bedroom": "Bedroom",
   "key.bedroom.next_camera": "Next spectator camera",
-  "key.bedroom.previous_camera": "Previous spectator camera"
+  "key.bedroom.previous_camera": "Previous spectator camera",
+  "subtitles.bedroom.fluorescent_hum": "Fluorescent hum",
+  "subtitles.bedroom.wet_step": "Wet footsteps",
+  "subtitles.bedroom.distant_steps": "Distant footsteps",
+  "subtitles.bedroom.ceiling_drip": "Ceiling drip",
+  "subtitles.bedroom.buzz_click": "Electrical fault",
+  "subtitles.bedroom.sanity_whisper": "Whisper",
+  "subtitles.bedroom.sanity_steps": "Unsettling footsteps"
 }

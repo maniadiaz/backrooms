@@ -18,5 +18,12 @@
   "block.bedroom.filing_cabinet": "Archivador metálico",
   "key.categories.bedroom": "Bedroom",
   "key.bedroom.next_camera": "Siguiente cámara",
-  "key.bedroom.previous_camera": "Cámara anterior"
+  "key.bedroom.previous_camera": "Cámara anterior",
+  "subtitles.bedroom.fluorescent_hum": "Zumbido fluorescente",
+  "subtitles.bedroom.wet_step": "Pisadas húmedas",
+  "subtitles.bedroom.distant_steps": "Pasos lejanos",
+  "subtitles.bedroom.ceiling_drip": "Goteo del techo",
+  "subtitles.bedroom.buzz_click": "Fallo eléctrico",
+  "subtitles.bedroom.sanity_whisper": "Susurro",
+  "subtitles.bedroom.sanity_steps": "Pasos inquietantes"
 }

@@ -40,6 +40,7 @@ public final class MatchData extends SavedData {
         CompoundTag inventory = new CompoundTag();
         CompoundTag location = new CompoundTag();
         SurvivalState survival = new SurvivalState();
+        AmbientSchedule ambient = new AmbientSchedule();
         Member(UUID id) { this.id = id; }
     }
 
@@ -67,7 +68,7 @@ public final class MatchData extends SavedData {
         round++;
         level = 0;
         phase = Phase.ACTIVE;
-        members.values().forEach(m -> { m.state = State.ACTIVE; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); });
+        members.values().forEach(m -> { m.state = State.ACTIVE; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); m.ambient = new AmbientSchedule(); });
         setDirty();
         return true;
     }
@@ -101,7 +102,7 @@ public final class MatchData extends SavedData {
             restTicks = REST_TICKS;
             level++;
             vote.clear();
-            members.values().forEach(p -> { p.state = State.REST; p.deaths = 0; p.limboTicks = 0; p.survival.sanity = 100; p.survival.quietTicks = 0; });
+            members.values().forEach(p -> { p.state = State.REST; p.deaths = 0; p.limboTicks = 0; p.survival.sanity = 100; p.survival.quietTicks = 0; p.ambient = new AmbientSchedule(); });
             setDirty();
         }
         return true;
@@ -122,7 +123,7 @@ public final class MatchData extends SavedData {
         phase = Phase.LOBBY;
         level = 0;
         restTicks = 0;
-        members.values().forEach(m -> { m.state = State.LOBBY; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); });
+        members.values().forEach(m -> { m.state = State.LOBBY; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); m.ambient = new AmbientSchedule(); });
         setDirty();
     }
 
