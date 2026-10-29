@@ -127,5 +127,32 @@
         "attenuation_distance": 24
       }
     ]
+  },
+  "smiler_hiss": {
+    "subtitle": "subtitles.bedroom.smiler_hiss",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/smiler_hiss",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "smiler_laugh": {
+    "subtitle": "subtitles.bedroom.smiler_laugh",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/smiler_laugh",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "smiler_attack": {
+    "subtitle": "subtitles.bedroom.smiler_attack",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/smiler_attack",
+        "attenuation_distance": 24
+      }
+    ]
   }
 }

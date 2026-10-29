@@ -63,6 +63,8 @@ public final class Bedroom {
         BLOCK_ENTITIES.register(bus);
         HoundEntity.TYPES.register(bus);
         bus.addListener(HoundEntity::attributes);
+        SmilerEntity.TYPES.register(bus);
+        bus.addListener(SmilerEntity::attributes);
         BedroomSounds.SOUNDS.register(bus);
         context.registerConfig(ModConfig.Type.COMMON, BedroomConfig.SPEC);
         context.registerConfig(ModConfig.Type.CLIENT, AtmosphereClientConfig.SPEC);

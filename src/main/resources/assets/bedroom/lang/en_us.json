@@ -32,5 +32,9 @@
   "subtitles.bedroom.hound_lure": "Strange lament",
   "subtitles.bedroom.hound_growl": "Hound growl",
   "subtitles.bedroom.hound_charge": "Hound charges",
-  "subtitles.bedroom.hound_attack": "Piercing howl"
+  "subtitles.bedroom.hound_attack": "Piercing howl",
+  "entity.bedroom.smiler": "Smiler",
+  "subtitles.bedroom.smiler_hiss": "Smiler hissing",
+  "subtitles.bedroom.smiler_laugh": "Distorted laughter",
+  "subtitles.bedroom.smiler_attack": "Smiler strike"
 }

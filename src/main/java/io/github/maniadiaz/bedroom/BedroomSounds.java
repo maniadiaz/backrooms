@@ -21,6 +21,9 @@ final class BedroomSounds {
     static final RegistryObject<SoundEvent> HOUND_GROWL = sound("hound_growl");
     static final RegistryObject<SoundEvent> HOUND_CHARGE = sound("hound_charge");
     static final RegistryObject<SoundEvent> HOUND_ATTACK = sound("hound_attack");
+    static final RegistryObject<SoundEvent> SMILER_HISS = sound("smiler_hiss");
+    static final RegistryObject<SoundEvent> SMILER_LAUGH = sound("smiler_laugh");
+    static final RegistryObject<SoundEvent> SMILER_ATTACK = sound("smiler_attack");
     private static RegistryObject<SoundEvent> sound(String id) {
         ResourceLocation location = ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID, id);
         return SOUNDS.register(id, () -> SoundEvent.createVariableRangeEvent(location));

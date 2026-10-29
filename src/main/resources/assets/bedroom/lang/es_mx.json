@@ -32,5 +32,9 @@
   "subtitles.bedroom.hound_lure": "Lamento extraño",
   "subtitles.bedroom.hound_growl": "Gruñido del sabueso",
   "subtitles.bedroom.hound_charge": "El sabueso carga",
-  "subtitles.bedroom.hound_attack": "Aullido desgarrador"
+  "subtitles.bedroom.hound_attack": "Aullido desgarrador",
+  "entity.bedroom.smiler": "Smiler",
+  "subtitles.bedroom.smiler_hiss": "Siseo del Smiler",
+  "subtitles.bedroom.smiler_laugh": "Risa distorsionada",
+  "subtitles.bedroom.smiler_attack": "Estallido del Smiler"
 }

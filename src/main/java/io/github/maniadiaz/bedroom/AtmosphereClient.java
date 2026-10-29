@@ -51,9 +51,11 @@ public final class AtmosphereClient {
     static void reset() {
         Minecraft mc = Minecraft.getInstance();
         stopHum();
+        SmilerClient.reset();
         if (wasScene) for (var sound : new net.minecraftforge.registries.RegistryObject[] {
                 BedroomSounds.WET_STEP, BedroomSounds.DISTANT_STEPS, BedroomSounds.DRIP, BedroomSounds.BUZZ_CLICK, BedroomSounds.WHISPER, BedroomSounds.FALSE_STEPS,
-                BedroomSounds.HOUND_STEPS, BedroomSounds.HOUND_BREATH, BedroomSounds.HOUND_LURE, BedroomSounds.HOUND_GROWL, BedroomSounds.HOUND_CHARGE, BedroomSounds.HOUND_ATTACK }) {
+                BedroomSounds.HOUND_STEPS, BedroomSounds.HOUND_BREATH, BedroomSounds.HOUND_LURE, BedroomSounds.HOUND_GROWL, BedroomSounds.HOUND_CHARGE, BedroomSounds.HOUND_ATTACK,
+                BedroomSounds.SMILER_LAUGH, BedroomSounds.SMILER_ATTACK }) {
             mc.getSoundManager().stop(sound.getId(), null);
         }
         wasScene = false; wasActive = false;
