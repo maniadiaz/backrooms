@@ -1,5 +1,7 @@
 # Etapa 7 — Tres fusibles y salida por No-Clip
 
+> Actualización 1.1.1: este documento describe la implementación histórica con carrera. La salida actual requiere agacharse (Shift) y avanzar durante dos segundos, sin mínimo de hambre. Ver COMO-JUGAR.md.
+
 Entrega 0.7.0 para Minecraft Java 1.20.1 / Forge 47.4.28. El usuario confirmó la misión cooperativa de tres fusibles y tres paneles.
 
 ## Objetivo compartido

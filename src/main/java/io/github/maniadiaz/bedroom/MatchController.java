@@ -445,7 +445,7 @@ public final class MatchController {
         if (Campaign.dungeon(p.level().dimension()) && p.distanceToSqr(event.getPos().getCenter()) <= 25) {
             if (m.state == MatchData.State.ACTIVE && Campaign.exit(p.level().getBlockState(event.getPos()))) {
                 handled = true;
-                tell(p,d.mission.ready()?"Mantén avance y carrera contra esta pared durante 2 segundos.":"La pared no responde. Repara los tres paneles primero.");
+                tell(p,d.mission.ready()?"Mantén agacharse (Shift) y camina hacia delante contra esta pared durante 2 segundos.":"La pared no responde. Repara los tres paneles primero.");
             } else
             if(m.state==MatchData.State.VICTORY&&event.getPos().equals(MatchRooms.button(Celebration.ROOM))){
                 handled=true;if(p.getUUID().equals(d.host))restart(p.server);

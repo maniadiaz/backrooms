@@ -80,7 +80,7 @@ final class MissionSystem {
                     for(var m:d.members.values()) {
                         var other=m.id.equals(p.getUUID())?p:p.server.getPlayerList().getPlayer(m.id);
                         if(other!=null) { BedroomNetwork.sync(other); MatchAnnouncements.show(other,d.mission.ready()?"SALIDA HABILITADA":"ENERGÍA RESTAURADA",
-                                d.mission.ready()?"Corre contra la pared anómala durante 2 segundos.":"Paneles reparados: "+d.mission.count()+" / 3",net.minecraft.ChatFormatting.GOLD); }
+                                d.mission.ready()?"Mantén Shift y avanza contra la pared durante 2 segundos.":"Paneles reparados: "+d.mission.count()+" / 3",net.minecraft.ChatFormatting.GOLD); }
                     }
                 }
                 return true;

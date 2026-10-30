@@ -12,7 +12,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 /** HUD state travels to every remote client, including friends on an integrated server. */
 public final class BedroomNetwork {
-    private static final String PROTOCOL = "4";
+    private static final String PROTOCOL = "5";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID, "match"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals);
 

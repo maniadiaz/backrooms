@@ -1,4 +1,4 @@
-# Entrega de la campaña inicial — 1.1.0
+# Entrega de la campaña inicial — 1.1.1
 
 ## Funcionalidad entregada
 
@@ -19,9 +19,11 @@ Las decisiones nuevas para cerrar el alcance fueron una campaña inicial de dos 
 
 Los mapas ahora se limitan por dificultad a 100/150/250/350/500 bloques por lado. Fácil es el valor inicial de 150 × 150. Hay orientación a la sala de control, linterna 3D con cono visible, niebla cercana, audio reforzado y mayor presión de cordura. Ver [actualización 1.1.0](ACTUALIZACION-1.1.0.md).
 
+En 1.1.1 se cambia la salida a agacharse (Shift) y avanzar cuarenta ticks continuos. El servidor exige estar agachado, ya no exige hambre mínima y reinicia la carga si se suelta una de las acciones. El protocolo es 5; todos los clientes y el servidor deben actualizar.
+
 ## Evidencia automática
 
-- `build runGameTestServer`: **68 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.1.0; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
+- `build runGameTestServer`: **68 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.1.1; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
 - Campaña de extremo a extremo con cuatro participantes simulados: recoge componentes mediante interacciones reales, valida las salidas generadas, cuarenta ticks de carga y veinte de transición, descansa, revive y cambia de dimensión, completa el Nivel 1 y llega al festejo.
 - Conexión de pasillos y aproximación a cada objetivo/compuerta; modelos y OGG mono empaquetados.
 - Ataques, cordura, consumibles, inventarios protegidos, limbo, votos, espera, cámaras y recuperación de componentes.

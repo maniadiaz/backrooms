@@ -55,7 +55,7 @@ public final class MissionGameTests {
         for(int i=0;i<20;i++)charge.advance(a,true);charge.advance(b,true);
         h.assertTrue(charge.ticks==1,"Changing wall resets charge");charge.advance(b,false);h.assertTrue(charge.ticks==0,"Releasing intent resets charge");h.succeed();
     }
-    @GameTest(template="empty") public static void actualContactRequiresMissionActivePlayerAndEnoughFood(GameTestHelper h){
+    @GameTest(template="empty") public static void actualContactRequiresSneakingAndWorksWithoutFood(GameTestHelper h){
         var level=h.getLevel().getServer().getLevel(DevelopmentCommands.LEVEL_0);var p=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"NoClip"));
         try{
             MatchController.join(p);var d=MatchData.get(p.server);d.start(p.getUUID(),Set.of(p.getUUID()));
@@ -65,10 +65,14 @@ public final class MissionGameTests {
             h.assertTrue(NoClipSystem.contact(p)!=null,"Body contact plus forward ray identifies glitch wall");
             var charge=new NoClipSystem.Charge();for(int i=0;i<50;i++)NoClipSystem.advance(p,charge,true);
             h.assertTrue(charge.ticks==0,"Locked objectives prevent charging");
-            d.mission.installed=7;for(int i=0;i<39;i++)h.assertTrue(!NoClipSystem.advance(p,charge,true),"Charge requires two seconds");
+            d.mission.installed=7;for(int i=0;i<50;i++)NoClipSystem.advance(p,charge,true);
+            h.assertTrue(charge.ticks==0,"Forward intent alone without sneaking cannot charge");
+            p.setShiftKeyDown(true);p.getFoodData().setFoodLevel(0);
+            for(int i=0;i<39;i++)h.assertTrue(!NoClipSystem.advance(p,charge,true),"Sneak and forward require two seconds even without food");
             h.assertTrue(NoClipSystem.advance(p,charge,true),"Unlocked wall accepts complete physical charge");
             p.setPos(24002.5,65,24004.5);NoClipSystem.advance(p,charge,true);h.assertTrue(charge.ticks==0,"Looking from a distance cannot charge");
-            p.setPos(24003.69,65,24004.5);p.getFoodData().setFoodLevel(6);NoClipSystem.advance(p,charge,true);h.assertTrue(charge.ticks==0,"Insufficient hunger cannot count as running");
+            p.setPos(24003.69,65,24004.5);NoClipSystem.advance(p,charge,true);p.setShiftKeyDown(false);NoClipSystem.advance(p,charge,true);h.assertTrue(charge.ticks==0,"Releasing sneak resets progress immediately");
+            p.setShiftKeyDown(true);NoClipSystem.advance(p,charge,true);NoClipSystem.advance(p,charge,false);h.assertTrue(charge.ticks==0,"Releasing forward resets progress immediately");
             p.getFoodData().setFoodLevel(20);d.members.get(p.getUUID()).state=MatchData.State.SPECTATING;NoClipSystem.advance(p,charge,true);h.assertTrue(charge.ticks==0,"Spectators cannot trigger exit");h.succeed();
         }finally{if(MatchController.member(p))MatchController.leave(p);p.discard();}
     }

@@ -12,7 +12,7 @@ En el Nivel 0 busquen tres estuches numerados de fusibles. Clic derecho para rec
 
 La indicación `CONTROL` del HUD muestra dirección respecto a tu mirada y distancia hasta la sala iluminada de paneles. `/backrooms objective` también da las coordenadas del siguiente panel. La orientación señala un destino; deben encontrar los recodos que llevan a él.
 
-Reparar los tres habilita las paredes/compuertas anómalas oscuras. Mantener avance y carrera contra una durante dos segundos, con comida suficiente para correr. La pantalla se pone negra un segundo y pasa todo el equipo. El primer nivel conduce a un descanso de noventa segundos; el anfitrión puede pulsar el botón para salir antes. El segundo conduce al atrio de victoria y fuegos artificiales, y después al lobby.
+Reparar los tres habilita las paredes/compuertas anómalas oscuras. Mantener agacharse (Shift por defecto) y caminar hacia delante contra una durante dos segundos continuos. Si cambiaste la tecla de agacharse, usa la que tengas asignada. No hace falta correr ni tener comida para activar la salida; soltar avance o dejar de agacharse reinicia la carga. La pantalla se pone negra un segundo y pasa todo el equipo. El primer nivel conduce a un descanso de noventa segundos; el anfitrión puede pulsar el botón para salir antes. El segundo conduce al atrio de victoria y fuegos artificiales, y después al lobby.
 
 No se puede romper ni construir libremente. Los objetos de misión solo se insertan en sus paneles. Un componente perdido por eliminación o desconexión puede recuperarse de su estuche; no se duplica si alguien todavía lo lleva o puede recuperarlo del limbo. Las copias sustituidas dejan de funcionar.
 
@@ -46,6 +46,6 @@ Los encuentros se intentan por tiempo: el primero desde 90/60/45/35/25 segundos 
 - `/backrooms lobby`, `/backrooms status`, `/backrooms leave`.
 - `/backrooms restart`: propone votación durante la partida. `/backrooms vote restart` o `/backrooms vote continue`; gana una mayoría estricta y hay treinta segundos.
 - `/backrooms spectate`, `next`, `previous`, `off`. Cámaras con `]` y `[`; se pueden reasignar.
-- Comer/beber/curarse: mantener usar objeto. Insertar componente: clic derecho en su panel. Correr: tecla de carrera asignada más avance.
+- Comer/beber/curarse: mantener usar objeto. Insertar componente: clic derecho en su panel. Pasar de nivel: agacharse (Shift) más avance contra la pared habilitada durante dos segundos.
 
 Las pruebas administrativas requieren operador y `developmentCommands=true`; no son atajos habilitados en la configuración de distribución. El volumen, niebla y movimiento opcional de cámara se ajustan en `config/bedroom-client.toml`. Los apagones y la cordura son reglas del servidor.

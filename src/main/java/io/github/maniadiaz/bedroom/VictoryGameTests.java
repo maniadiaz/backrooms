@@ -30,7 +30,7 @@ public final class VictoryGameTests {
             for(int level=0;level<2;level++){
                 solve(host,d);h.assertTrue(d.mission.ready(),"Actual component interactions must solve each level");
                 var exit=MatchArena.exit(d);host.serverLevel().getChunkAt(exit);host.setPos(exit.getX()-.31,65,exit.getZ()+.5);host.setYRot(-90);host.setXRot(0);host.getFoodData().setFoodLevel(20);
-                h.assertTrue(NoClipSystem.contact(host)!=null,"Each generated exit must accept physical contact");NoClipSystem.input(host,true);
+                host.setShiftKeyDown(true);h.assertTrue(NoClipSystem.contact(host)!=null,"Each generated exit must accept physical contact");NoClipSystem.input(host,true);
                 for(int tick=0;tick<39;tick++)NoClipSystem.step(server,team);
                 h.assertTrue(d.exitDelay==0,"Charge from the previous dimension must never carry over");
                 NoClipSystem.step(server,team);h.assertTrue(d.exitDelay==20,"Fortieth tick must schedule one-second transition");

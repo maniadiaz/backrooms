@@ -41,7 +41,7 @@ public final class NoClipSystem {
     }
     static boolean advance(ServerPlayer p,Charge charge,boolean intent) {
         var d=MatchData.get(p.server);
-        return charge.advance(contact(p),intent&&SurvivalSystem.active(p)&&p.getFoodData().getFoodLevel()>6&&Campaign.dungeon(p.level().dimension())&&d.mission.ready());
+        return charge.advance(contact(p),intent&&p.isShiftKeyDown()&&SurvivalSystem.active(p)&&Campaign.dungeon(p.level().dimension())&&d.mission.ready());
     }
     @SubscribeEvent public static void tick(TickEvent.ServerTickEvent event) {
         if(event.phase!=TickEvent.Phase.END)return;

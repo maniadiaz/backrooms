@@ -1,10 +1,12 @@
-# Backrooms 1.1.0
+# Backrooms 1.1.1
 
 Campaña cooperativa de terror para **Minecraft Java 1.20.1**, **Forge 47.4.28** y **Java 17**, con uno a cuatro participantes.
 
 Repositorio: [maniadiaz/backrooms](https://github.com/maniadiaz/backrooms). Renombrado desde Bedroom conservando todos sus commits y etiquetas. El identificador técnico `bedroom`, sus dimensiones, datos guardados y archivos de configuración se conservan para mantener la compatibilidad. El nombre visible y los paquetes son **Backrooms**. `/backrooms` es el comando principal; `/bedroom` sigue funcionando.
 
 La campaña inicial tiene dos niveles completos: el laberinto amarillo del Nivel 0 y los almacenes de Zona de Carga. Incluye lobby automático, espera/espectadores, votaciones, limbo, cordura individual, consumibles, linterna, loot, tres entidades, misiones cooperativas, salida por No-Clip, descanso y victoria con fuegos artificiales.
+
+**Nuevo en 1.1.1:** la salida se activa con agacharse (Shift) y avance durante dos segundos, sin necesitar comida para correr.
 
 **Nuevo en 1.1.0:** mapas limitados por dificultad (100/150/250/350/500 bloques por lado), orientación a los paneles en el HUD, linterna 3D con haz visible, niebla a 28 bloques, audio reforzado y cordura más exigente. Los encuentros son por tiempo y vuelven a intentar pronto si no encuentran espacio. [Cambios y balance detallados](docs/ACTUALIZACION-1.1.0.md).
 
@@ -14,9 +16,9 @@ La campaña inicial tiene dos niveles completos: el laberinto amarillo del Nivel
 - [Controles, reglas, objetos y entidades](docs/COMO-JUGAR.md).
 - [Informe de entrega, pruebas y límites de validación](docs/ENTREGA-FINAL.md).
 
-Compilar produce `build/libs/backrooms-1.1.0.jar`. El empaquetador crea `dist/backrooms-1.1.0-client.zip`, `dist/backrooms-1.1.0-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
+Compilar produce `build/libs/backrooms-1.1.1.jar`. El empaquetador crea `dist/backrooms-1.1.1-client.zip`, `dist/backrooms-1.1.1-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
 
-Al entrar se llega al lobby. El anfitrión pulsa el botón del bloque verde. Buscar tres fusibles numerados y reparar sus paneles; mantener avance y carrera dos segundos contra una pared anómala habilitada. Pantalla negra de un segundo, recuperación del equipo y descanso de noventa segundos o botón para salir antes. En Zona de Carga se recuperan tres relés. Su compuerta conduce al atrio de festejo y después al lobby.
+Al entrar se llega al lobby. El anfitrión pulsa el botón del bloque verde. Buscar tres fusibles numerados y reparar sus paneles; mantener agacharse (Shift) y avanzar dos segundos contra una pared anómala habilitada. Pantalla negra de un segundo, recuperación del equipo y descanso de noventa segundos o botón para salir antes. En Zona de Carga se recuperan tres relés. Su compuerta conduce al atrio de festejo y después al lobby.
 
 Primera y segunda muertes de cada nivel dan treinta segundos de limbo; la tercera, o agotar ese tiempo, elimina hasta completar el nivel. Si todos quedan sin oportunidad, derrota. Desconectarse pierde el intento personal; al volver se espera y el equipo decide mediante voto si reiniciar. No hay checkpoint al cerrar el mundo. El inventario externo se protege y `/backrooms leave` lo restaura.
 
