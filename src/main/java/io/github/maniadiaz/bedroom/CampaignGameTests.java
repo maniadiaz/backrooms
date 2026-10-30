@@ -13,12 +13,30 @@ import net.minecraftforge.gametest.*;
 
 @GameTestHolder(Bedroom.MOD_ID) @PrefixGameTestTemplate(false)
 public final class CampaignGameTests {
+    @GameTest(template="empty") public static void oldWarehouseLampsUpgradeWithoutBlockingRunningJumps(GameTestHelper h){
+        var level=Campaign.level(h.getLevel().getServer(),1);var pos=new BlockPos(26008,68,26008);
+        var p=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"JumpClearance"));
+        try{
+            level.setBlock(pos,Bedroom.LIGHT.get().defaultBlockState(),3);
+            for(int y=69;y<=71;y++)level.setBlock(new BlockPos(pos.getX(),y,pos.getZ()),net.minecraft.world.level.block.Blocks.CHAIN.defaultBlockState(),3);
+            WarehouseLighting.upgrade(level,level.getChunkAt(pos));
+            h.assertTrue(level.getBlockState(pos).isAir()&&level.getBlockState(pos.above()).isAir()&&level.getBlockState(pos.above(2)).is(Bedroom.LIGHT.get()),"Existing lamp and low chain move out of the jump path");
+            p.setPos(pos.getX()+.5,66.25,pos.getZ()+.5);
+            h.assertTrue(level.noCollision(p),"Standing player at jump apex fits below the actual upgraded lamp");
+            p.move(net.minecraft.world.entity.MoverType.SELF,new net.minecraft.world.phys.Vec3(0,0,1));
+            h.assertTrue(p.getZ()>pos.getZ()+1.4&&!p.horizontalCollision,"Forward movement at jump height must not hit lamp supports");
+            WarehouseLighting.upgrade(level,level.getChunkAt(pos));
+            h.assertTrue(level.getBlockState(pos.above(2)).is(Bedroom.LIGHT.get()),"Reloading an upgraded chunk preserves the raised lamp");
+            h.assertTrue(Campaign.lampY(level)==70,"Outage logic must target the raised lamps");h.succeed();
+        }finally{p.discard();}
+    }
     @GameTest(template="empty") public static void warehouseDimensionPaletteAndAislesConnect(GameTestHelper h){
         var level=Campaign.level(h.getLevel().getServer(),1);
         h.assertTrue(level!=null&&level.getChunkSource().getGenerator() instanceof Level1Generator,"Warehouse must load as its own dimension and generator");
         var generator=(Level1Generator)level.getChunkSource().getGenerator();
         h.assertTrue(generator.stateAt(8,64,8).is(Bedroom.CONCRETE.get())||generator.stateAt(8,64,8).is(Bedroom.WET_CONCRETE.get()),"Warehouse has concrete rather than carpet");
-        h.assertTrue(generator.stateAt(8,72,8).is(Bedroom.STEEL.get())&&generator.stateAt(8,70,8).is(net.minecraft.world.level.block.Blocks.CHAIN),"High metal ceiling and suspended lamps exist");
+        h.assertTrue(generator.stateAt(8,72,8).is(Bedroom.STEEL.get())&&generator.stateAt(8,71,8).is(net.minecraft.world.level.block.Blocks.CHAIN),"High metal ceiling and suspended lamps exist");
+        h.assertTrue(generator.stateAt(8,68,8).isAir()&&generator.stateAt(8,69,8).isAir()&&!generator.stateAt(8,70,8).isAir(),"Raised lamps leave running-jump headroom");
         boolean[][] seen=new boolean[128][128];var queue=new ArrayDeque<BlockPos>();queue.add(new BlockPos(8,65,8));seen[8][8]=true;
         while(!queue.isEmpty()){
             var p=queue.remove();for(var direction:List.of(Direction.NORTH,Direction.SOUTH,Direction.EAST,Direction.WEST)){

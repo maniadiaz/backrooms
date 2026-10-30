@@ -11,7 +11,7 @@ final class Campaign {
     static boolean dungeon(ResourceKey<Level> key){return key.equals(DevelopmentCommands.LEVEL_0)||key.equals(LEVEL_1);}
     static ServerLevel level(MinecraftServer server,int index){return server.getLevel(index==0?DevelopmentCommands.LEVEL_0:LEVEL_1);}
     static int ceiling(Level level){return level.dimension().equals(LEVEL_1)?72:68;}
-    static int lampY(Level level){return 68;}
+    static int lampY(Level level){return level.dimension().equals(LEVEL_1)?70:68;}
     static boolean exit(net.minecraft.world.level.block.state.BlockState state){return state.is(Bedroom.EXIT.get())||state.is(Bedroom.LOADING_EXIT.get());}
     private Campaign(){}
 }

@@ -1,4 +1,4 @@
-# Entrega de la campaña inicial — 1.1.1
+# Entrega de la campaña inicial — 1.1.2
 
 ## Funcionalidad entregada
 
@@ -21,9 +21,11 @@ Los mapas ahora se limitan por dificultad a 100/150/250/350/500 bloques por lado
 
 En 1.1.1 se cambia la salida a agacharse (Shift) y avanzar cuarenta ticks continuos. El servidor exige estar agachado, ya no exige hambre mínima y reinicia la carga si se suelta una de las acciones. El protocolo es 5; todos los clientes y el servidor deben actualizar.
 
+En 1.1.2 las lámparas y la luz de control del Nivel 1 suben a Y=70, dejando cinco bloques hasta el suelo transitable. Las cadenas empiezan a Y=71. Se migran lámparas antiguas a Y=68 y sus cadenas bajas al cargar chunks existentes, con trabajo limitado a dos chunks por tick y sin forzar carga de terreno. Se comprueba movimiento real del jugador a la altura máxima de un salto normal bajo una lámpara migrada, además de la altura del generador y los apagones. El techo del almacén sigue en Y=72.
+
 ## Evidencia automática
 
-- `build runGameTestServer`: **68 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.1.1; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
+- `build runGameTestServer`: **69 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.1.2; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
 - Campaña de extremo a extremo con cuatro participantes simulados: recoge componentes mediante interacciones reales, valida las salidas generadas, cuarenta ticks de carga y veinte de transición, descansa, revive y cambia de dimensión, completa el Nivel 1 y llega al festejo.
 - Conexión de pasillos y aproximación a cada objetivo/compuerta; modelos y OGG mono empaquetados.
 - Ataques, cordura, consumibles, inventarios protegidos, limbo, votos, espera, cámaras y recuperación de componentes.

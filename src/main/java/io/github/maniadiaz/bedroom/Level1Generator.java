@@ -19,7 +19,7 @@ public final class Level1Generator extends Level0Generator {
         if(y==64)return(layout.wet(x,z)?Bedroom.WET_CONCRETE.get():Bedroom.CONCRETE.get()).defaultBlockState();
         if(y==72)return Bedroom.STEEL.get().defaultBlockState();
         if(y<65||y>71)return Blocks.AIR.defaultBlockState();
-        if(layout.lamp(x,z)&&aisle(x,z)&&y>=68)return(y==68?(layout.deadLamp(x,z)?Bedroom.DEAD_LIGHT.get():Bedroom.LIGHT.get()):Blocks.CHAIN).defaultBlockState();
+        if(layout.lamp(x,z)&&aisle(x,z)&&y>=70)return(y==70?(layout.deadLamp(x,z)?Bedroom.DEAD_LIGHT.get():Bedroom.LIGHT.get()):Blocks.CHAIN).defaultBlockState();
         if(layout.exit(x,z)&&y<=67)return Bedroom.LOADING_EXIT.get().defaultBlockState();
         if(y==65&&layout.supply(x,z))return Bedroom.FILING_CABINET.get().defaultBlockState();
         if(Math.floorMod(x,128)>=112&&Math.floorMod(z,128)>=112)return Blocks.AIR.defaultBlockState();

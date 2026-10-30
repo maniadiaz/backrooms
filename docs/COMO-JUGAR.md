@@ -49,3 +49,5 @@ Los encuentros se intentan por tiempo: el primero desde 90/60/45/35/25 segundos 
 - Comer/beber/curarse: mantener usar objeto. Insertar componente: clic derecho en su panel. Pasar de nivel: agacharse (Shift) más avance contra la pared habilitada durante dos segundos.
 
 Las pruebas administrativas requieren operador y `developmentCommands=true`; no son atajos habilitados en la configuración de distribución. El volumen, niebla y movimiento opcional de cámara se ajustan en `config/bedroom-client.toml`. Los apagones y la cordura son reglas del servidor.
+
+En el Nivel 1 las lámparas cuelgan a cinco bloques del suelo para permitir correr y saltar por debajo. Al actualizar a 1.1.2, las luces antiguas y sus cadenas bajas se elevan al cargar la zona; no es necesario borrar el mundo.

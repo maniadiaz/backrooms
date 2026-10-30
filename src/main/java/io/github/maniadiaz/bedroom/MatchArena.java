@@ -29,7 +29,7 @@ final class MatchArena {
             level.setBlock(new BlockPos(exit.getX()+dx,y,exit.getZ()+dz),net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),2);
         for(int y=65;y<=67;y++)level.setBlock(new BlockPos(exit.getX(),y,exit.getZ()),
                 (d.level==0?Bedroom.EXIT.get():Bedroom.LOADING_EXIT.get()).defaultBlockState(),3);
-        level.setBlock(exit.above(3),net.minecraft.world.level.block.Blocks.SEA_LANTERN.defaultBlockState(),3);
+        level.setBlock(new BlockPos(exit.getX(),Campaign.lampY(level),exit.getZ()),net.minecraft.world.level.block.Blocks.SEA_LANTERN.defaultBlockState(),3);
     }
     static void contain(ServerPlayer p,MatchData d){
         if(!contains(d,p.blockPosition())){
