@@ -48,6 +48,8 @@ public final class MatchController {
         event.getDispatcher().register(Commands.literal("bedroom")
                 .then(Commands.literal("lobby").executes(c -> join(c.getSource().getPlayerOrException())))
                 .then(Commands.literal("leave").executes(c -> leave(c.getSource().getPlayerOrException())))
+                .then(Commands.literal("objective").executes(c -> objective(c.getSource().getPlayerOrException())))
+                .then(difficultyCommands())
                 .then(Commands.literal("restart").requires(s -> s.hasPermission(2)
                         || (s.getEntity() instanceof ServerPlayer p && (canRestart(p) || (MatchData.get(p.server).phase != MatchData.Phase.LOBBY && MatchData.get(p.server).members.containsKey(p.getUUID())))))
                         .executes(c -> {
@@ -80,6 +82,28 @@ public final class MatchController {
         event.getDispatcher().register(Commands.literal("backrooms").redirect(event.getDispatcher().getRoot().getChild("bedroom")));
     }
 
+    private static com.mojang.brigadier.builder.LiteralArgumentBuilder<net.minecraft.commands.CommandSourceStack> difficultyCommands(){
+        var command=Commands.literal("difficulty").executes(c->{
+            var d=MatchData.get(c.getSource().getServer());
+            c.getSource().sendSuccess(()->Component.literal("Dificultad: "+d.difficulty.id+" · "+d.difficulty.size+" × "+d.difficulty.size),false);return 1;
+        });
+        for(var option:MatchDifficulty.values())command.then(Commands.literal(option.id).executes(c->{
+            var d=MatchData.get(c.getSource().getServer());var actor=c.getSource().getEntity();
+            if(d.phase!=MatchData.Phase.LOBBY||(!c.getSource().hasPermission(2)&&(!(actor instanceof ServerPlayer p)||!p.getUUID().equals(d.host)))){
+                c.getSource().sendFailure(Component.literal("Solo el anfitrión u operador puede cambiar la dificultad desde el lobby."));return 0;
+            }
+            d.difficulty=option;d.setDirty();
+            c.getSource().getServer().getPlayerList().broadcastSystemMessage(Component.literal("BACKROOMS · "+option.id+" · "+option.size+" × "+option.size),false);return 1;
+        }));return command;
+    }
+    static int objective(ServerPlayer p){
+        var d=MatchData.get(p.server);if(!SurvivalSystem.active(p))return 0;
+        BlockPos target=MatchArena.exit(d);
+        String title="SALA DE CONTROL / SALIDA";
+        for(int i=0;i<3;i++)if(!d.mission.done(i)){target=MissionSystem.panel(d,i);title="PANEL "+(i+1);break;}
+        tell(p,title+" · "+MatchArena.direction(p,target)+" · X "+target.getX()+" Z "+target.getZ());return 1;
+    }
+
     static int join(ServerPlayer p) {
         MatchData d = MatchData.get(p.server);
         if (dimension(p.server) == null) { tell(p, "La dimensión Backrooms no está disponible."); return 0; }
@@ -103,6 +127,7 @@ public final class MatchController {
         p.experienceLevel = 0; p.totalExperience = 0; p.experienceProgress = 0;
         apply(p, d, m, false);
         tell(p, "Lobby: botón sobre el bloque verde al fondo. El anfitrión inicia. /backrooms leave para salir.");
+        tell(p,"Dificultad: "+d.difficulty.id+" · "+d.difficulty.size+" × "+d.difficulty.size+". Anfitrión: /backrooms difficulty principiante|facil|normal|dificil|hardcore");
         return 1;
     }
 
@@ -318,7 +343,7 @@ public final class MatchController {
     private static void moveArena(ServerPlayer p, MatchData data) {
         ServerLevel level = Campaign.level(p.server,data.level);
         if (level == null) return;
-        int x = MatchRooms.arena(data) + 8;
+        int x = MissionSystem.anchor(data) + 8;
         level.getChunkAt(new BlockPos(x, 65, 8));
         p.setCamera(p);
         p.teleportTo(level, x + 0.5, 65, 8.5, 0, 0);
@@ -630,6 +655,7 @@ public final class MatchController {
         for (MatchData.Member m : d.members.values()) {
             ServerPlayer p = server.getPlayerList().getPlayer(m.id);
             if (p == null) continue;
+            if(m.state==MatchData.State.ACTIVE&&p.serverLevel()==Campaign.level(server,d.level))MatchArena.contain(p,d);
             SurvivalSystem.tick(p, m, d);
             if (before.get(m.id) != m.state) apply(p, d, m, true);
             if (previousPhase == MatchData.Phase.ACTIVE && d.phase == MatchData.Phase.LOBBY)

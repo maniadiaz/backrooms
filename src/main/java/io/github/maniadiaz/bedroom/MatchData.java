@@ -24,6 +24,7 @@ public final class MatchData extends SavedData {
     final RestartVote vote = new RestartVote();
     Phase phase = Phase.LOBBY;
     UUID host;
+    MatchDifficulty difficulty = MatchDifficulty.FACIL;
     int round;
     int level;
     int restTicks;
@@ -184,6 +185,7 @@ public final class MatchData extends SavedData {
     @Override public CompoundTag save(CompoundTag tag) {
         tag.putString("phase", phase.name());
         if (host != null) tag.putUUID("host", host);
+        tag.putString("difficulty", difficulty.id);
         tag.putInt("round", round);
         tag.putInt("level", level);
         tag.putInt("restTicks", restTicks);
@@ -221,6 +223,7 @@ public final class MatchData extends SavedData {
         data.phase = Phase.valueOf(tag.getString("phase"));
         data.awaitingPlayers = data.phase != Phase.LOBBY;
         data.host = tag.hasUUID("host") ? tag.getUUID("host") : null;
+        data.difficulty = MatchDifficulty.parse(tag.getString("difficulty"));
         data.round = tag.getInt("round");
         data.level = tag.getInt("level");
         data.restTicks = tag.getInt("restTicks");

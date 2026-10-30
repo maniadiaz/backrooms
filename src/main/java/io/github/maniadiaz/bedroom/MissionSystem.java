@@ -17,11 +17,15 @@ final class MissionSystem {
     static String name(MatchData d){return d.level==0?"Fusible":"Relé de carga";}
     static int anchor(MatchData d) { return Math.floorDiv(MatchRooms.arena(d),128)*128; }
     static BlockPos cache(MatchData d,int i) {
-        int[] x={23,87,39}, z={23,39,87}; return new BlockPos(anchor(d)+x[i],65,z[i]);
+        int n=MatchArena.size(d);
+        int[] x={MatchArena.aisle(n/4),MatchArena.aisle(n*3/4),MatchArena.aisle(n/3)};
+        int[] z={MatchArena.aisle(n/4),MatchArena.aisle(n/3),MatchArena.aisle(n*3/4)};
+        return new BlockPos(anchor(d)+x[i],65,z[i]);
     }
-    static BlockPos panel(MatchData d,int i) { return new BlockPos(anchor(d)+103+i*4,65,103); }
+    static BlockPos panel(MatchData d,int i) { return MatchArena.exit(d).offset(-3+i*3,0,-2); }
     static void prepare(net.minecraft.server.MinecraftServer server,MatchData d) {
         var level = Campaign.level(server,d.level); if (level==null) return;
+        MatchArena.prepare(level,d);
         for (int i=0;i<3;i++) {
             level.getChunkAt(cache(d,i)); level.getChunkAt(panel(d,i));
             level.setBlock(cache(d,i),cacheBlock(d).defaultBlockState().setValue(Node.INDEX,i),3);
@@ -63,7 +67,7 @@ final class MissionSystem {
                 if(p.getInventory().add(fuse(d,i,lease))) {
                     d.mission.leases[i]=lease; d.setDirty();
                     p.level().setBlock(pos,p.level().getBlockState(pos).setValue(BlockStateProperties.POWERED,true),3);
-                    message(p,name(d)+" "+(i+1)+" recuperado. Llévalo al panel del mismo número, cerca de la salida.");
+                    message(p,name(d)+" "+(i+1)+" recuperado. Llévalo al panel del mismo número, en la sala de control. Usa /backrooms objective para orientarte.");
                 } else message(p,"Necesitas un espacio libre en el inventario.");
                 return true;
             }

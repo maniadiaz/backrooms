@@ -50,7 +50,8 @@ for kind, seconds in [('drag',.65),('metal',1.25),('alert',.85),('attack',.55)]:
         wave = (np.sin(phase)*.4+np.sin(phase*2)*.18+noise(len(t),400,4500)*.35)*envelope
         wave += noise(len(t),1000,10000)*np.exp(-t*40)*np.minimum(1,t*250)*.25
     else: wave = (noise(len(t),100,3800)+.3*np.sin(2*np.pi*85*t))*envelope*np.exp(-t*4)
-    wave *= .5/max(np.max(np.abs(wave)),1e-9)
+    wave = np.tanh(wave * 1.3)
+    wave *= .72/max(np.max(np.abs(wave)),1e-9)
     file = ROOT/f'sounds/ambient/bacteria_{kind}.ogg'
     sf.write(file,wave,RATE,format='OGG',subtype='VORBIS')
     decoded,rate = sf.read(file)

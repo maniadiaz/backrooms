@@ -1,4 +1,4 @@
-# Backrooms 1.0.1
+# Backrooms 1.1.0
 
 Campaña cooperativa de terror para **Minecraft Java 1.20.1**, **Forge 47.4.28** y **Java 17**, con uno a cuatro participantes.
 
@@ -6,13 +6,15 @@ Repositorio: [maniadiaz/backrooms](https://github.com/maniadiaz/backrooms). Reno
 
 La campaña inicial tiene dos niveles completos: el laberinto amarillo del Nivel 0 y los almacenes de Zona de Carga. Incluye lobby automático, espera/espectadores, votaciones, limbo, cordura individual, consumibles, linterna, loot, tres entidades, misiones cooperativas, salida por No-Clip, descanso y victoria con fuegos artificiales.
 
+**Nuevo en 1.1.0:** mapas limitados por dificultad (100/150/250/350/500 bloques por lado), orientación a los paneles en el HUD, linterna 3D con haz visible, niebla a 28 bloques, audio reforzado y cordura más exigente. Los encuentros son por tiempo y vuelven a intentar pronto si no encuentran espacio. [Cambios y balance detallados](docs/ACTUALIZACION-1.1.0.md).
+
 ## Jugar e instalar
 
 - [Instalación de cliente, Essential y servidor dedicado](docs/INSTALACION.md).
 - [Controles, reglas, objetos y entidades](docs/COMO-JUGAR.md).
 - [Informe de entrega, pruebas y límites de validación](docs/ENTREGA-FINAL.md).
 
-Compilar produce `build/libs/backrooms-1.0.1.jar`. El empaquetador crea `dist/backrooms-1.0.1-client.zip`, `dist/backrooms-1.0.1-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
+Compilar produce `build/libs/backrooms-1.1.0.jar`. El empaquetador crea `dist/backrooms-1.1.0-client.zip`, `dist/backrooms-1.1.0-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
 
 Al entrar se llega al lobby. El anfitrión pulsa el botón del bloque verde. Buscar tres fusibles numerados y reparar sus paneles; mantener avance y carrera dos segundos contra una pared anómala habilitada. Pantalla negra de un segundo, recuperación del equipo y descanso de noventa segundos o botón para salir antes. En Zona de Carga se recuperan tres relés. Su compuerta conduce al atrio de festejo y después al lobby.
 
@@ -23,6 +25,8 @@ El Sabueso reacciona a mirada/movimiento, Smiler a observadores válidos y Bacte
 ## Comandos
 
 `/backrooms lobby`, `/backrooms status`, `/backrooms leave`, `/backrooms restart`, `/backrooms vote restart`, `/backrooms vote continue`, `/backrooms spectate` y sus variantes `next`, `previous`, `off`. Las cámaras también se cambian con `]` y `[`, reasignables. El HUD permanece a la izquierda con estado encima de muertes.
+
+En el lobby: `/backrooms difficulty principiante|facil|normal|dificil|hardcore` (elegir una opción, sin barras), solo anfitrión u operador. Fácil inicia en 150 × 150. Durante la partida: `/backrooms objective` indica el siguiente panel y el HUD orienta hacia la sala de control.
 
 Los comandos `testdeath`/`testnext` y la sala de desarrollo requieren operador y `developmentCommands=true`; el paquete de distribución los desactiva. Los botones y las misiones normales no requieren operador.
 
@@ -37,7 +41,7 @@ python scripts/package_release.py
 
 En Linux/CI: `bash gradlew build runGameTestServer --console=plain`. El empaquetador utiliza Python 3.11 o posterior, biblioteca estándar. Los recursos generados ya están versionados; compilar no requiere herramientas de síntesis de audio.
 
-Las 63 pruebas obligatorias verifican reglas, inventarios, geometría, entidades, misiones, red/HUD, compatibilidad de comandos y una campaña completa con cuatro participantes simulados. Esto no equivale a cuatro clientes ni a una sesión Essential. Quedan pendientes la revisión visual/auditiva de una partida completa y la validación de red con amigos; el informe distingue esas comprobaciones de las automatizadas.
+Las 68 pruebas obligatorias verifican reglas, inventarios, geometría, entidades, misiones, red/HUD, dificultad, orientación, encuentros por tiempo y una campaña completa con cuatro participantes simulados. Se verifica la conexión de objetivos dentro de los cinco tamaños en ambos niveles. Esto no equivale a cuatro clientes ni a una sesión Essential. Quedan pendientes la revisión visual/auditiva de estos cambios y la validación de red con amigos; el informe distingue esas comprobaciones de las automatizadas.
 
 Las pruebas usan exclusivamente `run-gametest/`: cada ejecución borra su mundo de ensayo para evitar geometría antigua. No guardar partidas personales allí. Mundos, logs, caches, `.tools/`, `build/` y `dist/` se excluyen de Git. El workflow de GitHub recompila, ejecuta la suite y empaqueta artefactos; su resultado remoto se revisa por separado del resultado local.
 

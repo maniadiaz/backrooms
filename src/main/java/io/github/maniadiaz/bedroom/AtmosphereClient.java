@@ -79,7 +79,7 @@ public final class AtmosphereClient {
     @SubscribeEvent public static void fog(ViewportEvent.RenderFog event) {
         if (event.getMode() != net.minecraft.client.renderer.FogRenderer.FogMode.FOG_TERRAIN || !customFog(event.getCamera())) return;
         float far = Math.min(event.getFarPlaneDistance(), AtmosphereClientConfig.FOG_DISTANCE.get());
-        event.setFarPlaneDistance(far); event.setNearPlaneDistance(Math.min(32, far * .5F));
+        event.setFarPlaneDistance(far); event.setNearPlaneDistance(Math.min(6, far * .2F));
         event.setFogShape(com.mojang.blaze3d.shaders.FogShape.CYLINDER); event.setCanceled(true);
     }
     @SubscribeEvent public static void fogColor(ViewportEvent.ComputeFogColor event) {
@@ -105,7 +105,7 @@ public final class AtmosphereClient {
         @Override public boolean canStartSilent() { return true; }
         @Override public void tick() {
             if (!scene()) { stop(); return; }
-            float target = AtmosphereClientConfig.HUM_VOLUME.get().floatValue();
+            float target = Math.min(.8F,AtmosphereClientConfig.HUM_VOLUME.get().floatValue()*1.4F);
             volume += Math.max(-.025F, Math.min(.025F, target - volume));
         }
         void finish() { stop(); }

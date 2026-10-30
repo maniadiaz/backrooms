@@ -74,7 +74,7 @@ public final class MissionGameTests {
     }
     @GameTest(template="empty") public static void nodesLeaveGeneratorCrossCorridorsConnected(GameTestHelper h){
         var d=new MatchData();d.round=7;var layout=new Level0Layout(981);
-        for(int i=0;i<3;i++)for(BlockPos pos:List.of(MissionSystem.cache(d,i),MissionSystem.panel(d,i))){
+        for(int i=0;i<3;i++)for(BlockPos pos:List.of(MissionSystem.cache(d,i))){
             h.assertTrue(!layout.wall(pos.getX(),pos.getZ()),"Mission node starts in an open corridor");
             h.assertTrue(!layout.wall(pos.getX(),pos.getZ()+1),"Adjacent lane must remain open");
         }
@@ -82,7 +82,7 @@ public final class MissionGameTests {
         h.assertTrue(copy.mission.count()==1,"Shared progress persists within the current run");d.reset();h.assertTrue(d.mission.count()==0&&d.exitDelay==0,"Reset clears objectives and queued exit");h.succeed();
     }
     @GameTest(template="empty") public static void hudProtocolIncludesSharedMissionAndCharge(GameTestHelper h){
-        var original=new BedroomNetwork.Hud(true,"ACTIVE",1,0,0,4,85,70,1,3,20,2,15);
+        var original=new BedroomNetwork.Hud(true,"ACTIVE",1,0,0,4,85,70,1,3,20,2,15,"facil 150×150","DELANTE · 50 m");
         var buffer=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
         try{original.encode(buffer);h.assertTrue(original.equals(BedroomNetwork.Hud.decode(buffer)),"Remote HUD retains objective and charge fields");}finally{buffer.release();}h.succeed();
     }

@@ -66,6 +66,7 @@ public final class BacteriaEntity extends Monster {
         if (distanceToSqr(p) <= 225 && (p.isSprinting() || p.swinging)) return p.position();
         return BacteriaNoise.heard(this,p);
     }
+    void investigate(ServerPlayer p){setTarget(p);lastKnown=p.position();lostTicks=0;state(State.CHASING);}
     private void forget() { setTarget(null); lastKnown = null; lostTicks = searchTicks = alertTicks = 0; state(State.ROAMING); getNavigation().stop(); }
     @Override public void tick() {
         super.tick();

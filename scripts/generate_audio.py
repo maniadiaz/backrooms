@@ -44,7 +44,7 @@ def edge_fade(wave, seconds=.015):
 
 
 def write(name, wave, peak=.42, fade=True):
-    wave = np.asarray(wave, dtype=np.float64)
+    wave = np.asarray(wave, dtype=np.float64) * 2.2
     if fade:
         wave = edge_fade(wave)
     maximum = float(np.max(np.abs(wave)))
@@ -68,7 +68,7 @@ for onset in (1.3, 4.8, 6.2):
     start = round(onset * RATE)
     n = round(.065 * RATE)
     hum[start:start+n] += .012 * noise(n, 1300, 6500) * np.hanning(n)
-write('fluorescent_hum', hum, .18, fade=False)
+write('fluorescent_hum', hum, .3, fade=False)
 
 
 def footstep(index):
@@ -116,7 +116,7 @@ t = time(2.7)
 breath = noise(len(t), 700, 4200)
 envelope = (np.sin(np.pi * t / 2.7) ** 2) * (.45 + .55 * np.sin(2 * np.pi * 2.1 * t) ** 2)
 whisper = .05 * breath * envelope + .006 * np.sin(2 * np.pi * 190 * t) * envelope
-write('sanity_whisper', whisper, .24)
+write('sanity_whisper', whisper * 1.5, .42)
 
 events = {
     'fluorescent_hum': ('fluorescent_hum', 16),

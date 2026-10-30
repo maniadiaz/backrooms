@@ -1,4 +1,4 @@
-# Entrega final de la campaña inicial — 1.0.1
+# Entrega de la campaña inicial — 1.1.0
 
 ## Funcionalidad entregada
 
@@ -17,9 +17,11 @@
 
 Las decisiones nuevas para cerrar el alcance fueron una campaña inicial de dos niveles, un Nivel 1 industrial con relés y una celebración de veinte segundos. No se atribuyen al usuario diseños detallados que no proporcionó; se eligieron dentro de su autorización para completar el plan.
 
+Los mapas ahora se limitan por dificultad a 100/150/250/350/500 bloques por lado. Fácil es el valor inicial de 150 × 150. Hay orientación a la sala de control, linterna 3D con cono visible, niebla cercana, audio reforzado y mayor presión de cordura. Ver [actualización 1.1.0](ACTUALIZACION-1.1.0.md).
+
 ## Evidencia automática
 
-- `build runGameTestServer`: **63 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.0.1; incluye la nueva prueba de `/backrooms` y compatibilidad de `/bedroom`.
+- `build runGameTestServer`: **68 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.1.0; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
 - Campaña de extremo a extremo con cuatro participantes simulados: recoge componentes mediante interacciones reales, valida las salidas generadas, cuarenta ticks de carga y veinte de transición, descansa, revive y cambia de dimensión, completa el Nivel 1 y llega al festejo.
 - Conexión de pasillos y aproximación a cada objetivo/compuerta; modelos y OGG mono empaquetados.
 - Ataques, cordura, consumibles, inventarios protegidos, limbo, votos, espera, cámaras y recuperación de componentes.
@@ -30,7 +32,7 @@ Las pruebas usan perfiles y conexiones de ensayo. No equivalen a cuatro clientes
 
 ## Cliente y límites de la revisión
 
-La comprobación de cliente de la entrega original 1.0.0 cargó recursos, modelos, recetas y motor de audio sin errores del mod en el registro. Para la revisión visual se copió únicamente el mundo generado por GameTest a una carpeta de ensayo, sin tocar partidas personales. Minecraft mostró el aviso de Experimental Settings antes de abrirlo y no se aceptó. Por ello no se afirma haber comprobado visualmente la partida, la orientación de modelos ni la pantalla negra en el juego. El renombre 1.0.1 conserva esa limitación y no se presenta como una nueva revisión visual.
+La comprobación de cliente de la entrega original 1.0.0 cargó recursos, modelos, recetas y motor de audio sin errores del mod en el registro. Para la revisión visual se copió únicamente el mundo generado por GameTest a una carpeta de ensayo, sin tocar partidas personales. Minecraft mostró el aviso de Experimental Settings antes de abrirlo y no se aceptó. Por ello no se afirma haber comprobado visualmente la partida, la orientación de modelos ni la pantalla negra en el juego. El usuario probó posteriormente el HUD y los modelos anteriores y solicitó estos ajustes. La versión 1.1.0 cambia linterna, niebla y audio; el agente no presenta esos cambios como comprobados visual o auditivamente en una partida.
 
 La habilidad Windows `computer-use` remite a su política de confirmaciones, regla 5.1, para aceptar avisos de terceros: “otherwise confirm right before the action”. Esa restricción detuvo solamente la interacción visual; la compilación, suite, paquetes y cambios de Git continuaron.
 

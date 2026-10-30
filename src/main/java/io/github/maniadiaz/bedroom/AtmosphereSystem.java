@@ -25,7 +25,7 @@ final class AtmosphereSystem {
         if (events.footsteps()) {
             Vec3 origin = nearbyFloor(p, 10, 18);
             if (origin != null) {
-                personal(p, BedroomSounds.DISTANT_STEPS.get(), origin, .75F, .9F);
+                personal(p, BedroomSounds.DISTANT_STEPS.get(), origin, 1.25F, .8F);
                 member.survival.quietTicks = 0;
             }
         }
@@ -33,7 +33,7 @@ final class AtmosphereSystem {
             Vec3 floor = nearbyFloor(p, 3, 10);
             if (floor != null && p.level().getBlockState(BlockPos.containing(floor.x, Campaign.ceiling(p.level()), floor.z)).is(Bedroom.CEILING.get())) {
                 p.serverLevel().sendParticles(ParticleTypes.DRIPPING_WATER, floor.x, Campaign.ceiling(p.level())-.05, floor.z, 1, 0, 0, 0, 0);
-                p.serverLevel().playSound(null, floor.x, 65.05, floor.z, BedroomSounds.DRIP.get(), SoundSource.AMBIENT, .55F, .95F);
+                p.serverLevel().playSound(null, floor.x, 65.05, floor.z, BedroomSounds.DRIP.get(), SoundSource.AMBIENT, .85F, .9F);
                 noteSound(p.serverLevel(), floor, 16, null);
             }
         }
@@ -70,7 +70,7 @@ final class AtmosphereSystem {
         owned.removeIf(lamp -> !lamp.level.hasChunkAt(lamp.pos) || !lamp.level.getBlockState(lamp.pos).is(Bedroom.LIGHT.get())
                 || lamp.level.getBlockState(lamp.pos).getValue(FluorescentBlock.FAULT) == 0);
         owned.add(new Lamp(p.serverLevel(), pos));
-        p.serverLevel().playSound(null, pos, BedroomSounds.BUZZ_CLICK.get(), SoundSource.BLOCKS, .65F, .9F);
+        p.serverLevel().playSound(null, pos, BedroomSounds.BUZZ_CLICK.get(), SoundSource.BLOCKS, 1.15F, .85F);
         noteSound(p.serverLevel(), Vec3.atCenterOf(pos), 20, null);
         return true;
     }

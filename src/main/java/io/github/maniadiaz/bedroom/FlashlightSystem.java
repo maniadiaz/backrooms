@@ -24,13 +24,17 @@ final class FlashlightSystem {
         if (lamp.isEmpty() || SurvivalItems.charge(lamp) <= 0) { clear(p); return; }
         lamp.getOrCreateTag().putInt("Charge", SurvivalItems.charge(lamp) - 1);
         if (SurvivalItems.charge(lamp) == 0) { lamp.getOrCreateTag().putBoolean("On", false); clear(p); return; }
-        if (p.server.getTickCount() % 10 != 0) return;
+        if (p.server.getTickCount() % 2 != 0) return;
         project(p);
     }
     static void project(ServerPlayer p) {
         clear(p);
         Set<Point> points = new HashSet<>();
-        var from = p.getEyePosition();
+        var forward=p.getLookAngle();var side=forward.cross(new net.minecraft.world.phys.Vec3(0,1,0)).normalize();
+        boolean main=p.getMainHandItem().is(Bedroom.FLASHLIGHT.get())&&SurvivalItems.on(p.getMainHandItem());
+        boolean right=(p.getMainArm()==net.minecraft.world.entity.HumanoidArm.RIGHT)==main;
+        var from = p.getEyePosition().add(side.scale(right?.25:-.25)).add(0,-.23,0).add(forward.scale(.35));
+        if(p.level().clip(new ClipContext(p.getEyePosition(),from,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p)).getType()!=net.minecraft.world.phys.HitResult.Type.MISS)return;
         for (float yaw : new float[] { -.17F, 0, .17F }) {
             var direction = p.getLookAngle().yRot(yaw);
             var hit = p.level().clip(new ClipContext(from, from.add(direction.scale(8)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, p));
@@ -61,7 +65,7 @@ final class FlashlightSystem {
     }
     static void clearAll() { for (UUID id : List.copyOf(beams.keySet())) clear(id); }
     static final class BeamLight extends AirBlock {
-        BeamLight() { super(Properties.of().air().replaceable().noCollission().noOcclusion().noLootTable().lightLevel(s -> 12)); }
+        BeamLight() { super(Properties.of().air().replaceable().noCollission().noOcclusion().noLootTable().lightLevel(s -> 14)); }
         @Override public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
             if (!owners.containsKey(new Point(level, pos))) level.removeBlock(pos, false);
             else level.scheduleTick(pos, this, 20);

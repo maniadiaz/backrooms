@@ -19,6 +19,9 @@ public final class CompassClient {
                         double tx = x * 128 + 115.5 - entity.getX(), tz = z * 128 + 115.5 - entity.getZ();
                         if (tx * tx + tz * tz < best) { best = tx * tx + tz * tz; dx = tx; dz = tz; }
                     }
+                    if(stack.hasTag()&&stack.getTag().contains("ExitX")){
+                        dx=stack.getTag().getInt("ExitX")+.5-entity.getX();dz=stack.getTag().getInt("ExitZ")+.5-entity.getZ();best=dx*dx+dz*dz;
+                    }
                     if (best >= 900) return (float) ((level.getGameTime() % 160) / 160.0);
                     double angle = Math.atan2(-dx, dz) / (Math.PI * 2) - entity.getYRot() / 360.0;
                     return (float) (angle - Math.floor(angle));

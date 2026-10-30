@@ -100,7 +100,7 @@ public final class SmilerEntity extends Monster {
     }
     boolean strike(ServerPlayer player, boolean lethal) {
         if (!valid(player)) return false;
-        boolean hit = player.hurt(damageSources().mobAttack(this), lethal ? 1000 : 16);
+        boolean hit = player.hurt(damageSources().mobAttack(this), lethal ? 1000 : (float)getAttributeValue(Attributes.ATTACK_DAMAGE));
         // A lethal bite already transitioned to limbo: never overwrite its recovered sanity.
         if (hit) {
             if (valid(player)) { MatchData.get(player.server).members.get(player.getUUID()).survival.sanity = 0; MatchData.get(player.server).setDirty(); }

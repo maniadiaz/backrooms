@@ -13,12 +13,16 @@ final class SurvivalSystem {
     static void tick(ServerPlayer p, MatchData.Member m, MatchData d) {
         if (m.state != MatchData.State.ACTIVE) { FlashlightSystem.clear(p); AtmosphereSystem.clear(p); return; }
         AtmosphereSystem.tick(p, m);
+        if(p.server.getTickCount()%20==0)for(int i=0;i<p.getInventory().getContainerSize();i++){
+            var stack=p.getInventory().getItem(i);if(!stack.is(Bedroom.ANOMALOUS_COMPASS.get()))continue;
+            var exit=MatchArena.exit(d);stack.getOrCreateTag().putInt("ExitX",exit.getX());stack.getOrCreateTag().putInt("ExitZ",exit.getZ());
+        }
         boolean dark = p.level().getBrightness(LightLayer.BLOCK, p.blockPosition().above()) <= 7;
         boolean threat = !p.level().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, p.getBoundingBox().inflate(15), e -> e.distanceToSqr(p) < 225).isEmpty();
         boolean company = d.members.values().stream().filter(other -> other.state == MatchData.State.ACTIVE && !other.id.equals(m.id))
                 .map(other -> p.server.getPlayerList().getPlayer(other.id)).anyMatch(other -> other != null && other.level() == p.level() && other.distanceToSqr(p) < 100);
         SurvivalState s = m.survival;
-        s.advance(dark, threat, company, BedroomConfig.COMPANY_HELPS.get());
+        s.advance(dark, threat, company, BedroomConfig.COMPANY_HELPS.get(),d.difficulty.sanityMultiplier*(1+d.level*.15));
         if (s.energyTicks > 0 && p.server.getTickCount() % 20 == 0) {
             p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, s.energyTicks, 1));
             p.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, s.energyTicks, 0));
@@ -31,10 +35,10 @@ final class SurvivalSystem {
             }
         } else if (s.sanity >= 25) removeOwnEffects(p, s);
         if (s.sanity < 50 && --s.hallucinationTicks <= 0) {
-            s.hallucinationTicks = 400 + p.getRandom().nextInt(401);
+            s.hallucinationTicks = 200 + p.getRandom().nextInt(301);
             var origin = AtmosphereSystem.nearbyFloor(p, 3, 7);
             AtmosphereSystem.personal(p, s.sanity < 25 ? BedroomSounds.FALSE_STEPS.get() : BedroomSounds.WHISPER.get(),
-                    origin == null ? p.position() : origin, .45F, .85F);
+                    origin == null ? p.position() : origin, .95F, .8F);
             if (s.sanity < 25 && !p.hasEffect(MobEffects.BLINDNESS)) {
                 p.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20, 0, false, false, true)); s.ownsBlind = true;
             }

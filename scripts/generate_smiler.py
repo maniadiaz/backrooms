@@ -60,7 +60,7 @@ for kind, seconds in [('hiss',4),('laugh',1.8),('attack',.9)]:
         wave = (tone*.5+filtered(seconds,400,2400)*.25)*pulses*np.sin(np.pi*t/seconds)**2
     else:
         wave = (filtered(seconds,300,5500)+.3*np.sin(2*np.pi*(180*t+120*t*t)))*np.sin(np.pi*t/seconds)**2*np.exp(-t*2)
-    wave *= .48/max(np.max(np.abs(wave)),1e-9)
+    wave *= .68/max(np.max(np.abs(wave)),1e-9)
     file = ROOT/f'sounds/ambient/smiler_{kind}.ogg'
     sf.write(file,wave,RATE,format='OGG',subtype='VORBIS')
     decoded, rate = sf.read(file)

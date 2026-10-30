@@ -29,7 +29,7 @@ public final class VictoryGameTests {
             var teammate=team.keySet().stream().filter(id->!id.equals(host.getUUID())).findFirst().orElseThrow();d.die(teammate);
             for(int level=0;level<2;level++){
                 solve(host,d);h.assertTrue(d.mission.ready(),"Actual component interactions must solve each level");
-                int x=MissionSystem.anchor(d)+115;host.serverLevel().getChunkAt(new BlockPos(x,65,115));host.setPos(x-.31,65,115.5);host.setYRot(-90);host.setXRot(0);host.getFoodData().setFoodLevel(20);
+                var exit=MatchArena.exit(d);host.serverLevel().getChunkAt(exit);host.setPos(exit.getX()-.31,65,exit.getZ()+.5);host.setYRot(-90);host.setXRot(0);host.getFoodData().setFoodLevel(20);
                 h.assertTrue(NoClipSystem.contact(host)!=null,"Each generated exit must accept physical contact");NoClipSystem.input(host,true);
                 for(int tick=0;tick<39;tick++)NoClipSystem.step(server,team);
                 h.assertTrue(d.exitDelay==0,"Charge from the previous dimension must never carry over");

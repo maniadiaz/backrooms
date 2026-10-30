@@ -1,4 +1,4 @@
-humVolume = 0.35
+humVolume = 0.5
 fog = true
-fogDistance = 96
+horrorFogDistance = 28
 cameraRoll = 0.0

@@ -26,7 +26,7 @@ public final class BedroomHud {
                 graphics.fill(i, i, width - i, i + 1, color); graphics.fill(i, height - i - 1, width - i, height - i, color);
                 graphics.fill(i, i, i + 1, height - i, color); graphics.fill(width - i - 1, i, width - i, height - i, color);
             }
-            int x = 12, y = Math.max(12, height / 2 - 62), w = 190, h = hud.voteSeconds() > 0 ? 162 : 132;
+            int x = 12, y = Math.max(12, height / 2 - 62), w = 190, h = hud.voteSeconds() > 0 ? 190 : 160;
             graphics.fill(x, y, x + w, y + h, 0xBD11110E);
             graphics.fill(x, y, x + 2, y + h, 0xFFE0C46E);
             graphics.fill(x + 8, y + 23, x + w - 8, y + 24, 0x665B5138);
@@ -50,9 +50,11 @@ public final class BedroomHud {
                 graphics.drawString(mc.font,"PANELES  "+hud.panels()+" / 3",x+10,y+100,0xFFE0C46E,false);
                 graphics.drawString(mc.font,hud.panels()==3?(hud.charge()>0?"NO-CLIP  "+hud.charge()*100/40+"%":"SALIDA HABILITADA"):(hud.level()==0?"BUSCA LOS TRES FUSIBLES":"BUSCA LOS TRES RELÉS"),x+10,y+115,0xFF80DBCE,false);
             }
+            graphics.drawString(mc.font,hud.difficulty(),x+10,y+132,0xFFB9B3A5,false);
+            if(hud.state().equals("ACTIVE"))graphics.drawString(mc.font,"CONTROL: "+hud.objective(),x+10,y+146,0xFF80DBCE,false);
             if (hud.voteSeconds() > 0) {
-                graphics.drawString(mc.font, "REINICIO " + hud.voteYes() + "/" + hud.voteRequired() + " | " + hud.voteSeconds() + "s", x + 10, y + 133, 0xFF80DBCE, false);
-                graphics.drawString(mc.font, "/backrooms vote ...", x + 10, y + 147, 0xFFB9B3A5, false);
+                graphics.drawString(mc.font, "REINICIO " + hud.voteYes() + "/" + hud.voteRequired() + " | " + hud.voteSeconds() + "s", x + 10, y + 163, 0xFF80DBCE, false);
+                graphics.drawString(mc.font, "/backrooms vote ...", x + 10, y + 177, 0xFFB9B3A5, false);
             }
         });
         event.registerAboveAll("noclip_blackout",(gui,graphics,partial,width,height)->{if(NoClipClient.black())graphics.fill(0,0,width,height,0xFF000000);});

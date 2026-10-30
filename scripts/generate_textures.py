@@ -186,3 +186,7 @@ for language in names:
                    'key.categories.bedroom': 'Backrooms', 'key.bedroom.next_camera': 'Siguiente cámara' if es else 'Next spectator camera',
                    'key.bedroom.previous_camera': 'Cámara anterior' if es else 'Previous spectator camera'})
     write_json(path, labels)
+
+# Preserve the solid held model when regenerating the rest of the sprites.
+import runpy
+runpy.run_path(str(Path(__file__).with_name('generate_flashlight_model.py')))

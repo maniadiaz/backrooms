@@ -49,6 +49,7 @@ public final class HoundEntity extends Monster {
         if (noisy || visible && (!looking || moving)) return State.CHARGING;
         return hunting ? State.SEARCHING : State.STALKING;
     }
+    void investigate(ServerPlayer p){setTarget(p);lastKnown=p.position();evidence=0;state=State.SEARCHING;}
     private boolean valid(ServerPlayer p) {
         return p.isAlive() && !p.isSpectator() && p.level() == level() && SurvivalSystem.active(p);
     }

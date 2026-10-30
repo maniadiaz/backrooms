@@ -12,9 +12,14 @@ final class SurvivalState {
     boolean ownsBlind;
 
     void advance(boolean dark, boolean threat, boolean accompanied, boolean companyHelps) {
+        advance(dark,threat,accompanied,companyHelps,0);
+    }
+    void advance(boolean dark,boolean threat,boolean accompanied,boolean companyHelps,double multiplier){
         quietTicks = Math.min(quietTicks + 1, 360000);
         double humPerSecond = quietTicks > 3600 ? .5 / 60 * (accompanied && companyHelps ? .5 : 1) : 0;
-        sanity = Math.max(0, sanity - drainPerSecond(dark ? .1 : 0, humPerSecond, threat ? .1 : 0) / 20);
+        double drain=multiplier==0?drainPerSecond(dark?.1:0,humPerSecond,threat?.1:0)
+                : Math.min(.3*multiplier,(.035+(dark?.16:0)+(threat?.18:0)+humPerSecond*3)*multiplier);
+        sanity = Math.max(0, sanity - drain / 20);
         if (energyTicks > 0 && --energyTicks == 0) recover(-5);
     }
     static double drainPerSecond(double... sources) {

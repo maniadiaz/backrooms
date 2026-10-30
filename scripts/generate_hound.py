@@ -56,7 +56,8 @@ for index, (kind, label) in enumerate(labels.items()):
     if kind == 'steps': envelope = np.exp(-t * 20) * np.minimum(t * 200, 1)
     if kind == 'breath': envelope *= np.sin(t * 10) ** 2
     wave = (rough * (.8 if kind in ('steps', 'breath') else .25) + voiced * .35) * envelope
-    wave *= .55 / max(np.max(np.abs(wave)), 1e-6)
+    wave = np.tanh(wave * 1.4)
+    wave *= .72 / max(np.max(np.abs(wave)), 1e-6)
     file = ROOT / f'sounds/ambient/hound_{kind}.ogg'
     sf.write(file, wave, 32000, format='OGG', subtype='VORBIS')
     decoded, rate = sf.read(file)
