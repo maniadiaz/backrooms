@@ -6,7 +6,7 @@ plugins {
 
 group = 'io.github.maniadiaz.bedroom'
 version = mod_version
-base { archivesName = 'bedroom' }
+base { archivesName = 'backrooms' }
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {

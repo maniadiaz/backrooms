@@ -1,6 +1,6 @@
 # Etapa 10 — Cierre, comprobación y paquetes
 
-Versión 1.0.0 de la campaña inicial de dos niveles. Se conserva la mecánica acordada de lobby, muertes, limbo, cordura y desconexiones. Las fases pendientes se ejecutaron consecutivamente y se guardaron en Git sin pedir una nueva instrucción de continuación.
+Entrega original 1.0.0 de la campaña inicial de dos niveles, seguida del renombre a Backrooms en 1.0.1. Se conserva la mecánica acordada de lobby, muertes, limbo, cordura y desconexiones. Las fases pendientes se ejecutaron consecutivamente y se guardaron en Git sin pedir una nueva instrucción de continuación. Los resultados descritos en esta etapa corresponden al cierre original; véase [renombre](RENOMBRE-BACKROOMS.md) para la validación de 1.0.1.
 
 Se añadió la trepa limitada de Bacteria con colisión real y animación sincronizada, respetando techo/altura y evitando intentos continuos. La prueba física específica eleva el total a 62 pruebas obligatorias aprobadas. No se anuncia navegación por techos ni por superficies arbitrarias.
 

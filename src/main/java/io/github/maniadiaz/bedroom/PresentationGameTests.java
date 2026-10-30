@@ -14,6 +14,18 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder(Bedroom.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class PresentationGameTests {
+    @GameTest(template="empty")
+    public static void backroomsCommandsAndLegacyAliasKeepExternalInventory(GameTestHelper h) throws Exception {
+        var p=new net.minecraftforge.common.util.FakePlayer(h.getLevel(),new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"RenamedMod"));
+        p.getInventory().setItem(0,new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND,2));
+        try {
+            var dispatcher=p.server.getCommands().getDispatcher();
+            h.assertTrue(dispatcher.execute("backrooms lobby",p.createCommandSourceStack())==1&&MatchController.member(p),"New public name must enter the lobby");
+            h.assertTrue(dispatcher.execute("backrooms status",p.createCommandSourceStack())==1,"New command must execute nested subcommands");
+            h.assertTrue(dispatcher.execute("bedroom leave",p.createCommandSourceStack())==1&&!MatchController.member(p),"Legacy command must stay compatible");
+            h.assertTrue(p.getInventory().getItem(0).is(net.minecraft.world.item.Items.DIAMOND)&&p.getInventory().getItem(0).getCount()==2,"Renaming must preserve the external inventory");h.succeed();
+        } finally {if(MatchController.member(p))MatchController.leave(p);p.discard();}
+    }
     @GameTest(template = "empty", timeoutTicks = 200)
     public static void restartAdmitsLateFriendAndPreservesExternalItems(GameTestHelper h) {
         var players = new LinkedHashMap<UUID, net.minecraft.server.level.ServerPlayer>();

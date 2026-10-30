@@ -16,7 +16,7 @@ No se puede romper ni construir libremente. Los objetos de misión solo se inser
 
 Primera y segunda muertes por nivel: limbo blanco, treinta segundos para encontrar el botón de salida. Si se acaba el tiempo, espectador. Tercera muerte: espectador directamente. Al completar un nivel revive todo el equipo y se reinicia su contador de muertes. Si no queda nadie activo ni con una oportunidad recuperable en limbo, derrota y lobby.
 
-Desconectarse pierde el progreso personal. Al volver se espera en el lobby: los que siguen dentro pueden votar reiniciar o continuar sin ese participante. Cerrar/reabrir el mundo también empieza de cero. `/bedroom leave` devuelve el inventario externo protegido.
+Desconectarse pierde el progreso personal. Al volver se espera en el lobby: los que siguen dentro pueden votar reiniciar o continuar sin ese participante. Cerrar/reabrir el mundo también empieza de cero. `/backrooms leave` devuelve el inventario externo protegido.
 
 ## Cordura y objetos
 
@@ -37,9 +37,9 @@ Penumbra, monotonía y entidades cercanas afectan a la cordura individual con un
 
 ## Comandos y controles
 
-- `/bedroom lobby`, `/bedroom status`, `/bedroom leave`.
-- `/bedroom restart`: propone votación durante la partida. `/bedroom vote restart` o `/bedroom vote continue`; gana una mayoría estricta y hay treinta segundos.
-- `/bedroom spectate`, `next`, `previous`, `off`. Cámaras con `]` y `[`; se pueden reasignar.
+- `/backrooms lobby`, `/backrooms status`, `/backrooms leave`.
+- `/backrooms restart`: propone votación durante la partida. `/backrooms vote restart` o `/backrooms vote continue`; gana una mayoría estricta y hay treinta segundos.
+- `/backrooms spectate`, `next`, `previous`, `off`. Cámaras con `]` y `[`; se pueden reasignar.
 - Comer/beber/curarse: mantener usar objeto. Insertar componente: clic derecho en su panel. Correr: tecla de carrera asignada más avance.
 
 Las pruebas administrativas requieren operador y `developmentCommands=true`; no son atajos habilitados en la configuración de distribución. El volumen, niebla y movimiento opcional de cámara se ajustan en `config/bedroom-client.toml`. Los apagones y la cordura son reglas del servidor.

@@ -77,12 +77,13 @@ public final class MatchController {
                     ServerPlayer p = c.getSource().getPlayerOrException();
                     return complete(p, true) ? 1 : 0;
                 })));
+        event.getDispatcher().register(Commands.literal("backrooms").redirect(event.getDispatcher().getRoot().getChild("bedroom")));
     }
 
     static int join(ServerPlayer p) {
         MatchData d = MatchData.get(p.server);
-        if (dimension(p.server) == null) { tell(p, "La dimensión Bedroom no está disponible."); return 0; }
-        if (d.members.containsKey(p.getUUID())) { tell(p, "Ya perteneces a la partida. Usa /bedroom status."); return 0; }
+        if (dimension(p.server) == null) { tell(p, "La dimensión Backrooms no está disponible."); return 0; }
+        if (d.members.containsKey(p.getUUID())) { tell(p, "Ya perteneces a la partida. Usa /backrooms status."); return 0; }
         CompoundTag external = d.waiting.get(p.getUUID());
         if (external == null) external = externalSnapshot(p);
         if (!d.join(p.getUUID())) {
@@ -101,7 +102,7 @@ public final class MatchController {
         p.getInventory().clearContent();
         p.experienceLevel = 0; p.totalExperience = 0; p.experienceProgress = 0;
         apply(p, d, m, false);
-        tell(p, "Lobby: botón sobre el bloque verde al fondo. El anfitrión inicia. /bedroom leave para salir.");
+        tell(p, "Lobby: botón sobre el bloque verde al fondo. El anfitrión inicia. /backrooms leave para salir.");
         return 1;
     }
 
@@ -119,7 +120,7 @@ public final class MatchController {
         returnExternal(p, m.external);
         d.remove(p.getUUID());
         BedroomNetwork.sync(p);
-        tell(p, "Saliste de Bedroom. Inventario externo restaurado.");
+        tell(p, "Saliste de Backrooms. Inventario externo restaurado.");
         return 1;
     }
 
@@ -175,9 +176,9 @@ public final class MatchController {
             if (eligible.contains(player.getUUID())) {
                 player.sendSystemMessage(Component.literal("¿Reiniciar la partida? ")
                         .append(Component.literal("[REINICIAR] ").withStyle(style -> style.withColor(net.minecraft.ChatFormatting.GREEN)
-                                .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/bedroom vote restart"))))
+                                .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/backrooms vote restart"))))
                         .append(Component.literal("[SEGUIR]").withStyle(style -> style.withColor(net.minecraft.ChatFormatting.AQUA)
-                                .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/bedroom vote continue")))));
+                                .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/backrooms vote continue")))));
             }
         }
     }
@@ -215,7 +216,7 @@ public final class MatchController {
         if (d.waiting.containsKey(p.getUUID())) d.observers.add(p.getUUID());
         d.cameras.put(p.getUUID(), target.getUUID());
         followCamera(p, d); BedroomNetwork.sync(p);
-        tell(p, "Observando a " + target.getScoreboardName() + ". Cambia con /bedroom spectate next o previous.");
+        tell(p, "Observando a " + target.getScoreboardName() + ". Cambia con /backrooms spectate next o previous.");
         return 1;
     }
 
@@ -366,7 +367,7 @@ public final class MatchController {
         d.setDirty();
         BedroomNetwork.sync(p);
         MatchAnnouncements.state(p, m, d.level);
-        tell(p, "Bedroom: " + m.state + (m.state == MatchData.State.LIMBO ? " — 30 segundos: busca el botón de salida." : ""));
+        tell(p, "Backrooms: " + m.state + (m.state == MatchData.State.LIMBO ? " — 30 segundos: busca el botón de salida." : ""));
     }
 
     static boolean death(ServerPlayer p) {

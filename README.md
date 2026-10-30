@@ -1,6 +1,8 @@
-# Bedroom 1.0.0
+# Backrooms 1.0.1
 
 Campaña cooperativa de terror para **Minecraft Java 1.20.1**, **Forge 47.4.28** y **Java 17**, con uno a cuatro participantes.
+
+Repositorio: [maniadiaz/backrooms](https://github.com/maniadiaz/backrooms). Renombrado desde Bedroom conservando todos sus commits y etiquetas. El identificador técnico `bedroom`, sus dimensiones, datos guardados y archivos de configuración se conservan para mantener la compatibilidad. El nombre visible y los paquetes son **Backrooms**. `/backrooms` es el comando principal; `/bedroom` sigue funcionando.
 
 La campaña inicial tiene dos niveles completos: el laberinto amarillo del Nivel 0 y los almacenes de Zona de Carga. Incluye lobby automático, espera/espectadores, votaciones, limbo, cordura individual, consumibles, linterna, loot, tres entidades, misiones cooperativas, salida por No-Clip, descanso y victoria con fuegos artificiales.
 
@@ -10,17 +12,17 @@ La campaña inicial tiene dos niveles completos: el laberinto amarillo del Nivel
 - [Controles, reglas, objetos y entidades](docs/COMO-JUGAR.md).
 - [Informe de entrega, pruebas y límites de validación](docs/ENTREGA-FINAL.md).
 
-Compilar produce `build/libs/bedroom-1.0.0.jar`. El empaquetador crea `dist/bedroom-1.0.0-client.zip`, `dist/bedroom-1.0.0-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
+Compilar produce `build/libs/backrooms-1.0.1.jar`. El empaquetador crea `dist/backrooms-1.0.1-client.zip`, `dist/backrooms-1.0.1-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
 
 Al entrar se llega al lobby. El anfitrión pulsa el botón del bloque verde. Buscar tres fusibles numerados y reparar sus paneles; mantener avance y carrera dos segundos contra una pared anómala habilitada. Pantalla negra de un segundo, recuperación del equipo y descanso de noventa segundos o botón para salir antes. En Zona de Carga se recuperan tres relés. Su compuerta conduce al atrio de festejo y después al lobby.
 
-Primera y segunda muertes de cada nivel dan treinta segundos de limbo; la tercera, o agotar ese tiempo, elimina hasta completar el nivel. Si todos quedan sin oportunidad, derrota. Desconectarse pierde el intento personal; al volver se espera y el equipo decide mediante voto si reiniciar. No hay checkpoint al cerrar el mundo. El inventario externo se protege y `/bedroom leave` lo restaura.
+Primera y segunda muertes de cada nivel dan treinta segundos de limbo; la tercera, o agotar ese tiempo, elimina hasta completar el nivel. Si todos quedan sin oportunidad, derrota. Desconectarse pierde el intento personal; al volver se espera y el equipo decide mediante voto si reiniciar. No hay checkpoint al cerrar el mundo. El inventario externo se protege y `/backrooms leave` lo restaura.
 
 El Sabueso reacciona a mirada/movimiento, Smiler a observadores válidos y Bacteria a ruido/visión con búsqueda por última posición y trepa limitada. Comparten un presupuesto de encuentros raros. Las cajas y archivadores contienen comida y suministros; los componentes de misión perdidos pueden recuperarse sin dejar la partida bloqueada.
 
 ## Comandos
 
-`/bedroom lobby`, `/bedroom status`, `/bedroom leave`, `/bedroom restart`, `/bedroom vote restart`, `/bedroom vote continue`, `/bedroom spectate` y sus variantes `next`, `previous`, `off`. Las cámaras también se cambian con `]` y `[`, reasignables. El HUD permanece a la izquierda con estado encima de muertes.
+`/backrooms lobby`, `/backrooms status`, `/backrooms leave`, `/backrooms restart`, `/backrooms vote restart`, `/backrooms vote continue`, `/backrooms spectate` y sus variantes `next`, `previous`, `off`. Las cámaras también se cambian con `]` y `[`, reasignables. El HUD permanece a la izquierda con estado encima de muertes.
 
 Los comandos `testdeath`/`testnext` y la sala de desarrollo requieren operador y `developmentCommands=true`; el paquete de distribución los desactiva. Los botones y las misiones normales no requieren operador.
 
@@ -35,7 +37,7 @@ python scripts/package_release.py
 
 En Linux/CI: `bash gradlew build runGameTestServer --console=plain`. El empaquetador utiliza Python 3.11 o posterior, biblioteca estándar. Los recursos generados ya están versionados; compilar no requiere herramientas de síntesis de audio.
 
-Las 62 pruebas obligatorias verifican reglas, inventarios, geometría, entidades, misiones, red/HUD y una campaña completa con cuatro participantes simulados. Esto no equivale a cuatro clientes ni a una sesión Essential. Quedan pendientes la revisión visual/auditiva de una partida completa y la validación de red con amigos; el informe distingue esas comprobaciones de las automatizadas.
+Las 63 pruebas obligatorias verifican reglas, inventarios, geometría, entidades, misiones, red/HUD, compatibilidad de comandos y una campaña completa con cuatro participantes simulados. Esto no equivale a cuatro clientes ni a una sesión Essential. Quedan pendientes la revisión visual/auditiva de una partida completa y la validación de red con amigos; el informe distingue esas comprobaciones de las automatizadas.
 
 Las pruebas usan exclusivamente `run-gametest/`: cada ejecución borra su mundo de ensayo para evitar geometría antigua. No guardar partidas personales allí. Mundos, logs, caches, `.tools/`, `build/` y `dist/` se excluyen de Git. El workflow de GitHub recompila, ejecuta la suite y empaqueta artefactos; su resultado remoto se revisa por separado del resultado local.
 
@@ -53,7 +55,7 @@ Texturas y modelos originales mediante `generate_textures.py`, `generate_mission
 - [Etapa 7: fusibles y No-Clip](docs/ETAPA-7-MISION-Y-NOCLIP.md).
 - [Etapa 8: Nivel 1 y progresión](docs/ETAPA-8-NIVEL-1.md).
 - [Etapa 9: victoria](docs/ETAPA-9-VICTORIA.md).
-- [Etapa 10: cierre 1.0.0](docs/ETAPA-10-ENTREGA.md).
+- [Etapa 10: cierre 1.0.1](docs/ETAPA-10-ENTREGA.md).
 - [Bestiario](docs/BESTIARIO.md), [partidas y lobby](docs/PARTIDAS-Y-LOBBY.md), [control de versiones](docs/CONTROL-DE-VERSIONES.md).
 
 Los documentos de etapas anteriores describen sus versiones históricas; el estado vigente es esta entrega y su informe final. La campaña inicial termina tras dos niveles. No incluye navegación de entidades por techos, campaña narrativa extensa, voces de actores ni niveles adicionales no diseñados.

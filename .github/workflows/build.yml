@@ -1,4 +1,4 @@
-name: Build and verify Bedroom
+name: Build and verify Backrooms
 on:
   push:
     branches: [main]
@@ -25,7 +25,7 @@ jobs:
       - run: python scripts/package_release.py
       - uses: actions/upload-artifact@v4
         with:
-          name: bedroom-delivery
+          name: backrooms-delivery
           path: |
             build/libs/*.jar
             dist/*.zip

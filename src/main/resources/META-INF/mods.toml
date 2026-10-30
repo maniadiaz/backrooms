@@ -4,7 +4,7 @@ license="All Rights Reserved"
 [[mods]]
 modId="bedroom"
 version="${version}"
-displayName="Bedroom"
+displayName="Backrooms"
 authors="maniadiaz"
 description='''Campaña cooperativa de terror para 1–4 jugadores: Nivel 0, Zona de Carga, cordura, entidades, misiones y un final de celebración.'''
 [[dependencies.bedroom]]

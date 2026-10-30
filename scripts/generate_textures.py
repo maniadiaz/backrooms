@@ -183,6 +183,6 @@ for language in names:
         labels[f'item.bedroom.{key}'] = a if es else b
     labels.update({'block.bedroom.cardboard_box': 'Caja de cartón' if es else 'Cardboard box',
                    'block.bedroom.filing_cabinet': 'Archivador metálico' if es else 'Filing cabinet',
-                   'key.categories.bedroom': 'Bedroom', 'key.bedroom.next_camera': 'Siguiente cámara' if es else 'Next spectator camera',
+                   'key.categories.bedroom': 'Backrooms', 'key.bedroom.next_camera': 'Siguiente cámara' if es else 'Next spectator camera',
                    'key.bedroom.previous_camera': 'Cámara anterior' if es else 'Previous spectator camera'})
     write_json(path, labels)

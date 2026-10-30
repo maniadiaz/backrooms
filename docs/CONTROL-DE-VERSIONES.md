@@ -1,6 +1,6 @@
 # Control de versiones por etapa
 
-Remoto: https://github.com/maniadiaz/bedroom-mod.git
+Remoto: https://github.com/maniadiaz/backrooms.git
 
 ## Flujo
 

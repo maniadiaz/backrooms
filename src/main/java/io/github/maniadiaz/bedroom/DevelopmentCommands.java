@@ -34,7 +34,7 @@ public final class DevelopmentCommands {
     private static int enter(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         if (MatchController.member(player)) {
-            source.sendFailure(Component.literal("Sal de la partida con /bedroom leave antes de usar comandos de desarrollo."));
+            source.sendFailure(Component.literal("Sal de la partida con /backrooms leave antes de usar comandos de desarrollo."));
             return 0;
         }
         ServerLevel level = source.getServer().getLevel(LEVEL_0);
@@ -55,7 +55,7 @@ public final class DevelopmentCommands {
         ensureRoom(level);
         player.teleportTo(level, 8.5, 65, 8.5, 0, 0);
         player.fallDistance = 0;
-        source.sendSuccess(() -> Component.literal("Sala de prueba del Nivel 0. Regreso: /bedroom exit"), false);
+        source.sendSuccess(() -> Component.literal("Sala de prueba del Nivel 0. Regreso: /backrooms exit"), false);
         return 1;
     }
 
@@ -63,14 +63,14 @@ public final class DevelopmentCommands {
         ServerPlayer player = source.getPlayerOrException();
         if (MatchController.member(player)) return MatchController.leave(player);
         if (!player.level().dimension().equals(LEVEL_0) || !player.getPersistentData().contains(RETURN)) {
-            source.sendFailure(Component.literal("No hay un regreso guardado desde Nivel 0. Usa /bedroom rescue para volver al spawn."));
+            source.sendFailure(Component.literal("No hay un regreso guardado desde Nivel 0. Usa /backrooms rescue para volver al spawn."));
             return 0;
         }
         CompoundTag data = player.getPersistentData().getCompound(RETURN);
         ResourceLocation id = ResourceLocation.tryParse(data.getString("dimension"));
         ServerLevel target = id == null ? null : source.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, id));
         if (target == null) {
-            source.sendFailure(Component.literal("La dimensión de origen no está disponible. Usa /bedroom rescue."));
+            source.sendFailure(Component.literal("La dimensión de origen no está disponible. Usa /backrooms rescue."));
             return 0;
         }
         player.teleportTo(target, data.getDouble("x"), data.getDouble("y"), data.getDouble("z"), data.getFloat("yaw"), data.getFloat("pitch"));

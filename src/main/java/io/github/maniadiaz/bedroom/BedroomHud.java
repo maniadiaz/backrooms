@@ -30,7 +30,7 @@ public final class BedroomHud {
             graphics.fill(x, y, x + w, y + h, 0xBD11110E);
             graphics.fill(x, y, x + 2, y + h, 0xFFE0C46E);
             graphics.fill(x + 8, y + 23, x + w - 8, y + 24, 0x665B5138);
-            graphics.drawString(mc.font, "BEDROOM: " + hud.state(), x + 10, y + 9, 0xFFE0C46E, false);
+            graphics.drawString(mc.font, "BACKROOMS: " + hud.state(), x + 10, y + 9, 0xFFE0C46E, false);
             graphics.drawString(mc.font, "MUERTES  " + hud.deaths() + " / 3", x + 10, y + 32, 0xFFF3EDE0, false);
             for (int i = 0; i < 3; i++) graphics.fill(x + 120 + i * 10, y + 33, x + 126 + i * 10, y + 39,
                     i < hud.deaths() ? 0xFFE46565 : 0xFF514A3D);
@@ -52,7 +52,7 @@ public final class BedroomHud {
             }
             if (hud.voteSeconds() > 0) {
                 graphics.drawString(mc.font, "REINICIO " + hud.voteYes() + "/" + hud.voteRequired() + " | " + hud.voteSeconds() + "s", x + 10, y + 133, 0xFF80DBCE, false);
-                graphics.drawString(mc.font, "/bedroom vote ...", x + 10, y + 147, 0xFFB9B3A5, false);
+                graphics.drawString(mc.font, "/backrooms vote ...", x + 10, y + 147, 0xFFB9B3A5, false);
             }
         });
         event.registerAboveAll("noclip_blackout",(gui,graphics,partial,width,height)->{if(NoClipClient.black())graphics.fill(0,0,width,height,0xFF000000);});

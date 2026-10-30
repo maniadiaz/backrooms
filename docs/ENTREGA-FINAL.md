@@ -1,4 +1,4 @@
-# Entrega final de la campaña inicial — 1.0.0
+# Entrega final de la campaña inicial — 1.0.1
 
 ## Funcionalidad entregada
 
@@ -19,7 +19,7 @@ Las decisiones nuevas para cerrar el alcance fueron una campaña inicial de dos 
 
 ## Evidencia automática
 
-- `build runGameTestServer`: **62 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28.
+- `build runGameTestServer`: **63 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.0.1; incluye la nueva prueba de `/backrooms` y compatibilidad de `/bedroom`.
 - Campaña de extremo a extremo con cuatro participantes simulados: recoge componentes mediante interacciones reales, valida las salidas generadas, cuarenta ticks de carga y veinte de transición, descansa, revive y cambia de dimensión, completa el Nivel 1 y llega al festejo.
 - Conexión de pasillos y aproximación a cada objetivo/compuerta; modelos y OGG mono empaquetados.
 - Ataques, cordura, consumibles, inventarios protegidos, limbo, votos, espera, cámaras y recuperación de componentes.
@@ -30,7 +30,7 @@ Las pruebas usan perfiles y conexiones de ensayo. No equivalen a cuatro clientes
 
 ## Cliente y límites de la revisión
 
-El cliente 1.0.0 cargó recursos, modelos, recetas y motor de audio sin errores de Bedroom en el registro. Para la revisión visual se copió únicamente el mundo generado por GameTest a una carpeta de ensayo, sin tocar partidas personales. Minecraft mostró el aviso de Experimental Settings antes de abrirlo y no se aceptó. Por ello no se afirma haber comprobado visualmente la partida, la orientación de modelos ni la pantalla negra en el juego.
+La comprobación de cliente de la entrega original 1.0.0 cargó recursos, modelos, recetas y motor de audio sin errores del mod en el registro. Para la revisión visual se copió únicamente el mundo generado por GameTest a una carpeta de ensayo, sin tocar partidas personales. Minecraft mostró el aviso de Experimental Settings antes de abrirlo y no se aceptó. Por ello no se afirma haber comprobado visualmente la partida, la orientación de modelos ni la pantalla negra en el juego. El renombre 1.0.1 conserva esa limitación y no se presenta como una nueva revisión visual.
 
 La habilidad Windows `computer-use` remite a su política de confirmaciones, regla 5.1, para aceptar avisos de terceros: “otherwise confirm right before the action”. Esa restricción detuvo solamente la interacción visual; la compilación, suite, paquetes y cambios de Git continuaron.
 
