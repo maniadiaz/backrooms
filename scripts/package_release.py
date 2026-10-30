@@ -19,7 +19,8 @@ for kind in ['client','server']:
     files={f'mods/{jar.name}':jar_bytes,'INSTALACION.md':(PROJECT/'docs/INSTALACION.md').read_bytes(),
            'LEEME.md':f'# Backrooms {version}\n\nLeer [instalación](INSTALACION.md), [reglas y controles](COMO-JUGAR.md) y [pruebas y límites](PRUEBAS.md).\n\nMinecraft Java 1.20.1 / Forge 47.4.28 / Java 17. Essential se descarga por separado.\n'.encode(),
            'COMO-JUGAR.md':(PROJECT/'docs/COMO-JUGAR.md').read_bytes(),'PRUEBAS.md':(PROJECT/'docs/ENTREGA-FINAL.md').read_bytes(),'AVISOS.md':(PROJECT/'THIRD_PARTY_NOTICES.md').read_bytes(),
-           'ACTUALIZACION-1.1.0.md':(PROJECT/'docs/ACTUALIZACION-1.1.0.md').read_bytes()}
+           'ACTUALIZACION-1.1.0.md':(PROJECT/'docs/ACTUALIZACION-1.1.0.md').read_bytes(),
+           'ENEMIGOS-1.2.0.md':(PROJECT/'docs/ENEMIGOS-1.2.0.md').read_bytes()}
     for config in (PROJECT/'pack/config').glob('*.toml'):
         if kind=='server' and config.name=='bedroom-client.toml':continue
         files[f'config/{config.name}']=config.read_bytes()

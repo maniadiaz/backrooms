@@ -156,6 +156,18 @@ public final class SmilerGameTests {
                 int pixel = face.getRGB(x,y); if ((pixel >>> 24) == 0) transparent++; if ((pixel & 255) > 180) bright++;
             }
             h.assertTrue(transparent > 3000 && bright > 100,"Only glowing eyes and grin should occupy the transparent face plane");
+            int red=0,yellow=0;
+            for(int x=0;x<face.getWidth();x++)for(int y=0;y<face.getHeight();y++){
+                int pixel=face.getRGB(x,y),r=pixel>>16&255,g=pixel>>8&255,b=pixel&255;
+                if((pixel>>>24)>0&&r>110&&g<40&&b<40)red++;
+                if((pixel>>>24)>0&&r>170&&g>150&&b<180)yellow++;
+            }
+            h.assertTrue(red>100&&yellow>100,"Red smile and yellow-white teeth must both be visible in the emissive layer");
+        }
+        try(var stream=loader.getResourceAsStream("assets/bedroom/textures/entity/smiler_body.png")){
+            h.assertTrue(stream!=null,"Black orb material must be packaged separately from the glowing face");
+            var body=javax.imageio.ImageIO.read(stream);int pixel=body.getRGB(0,0);
+            h.assertTrue((pixel>>>24)==255&&(pixel&255)<25,"The orb must have a solid black surface, not a transparent face alone");
         }
         for (String name : List.of("hiss","laugh","attack")) {
             try (var stream = loader.getResourceAsStream("assets/bedroom/sounds/ambient/smiler_"+name+".ogg")) {

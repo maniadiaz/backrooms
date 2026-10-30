@@ -17,6 +17,9 @@ public final class HoundEntity extends Monster {
             EntityType.Builder.of(HoundEntity::new, MobCategory.MONSTER).sized(.7F, 1.35F).clientTrackingRange(10).build("bedroom:hound"));
     enum State { INACTIVE, STALKING, HESITATING, CHARGING, SEARCHING }
     State state = State.INACTIVE;
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> VISUAL_STATE=net.minecraft.network.syncher.SynchedEntityData.defineId(HoundEntity.class,net.minecraft.network.syncher.EntityDataSerializers.INT);
+    @Override protected void defineSynchedData(){super.defineSynchedData();entityData.define(VISUAL_STATE,0);}
+    State visualState(){return State.values()[entityData.get(VISUAL_STATE)];}
     private Vec3 lastKnown;
     private Vec3 previousTarget;
     private int evidence, attackCooldown, voiceCooldown, lifetime;
@@ -72,7 +75,7 @@ public final class HoundEntity extends Monster {
         }
         if (tickCount % 100 == 0) playSound(BedroomSounds.HOUND_BREATH.get(), .65F, .9F);
         if ((state == State.INACTIVE || state == State.STALKING) && tickCount % 180 == 0) playSound(BedroomSounds.HOUND_LURE.get(), .6F, .8F);
-        if (target == null) { getNavigation().stop(); setTarget(null); previousTarget = null; state = State.INACTIVE; return; }
+        if (target == null) { getNavigation().stop(); setTarget(null); previousTarget = null; state = State.INACTIVE; entityData.set(VISUAL_STATE,state.ordinal()); return; }
         if (getTarget() != target) { previousTarget = null; evidence = 0; lastKnown = null; }
         setTarget(target);
         boolean visible = distanceToSqr(target) <= 225 && hasLineOfSight(target);
@@ -81,7 +84,7 @@ public final class HoundEntity extends Monster {
         if (previousTarget == null || moving) previousTarget = target.position();
         State next = reaction(visible, looking(target, this), moving, noisy, state == State.CHARGING || state == State.SEARCHING);
         if (visible || noisy) { lastKnown = target.position(); evidence = 0; }
-        else if (++evidence > 300) { setTarget(null); lastKnown = null; previousTarget = null; state = State.INACTIVE; getNavigation().stop(); return; }
+        else if (++evidence > 300) { setTarget(null); lastKnown = null; previousTarget = null; state = State.INACTIVE; entityData.set(VISUAL_STATE,state.ordinal()); getNavigation().stop(); return; }
         if (next != state) {
             if (voiceCooldown == 0 && (next == State.CHARGING || next == State.HESITATING)) {
                 playSound(next == State.CHARGING ? BedroomSounds.HOUND_CHARGE.get() : BedroomSounds.HOUND_GROWL.get(), .8F, .85F);
@@ -89,6 +92,7 @@ public final class HoundEntity extends Monster {
             }
             state = next;
         }
+        entityData.set(VISUAL_STATE,state.ordinal());
         if (state == State.HESITATING) { getNavigation().stop(); setDeltaMovement(0, getDeltaMovement().y, 0); getLookControl().setLookAt(target, 30, 30); }
         else if (lastKnown != null && tickCount % 10 == 0) getNavigation().moveTo(lastKnown.x, lastKnown.y, lastKnown.z, state == State.CHARGING ? 1.55 : .8);
         if (state == State.CHARGING && visible && distanceToSqr(target) < 2.25 && attackCooldown == 0) {

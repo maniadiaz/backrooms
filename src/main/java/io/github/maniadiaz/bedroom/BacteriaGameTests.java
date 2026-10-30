@@ -13,6 +13,16 @@ import net.minecraftforge.gametest.*;
 @GameTestHolder(Bedroom.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class BacteriaGameTests {
+    @GameTest(template="empty") public static void humanoidHeightFitsLevelZeroButCannotEnterTwoBlockGap(GameTestHelper h){
+        var level=level(h);var entity=BacteriaEntity.TYPE.get().create(level);
+        try{
+            room(level,25600,12);entity.moveTo(25604.5,65,25604.5,0,0);entity.setOnGround(true);
+            h.assertTrue(entity.getBbHeight()>2.9F&&level.noCollision(entity),"Humanoid body fits the real three-block ceiling with clearance");
+            for(int dx=1;dx<9;dx++)level.setBlock(new BlockPos(25600+dx,67,25606),Blocks.STONE.defaultBlockState(),3);
+            entity.move(net.minecraft.world.entity.MoverType.SELF,new Vec3(0,0,2));
+            h.assertTrue(entity.horizontalCollision&&entity.getZ()<25606,"Tall body stops at a two-block gap instead of clipping through the ceiling");h.succeed();
+        }finally{entity.discard();}
+    }
     private static ServerLevel level(GameTestHelper h) { return h.getLevel().getServer().getLevel(DevelopmentCommands.LEVEL_0); }
     private static FakePlayer player(ServerLevel level,String name) { return new FakePlayer(level,new GameProfile(UUID.randomUUID(),name)); }
     private static void room(ServerLevel level,int x,int length) {
@@ -102,7 +112,7 @@ public final class BacteriaGameTests {
             }
             p.setPos(origin.getX()+7.5,65,origin.getZ()+29.5);
             entity = EncounterSystem.bacteriaCandidate(level,spawn,p,List.of(p));
-            h.assertTrue(entity!=null && entity.getBbWidth()<1 && entity.getBbHeight()<3,"A hidden Bacteria must fit and navigate the two-wide L"); entity.discard();
+            h.assertTrue(entity!=null && entity.getBbWidth()<1 && entity.getBbHeight()>2.9F && entity.getBbHeight()<3,"Tall humanoid Bacteria must fit and navigate the three-high, two-wide L"); entity.discard();
             dog = HoundEntity.TYPE.get().create(level); dog.moveTo(spawn.getX()+10.5,65,spawn.getZ()+.5,0,0); level.addFreshEntity(dog);
             h.assertTrue(EncounterSystem.bacteriaCandidate(level,spawn,p,List.of(p))==null,"Hound reserves Bacteria encounter budget"); dog.discard();
             smiler = SmilerEntity.TYPE.get().create(level); smiler.moveTo(spawn.getX()+10.5,65,spawn.getZ()+.5,0,0); level.addFreshEntity(smiler);
@@ -126,7 +136,7 @@ public final class BacteriaGameTests {
         var loader = BacteriaGameTests.class.getClassLoader();
         try (var stream = loader.getResourceAsStream("assets/bedroom/textures/entity/bacteria.png")) {
             h.assertTrue(stream!=null,"Bacteria skin is packaged"); var image = javax.imageio.ImageIO.read(stream);
-            h.assertTrue(image.getWidth()==64 && image.getHeight()==64,"Model UVs require the 64-pixel skin");
+            h.assertTrue(image.getWidth()==128 && image.getHeight()==128,"Model UVs require the 128-pixel material atlas");
         }
         for (String name : List.of("drag","metal","alert","attack")) {
             try (var stream = loader.getResourceAsStream("assets/bedroom/sounds/ambient/bacteria_"+name+".ogg")) {

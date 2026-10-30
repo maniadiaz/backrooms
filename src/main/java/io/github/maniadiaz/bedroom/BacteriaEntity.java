@@ -18,7 +18,7 @@ import net.minecraftforge.registries.*;
 public final class BacteriaEntity extends Monster {
     static final DeferredRegister<EntityType<?>> TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Bedroom.MOD_ID);
     static final RegistryObject<EntityType<BacteriaEntity>> TYPE = TYPES.register("bacteria", () -> EntityType.Builder
-            .of(BacteriaEntity::new, MobCategory.MONSTER).sized(.75F,1.45F).clientTrackingRange(10).build("bedroom:bacteria"));
+            .of(BacteriaEntity::new, MobCategory.MONSTER).sized(.75F,2.95F).clientTrackingRange(10).build("bedroom:bacteria"));
     enum State { ROAMING, ALERT, CHASING, SEARCHING }
     private static final EntityDataAccessor<Integer> STATE = SynchedEntityData.defineId(BacteriaEntity.class,EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> CLIMBING=SynchedEntityData.defineId(BacteriaEntity.class,EntityDataSerializers.BOOLEAN);
@@ -37,7 +37,7 @@ public final class BacteriaEntity extends Monster {
     @Override public boolean onClimbable(){return entityData.get(CLIMBING)&&getY()<68;}
     void updateClimbing(){
         if(climbCooldown>0)climbCooldown--;
-        boolean wants=state()==State.CHASING&&horizontalCollision&&getY()<68&&level().getBlockState(blockPosition().above(2)).isAir();
+        boolean wants=state()==State.CHASING&&horizontalCollision&&getY()<68&&level().noCollision(this,getBoundingBox().move(0,.2,0));
         if(!wants&&entityData.get(CLIMBING))climbCooldown=100;
         boolean climbing=wants&&climbCooldown==0&&climbTicks<30;
         if(climbing)climbTicks++;

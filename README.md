@@ -1,10 +1,12 @@
-# Backrooms 1.1.2
+# Backrooms 1.2.0
 
 Campaña cooperativa de terror para **Minecraft Java 1.20.1**, **Forge 47.4.28** y **Java 17**, con uno a cuatro participantes.
 
 Repositorio: [maniadiaz/backrooms](https://github.com/maniadiaz/backrooms). Renombrado desde Bedroom conservando todos sus commits y etiquetas. El identificador técnico `bedroom`, sus dimensiones, datos guardados y archivos de configuración se conservan para mantener la compatibilidad. El nombre visible y los paquetes son **Backrooms**. `/backrooms` es el comando principal; `/bedroom` sigue funcionando.
 
 La campaña inicial tiene dos niveles completos: el laberinto amarillo del Nivel 0 y los almacenes de Zona de Carga. Incluye lobby automático, espera/espectadores, votaciones, limbo, cordura individual, consumibles, linterna, loot, tres entidades, misiones cooperativas, salida por No-Clip, descanso y victoria con fuegos artificiales.
+
+**Nuevo en 1.2.0:** rediseño de los tres enemigos: Sabueso encorvado con mandíbula y garras, Bacteria humanoide bípeda de tres bloques y Smiler como esfera negra con sonrisa roja, dientes amarillentos y ojos blancos. [Detalles y límites de validación](docs/ENEMIGOS-1.2.0.md).
 
 **Nuevo en 1.1.2:** las lámparas del Nivel 1 suben dos bloques, con actualización de las zonas existentes al cargarlas, para correr y saltar sin chocar.
 
@@ -18,7 +20,7 @@ La campaña inicial tiene dos niveles completos: el laberinto amarillo del Nivel
 - [Controles, reglas, objetos y entidades](docs/COMO-JUGAR.md).
 - [Informe de entrega, pruebas y límites de validación](docs/ENTREGA-FINAL.md).
 
-Compilar produce `build/libs/backrooms-1.1.2.jar`. El empaquetador crea `dist/backrooms-1.1.2-client.zip`, `dist/backrooms-1.1.2-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
+Compilar produce `build/libs/backrooms-1.2.0.jar`. El empaquetador crea `dist/backrooms-1.2.0-client.zip`, `dist/backrooms-1.2.0-server.zip` y `dist/SHA256SUMS.txt`. Son paquetes de directorio para instalación manual; no incluyen Minecraft, Forge, Java ni Essential. Todos deben actualizar a la misma versión del mod.
 
 Al entrar se llega al lobby. El anfitrión pulsa el botón del bloque verde. Buscar tres fusibles numerados y reparar sus paneles; mantener agacharse (Shift) y avanzar dos segundos contra una pared anómala habilitada. Pantalla negra de un segundo, recuperación del equipo y descanso de noventa segundos o botón para salir antes. En Zona de Carga se recuperan tres relés. Su compuerta conduce al atrio de festejo y después al lobby.
 
@@ -45,7 +47,7 @@ python scripts/package_release.py
 
 En Linux/CI: `bash gradlew build runGameTestServer --console=plain`. El empaquetador utiliza Python 3.11 o posterior, biblioteca estándar. Los recursos generados ya están versionados; compilar no requiere herramientas de síntesis de audio.
 
-Las 69 pruebas obligatorias verifican reglas, inventarios, geometría, entidades, misiones, red/HUD, dificultad, orientación, encuentros por tiempo y una campaña completa con cuatro participantes simulados. Se verifica la conexión de objetivos dentro de los cinco tamaños en ambos niveles. Esto no equivale a cuatro clientes ni a una sesión Essential. Quedan pendientes la revisión visual/auditiva de estos cambios y la validación de red con amigos; el informe distingue esas comprobaciones de las automatizadas.
+Las 70 pruebas obligatorias verifican reglas, inventarios, geometría, entidades, misiones, red/HUD, dificultad, orientación, encuentros por tiempo y una campaña completa con cuatro participantes simulados. Se verifica la conexión de objetivos dentro de los cinco tamaños en ambos niveles. Esto no equivale a cuatro clientes ni a una sesión Essential. Quedan pendientes la revisión visual/auditiva de estos cambios y la validación de red con amigos; el informe distingue esas comprobaciones de las automatizadas.
 
 Las pruebas usan exclusivamente `run-gametest/`: cada ejecución borra su mundo de ensayo para evitar geometría antigua. No guardar partidas personales allí. Mundos, logs, caches, `.tools/`, `build/` y `dist/` se excluyen de Git. El workflow de GitHub recompila, ejecuta la suite y empaqueta artefactos; su resultado remoto se revisa por separado del resultado local.
 

@@ -71,3 +71,7 @@ for lang, idx in [('es_mx', 0), ('en_us', 1)]:
     values.update({f'subtitles.bedroom.hound_{key}': label[idx] for key, label in labels.items()})
     file.write_text(json.dumps(values, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 print('Hound: skin and six validated mono OGG files generated.')
+
+# Preserve the redesigned mesh materials when rebuilding audio.
+from generate_enemy_designs import generate_hound
+generate_hound()

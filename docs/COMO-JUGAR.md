@@ -35,9 +35,9 @@ El ambiente drena un poco incluso con luz; penumbra, monotonía y entidades cerc
 
 ## Entidades
 
-- Sabueso: mirarlo sin caminar lo hace dudar. Moverse, correr o darle la espalda provoca carga; un compañero que corre puede atraerlo.
-- Smiler: cualquier mirada válida de un participante activo lo inmoviliza. Al perder todas avanza; ceguera y paredes anulan la observación. El contacto causa daño masivo y cordura a cero.
-- Bacteria: mirar no la detiene. Detecta visión cercana o ruido, avisa y persigue. Para perderla, romper la visión y permanecer silencioso tras varios recodos; puede trepar de forma limitada por superficies en contacto. No atraviesa paredes ni navega por techos.
+- Sabueso: cuadrúpedo pálido encorvado, con cabeza oscura, mandíbula abierta y garras. Mirarlo sin caminar lo hace dudar. Moverse, correr o darle la espalda provoca carga; un compañero que corre puede atraerlo.
+- Smiler: esfera negra flotante, ojos blancos, sonrisa roja y dientes amarillentos. Cualquier mirada válida de un participante activo lo inmoviliza. Al perder todas avanza; ceguera y paredes anulan la observación. El contacto causa daño masivo y cordura a cero.
+- Bacteria: humanoide esquelética de tres bloques, con brazos y dedos largos. Mirar no la detiene. Detecta visión cercana o ruido, avisa y persigue. Para perderla, romper la visión y permanecer silencioso tras varios recodos; puede trepar de forma limitada por superficies en contacto. No atraviesa paredes ni navega por techos.
 
 Los encuentros se intentan por tiempo: el primero desde 90/60/45/35/25 segundos según dificultad. Requieren una posición fuera de la vista con ruta válida y no se acumulan cerca del equipo. Un fallo de colocación reintenta en cinco segundos. Los pasos falsos son independientes de las entidades reales.
 

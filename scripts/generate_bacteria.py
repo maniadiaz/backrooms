@@ -66,3 +66,7 @@ for language,index in [('es_mx',0),('en_us',1)]:
     values.update({f'subtitles.bedroom.bacteria_{key}':pair[index] for key,pair in labels.items()})
     file.write_text(json.dumps(values,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report,indent=2))
+
+# Preserve the redesigned mesh materials when rebuilding audio.
+from generate_enemy_designs import generate_bacteria
+generate_bacteria()

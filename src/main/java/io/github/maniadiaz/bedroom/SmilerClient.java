@@ -78,23 +78,39 @@ public final class SmilerClient {
     }
     static final class Renderer extends EntityRenderer<SmilerEntity> {
         private static final ResourceLocation FACE = ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID, "textures/entity/smiler.png");
+        private static final ResourceLocation BODY = ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID,"textures/entity/smiler_body.png");
         Renderer(EntityRendererProvider.Context context) { super(context); shadowRadius = 0; }
         @Override public ResourceLocation getTextureLocation(SmilerEntity entity) { return FACE; }
         @Override public void render(SmilerEntity entity, float yaw, float partial, PoseStack poses, MultiBufferSource buffers, int light) {
             poses.pushPose();
-            poses.translate(0, 1.45 + Math.sin((entity.tickCount + partial) * .055) * .045, 0);
+            double age=entity.tickCount+partial;
+            poses.translate(0, 1.05 + Math.sin(age * .055) * .045, 0);
             poses.mulPose(entityRenderDispatcher.cameraOrientation());
             poses.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180));
+            float radius=.72F+(float)Math.sin(age*.045)*.012F;
+            var shell=buffers.getBuffer(RenderType.entityCutoutNoCull(BODY));
+            for(int ring=0;ring<12;ring++)for(int segment=0;segment<24;segment++){
+                sphere(shell,poses.last(),ring,segment,radius,light);
+                sphere(shell,poses.last(),ring+1,segment,radius,light);
+                sphere(shell,poses.last(),ring+1,segment+1,radius,light);
+                sphere(shell,poses.last(),ring,segment+1,radius,light);
+            }
             VertexConsumer buffer = buffers.getBuffer(RenderType.eyes(FACE));
             var pose = poses.last();
-            vertex(buffer, pose, -.55F, -.4F, 0, 1); vertex(buffer, pose, .55F, -.4F, 1, 1);
-            vertex(buffer, pose, .55F, .4F, 1, 0); vertex(buffer, pose, -.55F, .4F, 0, 0);
+            vertex(buffer, pose, -.66F, -.56F, 0, 1); vertex(buffer, pose, .66F, -.56F, 1, 1);
+            vertex(buffer, pose, .66F, .56F, 1, 0); vertex(buffer, pose, -.66F, .56F, 0, 0);
             poses.popPose();
             super.render(entity, yaw, partial, poses, buffers, light);
         }
         private void vertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v) {
-            buffer.vertex(pose.pose(), x,y,0).color(255,255,255,255).uv(u,v).overlayCoords(OverlayTexture.NO_OVERLAY)
+            buffer.vertex(pose.pose(), x,y,.75F).color(255,255,255,255).uv(u,v).overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(LightTexture.FULL_BRIGHT).normal(pose.normal(),0,0,1).endVertex();
+        }
+        private static void sphere(VertexConsumer out,PoseStack.Pose pose,int ring,int segment,float radius,int light){
+            double latitude=Math.PI*ring/12,longitude=Math.PI*2*segment/24;
+            float x=(float)(Math.sin(latitude)*Math.cos(longitude)),y=(float)Math.cos(latitude),z=(float)(Math.sin(latitude)*Math.sin(longitude));
+            out.vertex(pose.pose(),x*radius,y*radius*1.08F,z*radius).color(255,255,255,255).uv(segment/24F,ring/12F)
+                    .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(pose.normal(),x,y,z).endVertex();
         }
     }
 }

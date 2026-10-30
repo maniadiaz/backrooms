@@ -1,5 +1,7 @@
 # Bedroom — bestiario y contratos de implementación
 
+> Rediseño visual 1.2.0: Sabueso encorvado, Bacteria humanoide bípeda de tres bloques y Smiler con cuerpo esférico negro. Las descripciones anteriores se conservan como diseño histórico; consultar ENEMIGOS-1.2.0.md para el aspecto actual.
+
 Estado vigente: 1.0.0 con las tres entidades en ambos niveles y trepa limitada de Bacteria con colisión real. Véanse las entregas históricas ETAPA-6A-SABUESO.md, ETAPA-6B-SMILER.md, ETAPA-6C-BACTERIA.md y el informe vigente ENTREGA-FINAL.md. La revisión visual, auditiva y cooperativa dentro de una partida sigue pendiente. Los valores indicados como propuestas deben calibrarse jugando; no son requisitos ya confirmados.
 
 ## Reglas comunes
