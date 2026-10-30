@@ -26,7 +26,7 @@ public final class EncounterSystem {
         if (data.phase != MatchData.Phase.ACTIVE) { progress.clear(); return; }
         var level = Campaign.level(server,data.level);
         if (level == null) return;
-        var active = players.stream().filter(p -> p.level() == level && SurvivalSystem.active(p) && p.isAlive() && !p.isSpectator()).toList();
+        var active = players.stream().filter(p -> p.level() == level && LevelZeroQuest.targetable(p) && p.isAlive() && !p.isSpectator()).toList();
         // Preserve cooldown through limbo and reconnections within this round.
         for (ServerPlayer p : active) {
             Progress old = progress.get(p.getUUID());

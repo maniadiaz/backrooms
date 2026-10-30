@@ -49,6 +49,7 @@ public final class MatchController {
                 .then(Commands.literal("lobby").executes(c -> join(c.getSource().getPlayerOrException())))
                 .then(Commands.literal("leave").executes(c -> leave(c.getSource().getPlayerOrException())))
                 .then(Commands.literal("objective").executes(c -> objective(c.getSource().getPlayerOrException())))
+                .then(Commands.literal("journal").executes(c->{LevelZeroQuest.journal(c.getSource().getPlayerOrException());return 1;}))
                 .then(difficultyCommands())
                 .then(Commands.literal("restart").requires(s -> s.hasPermission(2)
                         || (s.getEntity() instanceof ServerPlayer p && (canRestart(p) || (MatchData.get(p.server).phase != MatchData.Phase.LOBBY && MatchData.get(p.server).members.containsKey(p.getUUID())))))
@@ -98,6 +99,7 @@ public final class MatchController {
     }
     static int objective(ServerPlayer p){
         var d=MatchData.get(p.server);if(!SurvivalSystem.active(p))return 0;
+        if(d.level==0){LevelZeroQuest.journal(p);tell(p,MatchArena.direction(p,LevelZeroQuest.target(p,d)));return 1;}
         BlockPos target=MatchArena.exit(d);
         String title="SALA DE CONTROL / SALIDA";
         for(int i=0;i<3;i++)if(!d.mission.done(i)){target=MissionSystem.panel(d,i);title="PANEL "+(i+1);break;}
@@ -418,16 +420,17 @@ public final class MatchController {
             ServerPlayer player = players.get(m.id);
             if (player != null && m.state == MatchData.State.ACTIVE) m.inventory = snapshot(player);
         });
-        boolean advance=d.level==0;
+        boolean advance=d.level!=1;
+        if(d.level==0&&d.quest.ready())for(var member:d.members.values()){var player=players.get(member.id);if(player!=null){var advancement=p.server.getAdvancements().getAdvancement(ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID,"level_zero_complete"));if(advancement!=null)player.getAdvancements().award(advancement,"escape");}}
         if (!(advance?d.complete(p.getUUID(),true):d.win(p.getUUID()))) return false;
         for (MatchData.Member m : d.members.values()) {
             ServerPlayer player = players.get(m.id);
             if (player != null) {
                 apply(player, d, m, true);
-                MatchAnnouncements.show(player, advance?"NIVEL SUPERADO":"¡ESCAPARON!", advance ? "Equipo reunido. Próximo destino: Zona de Carga." : "Campaña completa. Los dos niveles superados.", net.minecraft.ChatFormatting.GREEN);
+                MatchAnnouncements.show(player, advance?"NIVEL SUPERADO":"¡ESCAPARON!", advance ? "Equipo reunido. Próximo destino: "+Campaign.name(d.level)+"." : "Campaña completa. Han escapado de Backrooms.", net.minecraft.ChatFormatting.GREEN);
             }
         }
-        tell(p,advance?"Nivel superado. Descanso de 90 segundos antes de Zona de Carga.":"¡Victoria! Celebren: regreso al lobby en 20 segundos o con el botón.");
+        tell(p,advance?"Nivel superado. Descanso de 90 segundos antes de "+Campaign.name(d.level)+".":"¡Victoria! Celebren: regreso al lobby en 20 segundos o con el botón.");
         return true;
     }
 
@@ -445,7 +448,7 @@ public final class MatchController {
         if (Campaign.dungeon(p.level().dimension()) && p.distanceToSqr(event.getPos().getCenter()) <= 25) {
             if (m.state == MatchData.State.ACTIVE && Campaign.exit(p.level().getBlockState(event.getPos()))) {
                 handled = true;
-                tell(p,d.mission.ready()?"Mantén agacharse (Shift) y camina hacia delante contra esta pared durante 2 segundos.":"La pared no responde. Repara los tres paneles primero.");
+                tell(p,MissionSystem.exitReady(d)?"Mantén agacharse (Shift) y camina hacia delante contra esta pared durante 2 segundos.":"La pared no responde. Completa las misiones y consulta /backrooms journal.");
             } else
             if(m.state==MatchData.State.VICTORY&&event.getPos().equals(MatchRooms.button(Celebration.ROOM))){
                 handled=true;if(p.getUUID().equals(d.host))restart(p.server);
@@ -511,7 +514,7 @@ public final class MatchController {
     @SubscribeEvent public static void hurt(LivingHurtEvent event) {
         if (event.getEntity() instanceof ServerPlayer p) {
             MatchData.Member m = MatchData.get(p.server).members.get(p.getUUID());
-            if (MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && (m.state != MatchData.State.ACTIVE||MatchData.get(p.server).exitDelay>0))) event.setCanceled(true);
+            if (LevelZeroQuest.hidden(p)||MatchData.get(p.server).waiting.containsKey(p.getUUID()) || (m != null && (m.state != MatchData.State.ACTIVE||MatchData.get(p.server).exitDelay>0))) event.setCanceled(true);
         }
     }
 
@@ -657,6 +660,7 @@ public final class MatchController {
             if (p == null) continue;
             if(m.state==MatchData.State.ACTIVE&&p.serverLevel()==Campaign.level(server,d.level))MatchArena.contain(p,d);
             SurvivalSystem.tick(p, m, d);
+            if(m.state==MatchData.State.ACTIVE)LevelZeroQuest.tick(p);else d.quest.hiding.remove(p.getUUID());
             if (before.get(m.id) != m.state) apply(p, d, m, true);
             if (previousPhase == MatchData.Phase.ACTIVE && d.phase == MatchData.Phase.LOBBY)
                 MatchAnnouncements.show(p, "DERROTA", "Todos cayeron. Vuelvan a intentarlo.", net.minecraft.ChatFormatting.RED);

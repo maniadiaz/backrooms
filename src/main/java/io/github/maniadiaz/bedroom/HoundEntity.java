@@ -54,7 +54,7 @@ public final class HoundEntity extends Monster {
     }
     void investigate(ServerPlayer p){setTarget(p);lastKnown=p.position();evidence=0;state=State.SEARCHING;}
     private boolean valid(ServerPlayer p) {
-        return p.isAlive() && !p.isSpectator() && p.level() == level() && SurvivalSystem.active(p);
+        return p.isAlive() && !p.isSpectator() && p.level() == level() && LevelZeroQuest.targetable(p);
     }
     @Override public void tick() {
         super.tick();

@@ -41,7 +41,7 @@ public final class NoClipSystem {
     }
     static boolean advance(ServerPlayer p,Charge charge,boolean intent) {
         var d=MatchData.get(p.server);
-        return charge.advance(contact(p),intent&&p.isShiftKeyDown()&&SurvivalSystem.active(p)&&Campaign.dungeon(p.level().dimension())&&d.mission.ready());
+        return charge.advance(contact(p),intent&&!LevelZeroQuest.hidden(p)&&p.isShiftKeyDown()&&SurvivalSystem.active(p)&&p.serverLevel()==Campaign.level(p.server,d.level)&&Campaign.dungeon(p.level().dimension())&&MissionSystem.exitReady(d));
     }
     @SubscribeEvent public static void tick(TickEvent.ServerTickEvent event) {
         if(event.phase!=TickEvent.Phase.END)return;
@@ -53,7 +53,7 @@ public final class NoClipSystem {
         if(d.exitDelay>0) {
             if(--d.exitDelay==0) {
                 var actor=players.values().stream().filter(SurvivalSystem::active).findFirst().orElse(null);
-                if(actor!=null&&d.mission.ready())MatchController.complete(actor,false,players);
+                if(actor!=null&&MissionSystem.exitReady(d))MatchController.complete(actor,false,players);
             }
             return;
         }
@@ -61,7 +61,7 @@ public final class NoClipSystem {
         for(var entry:inputs.entrySet()) {
             var p=players.get(entry.getKey());var in=entry.getValue();
             if(p!=null&&advance(p,in.charge,in.pressing&&in.round==d.round&&in.level==d.level&&server.getTickCount()-in.received<=15)) {
-                d.exitDelay=20;
+                d.nextDestination=d.level==0?2:1;d.exitDelay=20;
                 for(var member:d.members.values()) {
                     var other=players.get(member.id);if(other!=null)BedroomNetwork.blackout(other);
                 }

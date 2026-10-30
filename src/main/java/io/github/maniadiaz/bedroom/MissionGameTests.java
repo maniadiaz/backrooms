@@ -12,11 +12,11 @@ import net.minecraftforge.gametest.*;
 @GameTestHolder(Bedroom.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class MissionGameTests {
-    @GameTest(template="empty") public static void sharedPanelsConsumeMatchingFusesOnlyOnce(GameTestHelper h){
-        var level=h.getLevel().getServer().getLevel(DevelopmentCommands.LEVEL_0);
+    @GameTest(template="empty") public static void sharedPanelsConsumeMatchingRelaysOnlyOnce(GameTestHelper h){
+        var level=h.getLevel().getServer().getLevel(Campaign.LEVEL_1);
         var p=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"Fuses"));
         try{
-            MatchController.join(p);var d=MatchData.get(p.server);d.start(p.getUUID(),Set.of(p.getUUID()));MissionSystem.prepare(p.server,d);
+            MatchController.join(p);var d=MatchData.get(p.server);d.start(p.getUUID(),Set.of(p.getUUID()));d.level=1;MatchController.apply(p,d,d.members.get(p.getUUID()),false);MissionSystem.prepare(p.server,d);
             for(int i=0;i<3;i++){
                 BlockPos cache=MissionSystem.cache(d,i);p.setPos(cache.getX()+.5,65,cache.getZ()+2.5);
                 h.assertTrue(MissionSystem.interact(p,cache,InteractionHand.MAIN_HAND),"Mission cache accepts active participant");
@@ -32,10 +32,10 @@ public final class MissionGameTests {
             h.assertTrue(d.mission.ready(),"Three panels unlock the shared exit");h.succeed();
         }finally{if(MatchController.member(p))MatchController.leave(p);p.discard();}
     }
-    @GameTest(template="empty") public static void eliminatedOrLostFuseCanBeReissuedWithoutValidDuplicates(GameTestHelper h){
-        var level=h.getLevel().getServer().getLevel(DevelopmentCommands.LEVEL_0);var p=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"Recovery"));
+    @GameTest(template="empty") public static void eliminatedOrLostRelayCanBeReissuedWithoutValidDuplicates(GameTestHelper h){
+        var level=h.getLevel().getServer().getLevel(Campaign.LEVEL_1);var p=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"Recovery"));
         try{
-            MatchController.join(p);var d=MatchData.get(p.server);d.start(p.getUUID(),Set.of(p.getUUID()));MissionSystem.prepare(p.server,d);
+            MatchController.join(p);var d=MatchData.get(p.server);d.start(p.getUUID(),Set.of(p.getUUID()));d.level=1;MatchController.apply(p,d,d.members.get(p.getUUID()),false);MissionSystem.prepare(p.server,d);
             BlockPos pos=MissionSystem.cache(d,0);p.setPos(pos.getX()+.5,65,pos.getZ()+2.5);MissionSystem.interact(p,pos,InteractionHand.MAIN_HAND);
             h.assertTrue(!MissionSystem.recoverable(p,d,0),"A carried fuse cannot be duplicated from its cache");
             ItemStack old=MissionSystem.fuse(d,0,d.mission.leases[0]);
@@ -56,9 +56,9 @@ public final class MissionGameTests {
         h.assertTrue(charge.ticks==1,"Changing wall resets charge");charge.advance(b,false);h.assertTrue(charge.ticks==0,"Releasing intent resets charge");h.succeed();
     }
     @GameTest(template="empty") public static void actualContactRequiresSneakingAndWorksWithoutFood(GameTestHelper h){
-        var level=h.getLevel().getServer().getLevel(DevelopmentCommands.LEVEL_0);var p=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"NoClip"));
+        var level=h.getLevel().getServer().getLevel(Campaign.LEVEL_1);var p=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"NoClip"));
         try{
-            MatchController.join(p);var d=MatchData.get(p.server);d.start(p.getUUID(),Set.of(p.getUUID()));
+            MatchController.join(p);var d=MatchData.get(p.server);d.start(p.getUUID(),Set.of(p.getUUID()));d.level=1;MatchController.apply(p,d,d.members.get(p.getUUID()),false);
             for(int x=24000;x<=24006;x++)for(int z=24002;z<=24006;z++)for(int y=65;y<=67;y++)level.setBlock(new BlockPos(x,y,z),net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),3);
             for(int y=65;y<=67;y++)level.setBlock(new BlockPos(24004,y,24004),Bedroom.EXIT.get().defaultBlockState(),3);
             p.setPos(24003.69,65,24004.5);p.setYRot(-90);p.setXRot(0);p.getFoodData().setFoodLevel(20);
@@ -86,7 +86,7 @@ public final class MissionGameTests {
         h.assertTrue(copy.mission.count()==1,"Shared progress persists within the current run");d.reset();h.assertTrue(d.mission.count()==0&&d.exitDelay==0,"Reset clears objectives and queued exit");h.succeed();
     }
     @GameTest(template="empty") public static void hudProtocolIncludesSharedMissionAndCharge(GameTestHelper h){
-        var original=new BedroomNetwork.Hud(true,"ACTIVE",1,0,0,4,85,70,1,3,20,2,15,"facil 150×150","DELANTE · 50 m");
+        var original=new BedroomNetwork.Hud(true,"ACTIVE",1,0,0,4,85,70,1,3,20,2,15,"facil 150×150","DELANTE · 50 m",3,1048576);
         var buffer=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
         try{original.encode(buffer);h.assertTrue(original.equals(BedroomNetwork.Hud.decode(buffer)),"Remote HUD retains objective and charge fields");}finally{buffer.release();}h.succeed();
     }

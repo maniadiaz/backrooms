@@ -8,8 +8,10 @@ import net.minecraft.world.level.Level;
 
 final class Campaign {
     static final ResourceKey<Level> LEVEL_1=ResourceKey.create(Registries.DIMENSION,ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID,"level_1"));
-    static boolean dungeon(ResourceKey<Level> key){return key.equals(DevelopmentCommands.LEVEL_0)||key.equals(LEVEL_1);}
-    static ServerLevel level(MinecraftServer server,int index){return server.getLevel(index==0?DevelopmentCommands.LEVEL_0:LEVEL_1);}
+    static final ResourceKey<Level> DARKROOMS=ResourceKey.create(Registries.DIMENSION,ResourceLocation.fromNamespaceAndPath(Bedroom.MOD_ID,"darkrooms"));
+    static boolean dungeon(ResourceKey<Level> key){return key.equals(DevelopmentCommands.LEVEL_0)||key.equals(LEVEL_1)||key.equals(DARKROOMS);}
+    static String name(int level){return level==0?"Nivel 0":level==2?"Nivel 0.1 — Darkrooms":"Nivel 1 — Zona de Carga";}
+    static ServerLevel level(MinecraftServer server,int index){return server.getLevel(index==0?DevelopmentCommands.LEVEL_0:index==2?DARKROOMS:LEVEL_1);}
     static int ceiling(Level level){return level.dimension().equals(LEVEL_1)?72:68;}
     static int lampY(Level level){return level.dimension().equals(LEVEL_1)?70:68;}
     static boolean exit(net.minecraft.world.level.block.state.BlockState state){return state.is(Bedroom.EXIT.get())||state.is(Bedroom.LOADING_EXIT.get());}

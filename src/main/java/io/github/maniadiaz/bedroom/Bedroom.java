@@ -60,6 +60,7 @@ public final class Bedroom {
     public static final RegistryObject<com.mojang.serialization.Codec<? extends net.minecraft.world.level.chunk.ChunkGenerator>> LEVEL_0_GENERATOR =
             GENERATORS.register("level_0", () -> Level0Generator.CODEC);
     public static final RegistryObject<com.mojang.serialization.Codec<? extends net.minecraft.world.level.chunk.ChunkGenerator>> LEVEL_1_GENERATOR = GENERATORS.register("level_1",()->Level1Generator.CODEC);
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends net.minecraft.world.level.chunk.ChunkGenerator>> DARKROOMS_GENERATOR=GENERATORS.register("darkrooms",()->DarkroomsGenerator.CODEC);
 
     private static RegistryObject<Block> block(String name, java.util.function.Supplier<Block> factory) {
         RegistryObject<Block> block = BLOCKS.register(name, factory);
@@ -68,6 +69,7 @@ public final class Bedroom {
     }
 
     public Bedroom(FMLJavaModLoadingContext context) {
+        QuestContent.init();
         IEventBus bus = context.getModEventBus();
         BLOCKS.register(bus);
         ITEMS.register(bus);

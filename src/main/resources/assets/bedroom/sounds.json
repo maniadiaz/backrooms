@@ -190,5 +190,14 @@
         "attenuation_distance": 24
       }
     ]
+  },
+  "geiger": {
+    "subtitle": "subtitles.bedroom.geiger",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/geiger",
+        "attenuation_distance": 16
+      }
+    ]
   }
 }

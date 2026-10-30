@@ -1,53 +1,62 @@
-# Cómo jugar
+# Cómo jugar — Backrooms 1.3.0
 
-**Objetivo:** escapar del Nivel 0 y de Zona de Carga con un equipo de una a cuatro personas.
+Uno a cuatro participantes. Al entrar aparecen en el lobby. El primer integrante es anfitrión y pulsa el botón del bloque verde para comenzar. Quienes lleguen tarde esperan o miran las cámaras de sus compañeros.
 
-## Partida
+## Dificultad
 
-Al entrar aparecen en el lobby. El primer integrante es anfitrión y pulsa el botón sobre el bloque verde para iniciar. Quienes llegan después esperan la siguiente partida y pueden observar a sus compañeros.
+Antes de empezar, el anfitrión usa `/backrooms difficulty facil`. Opciones: `principiante` 100 × 100, `facil` 150 × 150 (inicial), `normal` 250 × 250, `dificil` 350 × 350 y `hardcore` 500 × 500. El mapa tiene límites y la elección queda fija durante la partida. Subir dificultad aumenta pérdida de cordura, frecuencia, daño y velocidad de las entidades.
 
-Antes de empezar, el anfitrión puede usar `/backrooms difficulty facil`. Las opciones son `principiante` (100 × 100), `facil` (150 × 150, inicial), `normal` (250 × 250), `dificil` (350 × 350) y `hardcore` (500 × 500). Hay paredes exteriores y el tamaño permanece fijo durante la partida. Subir dificultad aumenta cordura perdida, frecuencia de encuentros, daño y velocidad de las entidades. El Nivel 1 aumenta de nuevo la presión.
+## Nivel 0: cinco misiones
 
-En el Nivel 0 busquen tres estuches numerados de fusibles. Clic derecho para recogerlos; con cada fusible en la mano, clic derecho en el panel del mismo número. Los paneles están juntos cerca de la salida. En Zona de Carga se hace lo mismo con relés y controles de carga.
+1. **Primer escondite:** encontrar y usar la Nota #1 en la moqueta. Beber Agua de Almendras y quedar por encima del 70% de cordura. Tras el aviso del zumbido, usar el casillero y permanecer dentro diez segundos. Salir antes cancela el contador. Esto desbloquea el contador de cordura y el mapa mental del sector.
+2. **Colores:** leer la Nota #2 y pulsar los cuatro pilares en orden **Azul → Amarillo → Rojo → Verde**. Equivocarse atrae Bacteria y reinicia la secuencia. Acertar abre la compuerta de almacenamiento.
+3. **Hazmat:** leer la Nota #3, recoger la llave inglesa en la caja de herramientas y usarla en la taquilla amarilla del este. Equipar casco, traje y botas. Cada jugador necesita las tres piezas puestas para estar protegido.
+4. **Radiación:** buscar la Nota #4, entrar al sector verdoso con el traje y usar la consola maestra. Cuidado con el Sabueso. La consola entrega la llave y desbloquea la puerta blindada. Si se pierde una llave o pieza, puede recuperarse en su fuente.
+5. **Elegir salida:** leer la Nota #5. Usar la llave en la puerta blindada lleva al **Nivel 1: Zona de Carga**. Atravesar la pared Glitch lleva al **Nivel 0.1: Darkrooms**. Ambas requieren las misiones anteriores; todo el equipo toma la primera ruta activada.
 
-La indicación `CONTROL` del HUD muestra dirección respecto a tu mirada y distancia hasta la sala iluminada de paneles. `/backrooms objective` también da las coordenadas del siguiente panel. La orientación señala un destino; deben encontrar los recodos que llevan a él.
+Las notas se leen con usar bloque. `/backrooms journal` muestra las ya descubiertas; `/backrooms objective` orienta al siguiente destino. El mapa mental es una cuadrícula básica de sectores y notas conocidas, no un plano de las paredes. El progreso de misión es compartido; salud, cordura, comida y equipo son individuales.
 
-Reparar los tres habilita las paredes/compuertas anómalas oscuras. Mantener agacharse (Shift por defecto) y caminar hacia delante contra una durante dos segundos continuos. Si cambiaste la tecla de agacharse, usa la que tengas asignada. No hace falta correr ni tener comida para activar la salida; soltar avance o dejar de agacharse reinicia la carga. La pantalla se pone negra un segundo y pasa todo el equipo. El primer nivel conduce a un descanso de noventa segundos; el anfitrión puede pulsar el botón para salir antes. El segundo conduce al atrio de victoria y fuegos artificiales, y después al lobby.
+En la radiación hay partículas y niebla verdes y un contador Geiger. Sin el traje completo se reciben tres puntos de daño por segundo. El traje evita la radiación, pero no los ataques. Guardarlo en el inventario no protege.
 
-No se puede romper ni construir libremente. Los objetos de misión solo se insertan en sus paneles. Un componente perdido por eliminación o desconexión puede recuperarse de su estuche; no se duplica si alguien todavía lo lleva o puede recuperarlo del limbo. Las copias sustituidas dejan de funcionar.
+## Darkrooms y Zona de Carga
 
-## Muertes y desconexiones
+Darkrooms es un desvío oscuro con fluorescentes fundidos. Usar la linterna, localizar la pared de salida y atravesarla conduce a Zona de Carga. No tiene otra cadena de fusibles.
 
-Primera y segunda muertes por nivel: limbo blanco, treinta segundos para encontrar el botón de salida. Si se acaba el tiempo, espectador. Tercera muerte: espectador directamente. Al completar un nivel revive todo el equipo y se reinicia su contador de muertes. Si no queda nadie activo ni con una oportunidad recuperable en limbo, derrota y lobby.
+En Zona de Carga, encontrar tres relés numerados y usar cada uno en su panel correspondiente, juntos cerca de la salida. Reparar los tres habilita la compuerta anómala. Esta salida termina la campaña y lleva al atrio de victoria con fuegos artificiales.
 
-Desconectarse pierde el progreso personal. Al volver se espera en el lobby: los que siguen dentro pueden votar reiniciar o continuar sin ese participante. Cerrar/reabrir el mundo también empieza de cero. `/backrooms leave` devuelve el inventario externo protegido.
+Para atravesar cualquier pared anómala habilitada: mirar hacia ella, estar en contacto y mantener **agacharse (Shift por defecto) y avance durante dos segundos continuos**. Si cambiaste la tecla de agacharse, usa la asignada. Soltar una acción o perder contacto reinicia la carga. No hace falta correr ni tener comida. Sigue una pantalla negra de un segundo.
 
-## Cordura y objetos
+Entre niveles revive todo el equipo, se reinician muertes y cordura y hay noventa segundos de descanso; el anfitrión puede pulsar el botón para empezar antes. Al terminar el festejo se vuelve al lobby.
+
+## Muertes, desconexiones y protección
+
+Primera y segunda muertes de cada nivel: limbo blanco, treinta segundos para encontrar el botón de salida. Agotar el tiempo elimina al jugador. Tercera muerte: espectador directamente. Si no queda nadie activo ni con una oportunidad recuperable de limbo, derrota y lobby.
+
+Desconectarse pierde el intento personal. Al volver se espera: el equipo vota reiniciar o continuar. Cerrar/reabrir el mundo empieza de cero. `/backrooms leave` restaura el inventario externo protegido. No se puede romper ni construir libremente.
+
+## Supervivencia
 
 - Agua de Almendras: +30 de cordura y tres muslos de hambre.
 - Barra nutritiva: cuatro muslos y regeneración breve.
-- Bebida energética: treinta segundos de Velocidad II/Prisa I y luego -5 de cordura una sola vez.
+- Bebida energética: treinta segundos de Velocidad II/Prisa I y luego -5 de cordura una vez.
 - Vendas: tres corazones.
-- Linterna 3D: encender/apagar con usar objeto en cualquiera de las manos. La pila recarga 25%; consume energía encendida en la mano. Proyecta luz real y un cono visible, que se recortan contra paredes.
-- Brújula anómala: se orienta a una salida al acercarse a menos de treinta bloques; fuera de ese rango gira.
+- Linterna 3D: usar para encender/apagar en cualquiera de las manos. Consume batería encendida; las pilas recargan 25%. La luz y el haz respetan paredes.
+- Brújula anómala: se orienta hacia la pared de salida a menos de treinta bloques; fuera gira de forma errática.
 
-El ambiente drena un poco incluso con luz; penumbra, monotonía y entidades cercanas aumentan la pérdida individual. El tope ambiental por diez segundos es 3/4.5/6/7.5/9 puntos según dificultad; Nivel 1 aumenta otro 15%. Bajo 50 hay viñeta/susurros; bajo 25, lentitud y ceguera breve; a cero, daño de pánico hasta recuperar cordura. Los compañeros próximos reducen la monotonía.
+El ambiente drena algo de cordura incluso con luz. Oscuridad, monotonía y entidades cercanas aumentan la pérdida hasta el tope de dificultad. Bajo 50 hay viñeta/susurros; bajo 25, lentitud y ceguera breve; a cero, daño de pánico. Los compañeros próximos reducen la monotonía.
 
 ## Entidades
 
-- Sabueso: cuadrúpedo pálido encorvado, con cabeza oscura, mandíbula abierta y garras. Mirarlo sin caminar lo hace dudar. Moverse, correr o darle la espalda provoca carga; un compañero que corre puede atraerlo.
-- Smiler: esfera negra flotante, ojos blancos, sonrisa roja y dientes amarillentos. Cualquier mirada válida de un participante activo lo inmoviliza. Al perder todas avanza; ceguera y paredes anulan la observación. El contacto causa daño masivo y cordura a cero.
-- Bacteria: humanoide esquelética de tres bloques, con brazos y dedos largos. Mirar no la detiene. Detecta visión cercana o ruido, avisa y persigue. Para perderla, romper la visión y permanecer silencioso tras varios recodos; puede trepar de forma limitada por superficies en contacto. No atraviesa paredes ni navega por techos.
-
-Los encuentros se intentan por tiempo: el primero desde 90/60/45/35/25 segundos según dificultad. Requieren una posición fuera de la vista con ruta válida y no se acumulan cerca del equipo. Un fallo de colocación reintenta en cinco segundos. Los pasos falsos son independientes de las entidades reales.
+- **Sabueso:** cuadrúpedo encorvado con cabeza oscura y garras. Mirarlo sin caminar lo hace dudar; correr, moverse o darle la espalda provoca carga.
+- **Smiler:** esfera negra con ojos blancos, sonrisa roja y dientes amarillentos. Mirarlo lo inmoviliza; paredes y ceguera anulan esa observación. El contacto causa daño masivo y cordura a cero. El casillero protege durante el escondite.
+- **Bacteria:** humanoide esquelético de unos tres bloques, brazos y dedos largos. Mirarla no la detiene. Persigue por visión y ruido; perderla requiere varios recodos y silencio. No atraviesa paredes ni techos.
 
 ## Comandos y controles
 
 - `/backrooms lobby`, `/backrooms status`, `/backrooms leave`.
-- `/backrooms restart`: propone votación durante la partida. `/backrooms vote restart` o `/backrooms vote continue`; gana una mayoría estricta y hay treinta segundos.
-- `/backrooms spectate`, `next`, `previous`, `off`. Cámaras con `]` y `[`; se pueden reasignar.
-- Comer/beber/curarse: mantener usar objeto. Insertar componente: clic derecho en su panel. Pasar de nivel: agacharse (Shift) más avance contra la pared habilitada durante dos segundos.
+- `/backrooms journal`, `/backrooms objective`.
+- `/backrooms restart`: propone votación durante la partida; `/backrooms vote restart` o `/backrooms vote continue`. Mayoría estricta, treinta segundos.
+- `/backrooms spectate`, `next`, `previous`, `off`; cámaras con `]` y `[` reasignables.
+- Comer/beber/curarse: mantener usar objeto. Notas, pilares, casilleros, herramientas y consola: usar bloque.
 
-Las pruebas administrativas requieren operador y `developmentCommands=true`; no son atajos habilitados en la configuración de distribución. El volumen, niebla y movimiento opcional de cámara se ajustan en `config/bedroom-client.toml`. Los apagones y la cordura son reglas del servidor.
-
-En el Nivel 1 las lámparas cuelgan a cinco bloques del suelo para permitir correr y saltar por debajo. Al actualizar a 1.1.2, las luces antiguas y sus cadenas bajas se elevan al cargar la zona; no es necesario borrar el mundo.
+Las pruebas administrativas requieren operador y `developmentCommands=true`; la distribución las desactiva. Volumen, niebla y cámara se ajustan en `config/bedroom-client.toml`. Actualizar todos a la misma versión y dejar un solo jar del mod.

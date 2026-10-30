@@ -28,12 +28,17 @@ public final class VictoryGameTests {
             for(var p:team.values())MatchController.apply(p,d,d.members.get(p.getUUID()),false);
             var teammate=team.keySet().stream().filter(id->!id.equals(host.getUUID())).findFirst().orElseThrow();d.die(teammate);
             for(int level=0;level<2;level++){
-                solve(host,d);h.assertTrue(d.mission.ready(),"Actual component interactions must solve each level");
-                var exit=MatchArena.exit(d);host.serverLevel().getChunkAt(exit);host.setPos(exit.getX()-.31,65,exit.getZ()+.5);host.setYRot(-90);host.setXRot(0);host.getFoodData().setFoodLevel(20);
-                host.setShiftKeyDown(true);h.assertTrue(NoClipSystem.contact(host)!=null,"Each generated exit must accept physical contact");NoClipSystem.input(host,true);
-                for(int tick=0;tick<39;tick++)NoClipSystem.step(server,team);
-                h.assertTrue(d.exitDelay==0,"Charge from the previous dimension must never carry over");
-                NoClipSystem.step(server,team);h.assertTrue(d.exitDelay==20,"Fortieth tick must schedule one-second transition");
+                if(level==0){LevelZeroQuestGameTests.solve(host,d);h.assertTrue(d.quest.ready(),"Five real mission interactions unlock the final choice");}
+                else{solve(host,d);h.assertTrue(d.mission.ready(),"Actual relay interactions solve the warehouse");}
+                if(level==0){
+                    LevelZeroQuestGameTests.click(host,LevelZeroQuest.door(d));
+                    h.assertTrue(d.exitDelay==20&&d.nextDestination==1,"Using the key at the armored door selects warehouse after blackout");
+                }else{
+                    var exit=MatchArena.exit(d);host.setPos(exit.getX()-.31,65,exit.getZ()+.5);host.setYRot(-90);host.setXRot(0);host.setShiftKeyDown(true);NoClipSystem.input(host,true);
+                    for(int tick=0;tick<39;tick++)NoClipSystem.step(server,team);
+                    h.assertTrue(d.exitDelay==0,"Previous-level charge never carries across a transition");NoClipSystem.step(server,team);
+                    h.assertTrue(d.exitDelay==20,"Fortieth tick schedules a one-second transition");
+                }
                 for(int tick=0;tick<19;tick++)NoClipSystem.step(server,team);
                 h.assertTrue(d.phase==MatchData.Phase.ACTIVE&&d.exitDelay==1,"Level must remain active until blackout countdown ends");NoClipSystem.step(server,team);
                 if(level==0){

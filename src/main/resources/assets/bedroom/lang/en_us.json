@@ -52,5 +52,22 @@
   "block.bedroom.loading_exit": "Anomalous loading gate",
   "block.bedroom.relay_cache": "Relay case",
   "block.bedroom.relay_panel": "Loading control",
-  "item.bedroom.loading_relay": "Loading relay"
+  "item.bedroom.loading_relay": "Loading relay",
+  "block.bedroom.hiding_locker": "Casillero de escondite",
+  "block.bedroom.quest_toolbox": "Caja de herramientas",
+  "block.bedroom.hazmat_locker": "Taquilla Hazmat",
+  "block.bedroom.master_console": "Consola maestra",
+  "block.bedroom.armored_exit": "Puerta blindada",
+  "block.bedroom.maintenance_gate": "Compuerta de mantenimiento",
+  "block.bedroom.puzzle_blue": "Pilar Azul",
+  "block.bedroom.puzzle_yellow": "Pilar Amarillo",
+  "block.bedroom.puzzle_red": "Pilar Rojo",
+  "block.bedroom.puzzle_green": "Pilar Verde",
+  "block.bedroom.lore_note": "Nota de explorador",
+  "item.bedroom.wrench": "Llave inglesa",
+  "item.bedroom.armored_key": "Llave de puerta blindada",
+  "item.bedroom.hazmat_helmet": "Casco Hazmat",
+  "item.bedroom.hazmat_suit": "Traje Hazmat",
+  "item.bedroom.hazmat_boots": "Botas Hazmat",
+  "subtitles.bedroom.geiger": "Contador Geiger"
 }

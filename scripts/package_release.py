@@ -10,7 +10,7 @@ sha=lambda data:hashlib.sha256(data).hexdigest()
 jar_bytes=jar.read_bytes()
 with zipfile.ZipFile(jar) as archive:
     names=set(archive.namelist())
-    for path in ['META-INF/mods.toml','data/bedroom/dimension/level_1.json','assets/bedroom/textures/entity/bacteria.png','assets/bedroom/models/item/mission_fuse.json']:
+    for path in ['META-INF/mods.toml','data/bedroom/dimension/level_1.json','data/bedroom/dimension/darkrooms.json','data/bedroom/advancements/level_zero_complete.json','assets/bedroom/textures/entity/bacteria.png','assets/bedroom/models/item/hazmat_suit.json','assets/bedroom/models/block/hiding_locker.json','assets/bedroom/sounds/ambient/geiger.ogg']:
         assert path in names,f'Missing required release asset: {path}'
     metadata=archive.read('META-INF/mods.toml').decode()
     assert f'version="{version}"' in metadata and 'displayName="Backrooms"' in metadata and 'modId="bedroom"' in metadata
@@ -20,7 +20,8 @@ for kind in ['client','server']:
            'LEEME.md':f'# Backrooms {version}\n\nLeer [instalación](INSTALACION.md), [reglas y controles](COMO-JUGAR.md) y [pruebas y límites](PRUEBAS.md).\n\nMinecraft Java 1.20.1 / Forge 47.4.28 / Java 17. Essential se descarga por separado.\n'.encode(),
            'COMO-JUGAR.md':(PROJECT/'docs/COMO-JUGAR.md').read_bytes(),'PRUEBAS.md':(PROJECT/'docs/ENTREGA-FINAL.md').read_bytes(),'AVISOS.md':(PROJECT/'THIRD_PARTY_NOTICES.md').read_bytes(),
            'ACTUALIZACION-1.1.0.md':(PROJECT/'docs/ACTUALIZACION-1.1.0.md').read_bytes(),
-           'ENEMIGOS-1.2.0.md':(PROJECT/'docs/ENEMIGOS-1.2.0.md').read_bytes()}
+           'ENEMIGOS-1.2.0.md':(PROJECT/'docs/ENEMIGOS-1.2.0.md').read_bytes(),
+           'CAMPANIA-NIVEL-0-1.3.0.md':(PROJECT/'docs/CAMPANIA-NIVEL-0-1.3.0.md').read_bytes()}
     for config in (PROJECT/'pack/config').glob('*.toml'):
         if kind=='server' and config.name=='bedroom-client.toml':continue
         files[f'config/{config.name}']=config.read_bytes()

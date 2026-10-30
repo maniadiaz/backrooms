@@ -1,4 +1,4 @@
-# Entrega de la campaña inicial — 1.2.0
+# Entrega de la campaña inicial — 1.3.0
 
 ## Funcionalidad entregada
 
@@ -10,26 +10,29 @@
 | Nivel 0 | Laberinto procedural conectado, paleta amarilla, moqueta, fluorescentes, niebla/audio |
 | Nivel 1 | Dimensión de almacenes, hormigón/acero, cajas, techo alto y lámparas suspendidas |
 | Entidades | Sabueso, Smiler y Bacteria; miradas, ruido, persecución, búsqueda y apariciones compartidas |
-| Objetivos | Tres fusibles y tres relés; paneles numerados, progreso compartido y recuperación de pérdidas |
+| Objetivos | Cinco misiones de notas, escondite, colores, Hazmat y radiación; tres relés en Nivel 1 |
 | Progresión | No-Clip de dos segundos, transición de uno, revivir al equipo y descanso de noventa segundos |
 | Final | Atrio de victoria, cohetes reales, botón y retorno automático al lobby |
 | Distribución | Jar, ZIP cliente/servidor, configuraciones, manifiestos y SHA-256 |
 
-Las decisiones nuevas para cerrar el alcance fueron una campaña inicial de dos niveles, un Nivel 1 industrial con relés y una celebración de veinte segundos. No se atribuyen al usuario diseños detallados que no proporcionó; se eligieron dentro de su autorización para completar el plan.
+La entrega original cerró una campaña de dos niveles, con relés en el almacén y una celebración de veinte segundos. La versión 1.3.0 adopta las cinco misiones y la bifurcación solicitadas por el usuario. Darkrooms conecta después con Zona de Carga como continuación elegida para esta entrega; el documento del usuario definía su entrada, pero no su salida posterior.
 
 Los mapas ahora se limitan por dificultad a 100/150/250/350/500 bloques por lado. Fácil es el valor inicial de 150 × 150. Hay orientación a la sala de control, linterna 3D con cono visible, niebla cercana, audio reforzado y mayor presión de cordura. Ver [actualización 1.1.0](ACTUALIZACION-1.1.0.md).
 
-En 1.1.1 se cambia la salida a agacharse (Shift) y avanzar cuarenta ticks continuos. El servidor exige estar agachado, ya no exige hambre mínima y reinicia la carga si se suelta una de las acciones. El protocolo es 5; todos los clientes y el servidor deben actualizar.
+En 1.1.1 se cambia la salida a agacharse (Shift) y avanzar cuarenta ticks continuos. El servidor exige estar agachado, ya no exige hambre mínima y reinicia la carga si se suelta una de las acciones. En aquella versión el protocolo era 5. La versión actual usa 7; todos los clientes y el servidor deben actualizar.
 
 En 1.1.2 las lámparas y la luz de control del Nivel 1 suben a Y=70, dejando cinco bloques hasta el suelo transitable. Las cadenas empiezan a Y=71. Se migran lámparas antiguas a Y=68 y sus cadenas bajas al cargar chunks existentes, con trabajo limitado a dos chunks por tick y sin forzar carga de terreno. Se comprueba movimiento real del jugador a la altura máxima de un salto normal bajo una lámpara migrada, además de la altura del generador y los apagones. El techo del almacén sigue en Y=72.
 
 En 1.2.0 se rediseñan Sabueso, Bacteria y Smiler según las referencias del usuario. Bacteria mide físicamente 2.95 bloques y se prueba su navegación bajo techo de tres y su rechazo de huecos de dos. El protocolo cambia a 6. Ver ENEMIGOS-1.2.0.md.
 
+En 1.3.0 se sustituyen los fusibles del Nivel 0 por cinco misiones, se añade una puerta blindada al Nivel 1 y se dirige el Glitch a una dimensión Darkrooms real, conectada posteriormente a Zona de Carga. Se conserva Shift + avance y las reglas cooperativas. Ver CAMPANIA-NIVEL-0-1.3.0.md. El protocolo actual es 7.
+
 ## Evidencia automática
 
-- `build runGameTestServer`: **70 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.2.0; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
-- Campaña de extremo a extremo con cuatro participantes simulados: recoge componentes mediante interacciones reales, valida las salidas generadas, cuarenta ticks de carga y veinte de transición, descansa, revive y cambia de dimensión, completa el Nivel 1 y llega al festejo.
-- Conexión de pasillos y aproximación a cada objetivo/compuerta; modelos y OGG mono empaquetados.
+- `build runGameTestServer`: **75 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.3.0; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
+- Campaña de extremo a extremo con cuatro participantes simulados: resuelve notas, agua, escondite, colores, Hazmat y consola mediante interacciones reales, usa la puerta blindada, recupera los relés y valida la salida generada, cuarenta ticks de carga y veinte de transición, descansa, revive y cambia de dimensión, completa el Nivel 1 y llega al festejo.
+- Ruta alternativa completa por Darkrooms y vuelta a Zona de Carga. Escondite continuo/cancelación, Bacteria real por error de colores y daño de radiación evitado únicamente con el conjunto completo.
+- Conexión real de las salas de misión en Principiante, compuerta físicamente cerrada/abierta y límites de las salas para las cinco dificultades; modelos y OGG mono empaquetados.
 - Ataques, cordura, consumibles, inventarios protegidos, limbo, votos, espera, cámaras y recuperación de componentes.
 - Bacteria asciende de verdad en contacto con pared, mediante movimiento con colisión; se verifica su límite de altura. No utiliza teletransporte o `noPhysics`.
 - Los ZIP se vuelven a abrir, pasan CRC, comprueban cada hash interno y excluyen mundos/logs/capturas. Las configuraciones se analizan como TOML antes de empaquetar.

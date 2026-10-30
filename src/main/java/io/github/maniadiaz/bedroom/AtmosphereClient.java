@@ -84,7 +84,8 @@ public final class AtmosphereClient {
     }
     @SubscribeEvent public static void fogColor(ViewportEvent.ComputeFogColor event) {
         if (!customFog(event.getCamera())) return;
-        event.setRed(.39F); event.setGreen(.37F); event.setBlue(.28F);
+        if(BedroomHud.radioactive()){event.setRed(.12F);event.setGreen(.4F);event.setBlue(.1F);}
+        else {event.setRed(.39F); event.setGreen(.37F); event.setBlue(.28F);}
     }
     @SubscribeEvent public static void camera(ViewportEvent.ComputeCameraAngles event) {
         if (!BedroomHud.activeLevel() || !scene() || BedroomHud.sanity() >= 50 || Minecraft.getInstance().level == null) return;

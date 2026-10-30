@@ -29,6 +29,8 @@ public final class MatchData extends SavedData {
     int level;
     int restTicks;
     MissionState mission = new MissionState();
+    QuestState quest = new QuestState();
+    int nextDestination=1;
     int exitDelay;
     boolean stopping;
     boolean awaitingPlayers;
@@ -69,7 +71,7 @@ public final class MatchData extends SavedData {
         if (phase != Phase.LOBBY || !actor.equals(host) || members.isEmpty()
                 || !online.containsAll(members.keySet())) return false;
         round++;
-        mission = new MissionState(); exitDelay=0;
+        mission = new MissionState(); quest=new QuestState(); nextDestination=1; exitDelay=0;
         level = 0;
         phase = Phase.ACTIVE;
         members.values().forEach(m -> { m.state = State.ACTIVE; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); m.ambient = new AmbientSchedule(); });
@@ -104,8 +106,8 @@ public final class MatchData extends SavedData {
         else {
             phase = Phase.REST;
             restTicks = REST_TICKS;
-            level++;
-            mission = new MissionState(); exitDelay=0;
+            level=nextDestination;
+            mission = new MissionState(); quest=new QuestState(); nextDestination=1; exitDelay=0;
             vote.clear();
             members.values().forEach(p -> { p.state = State.REST; p.deaths = 0; p.limboTicks = 0; p.survival.sanity = 100; p.survival.quietTicks = 0; p.ambient = new AmbientSchedule(); });
             setDirty();
@@ -130,7 +132,7 @@ public final class MatchData extends SavedData {
     }
 
     void reset() {
-        mission = new MissionState(); exitDelay=0;
+        mission = new MissionState(); quest=new QuestState(); nextDestination=1; exitDelay=0;
         vote.clear(); observers.clear(); cameras.clear();
         awaitingPlayers = false;
         phase = Phase.LOBBY;
@@ -141,6 +143,7 @@ public final class MatchData extends SavedData {
     }
 
     void remove(UUID id) {
+        quest.hiding.remove(id);
         cameras.remove(id); observers.remove(id);
         members.remove(id);
         if (id.equals(host)) host = members.keySet().stream().findFirst().orElse(null);
@@ -189,7 +192,7 @@ public final class MatchData extends SavedData {
         tag.putInt("round", round);
         tag.putInt("level", level);
         tag.putInt("restTicks", restTicks);
-        tag.put("mission",mission.save());
+        tag.put("mission",mission.save());tag.put("quest",quest.save());tag.putInt("nextDestination",nextDestination);
         ListTag list = new ListTag();
         members.values().forEach(m -> {
             CompoundTag t = new CompoundTag();
@@ -227,7 +230,7 @@ public final class MatchData extends SavedData {
         data.round = tag.getInt("round");
         data.level = tag.getInt("level");
         data.restTicks = tag.getInt("restTicks");
-        data.mission = MissionState.load(tag.getCompound("mission"));
+        data.mission = MissionState.load(tag.getCompound("mission"));data.quest=QuestState.load(tag.getCompound("quest"));data.nextDestination=tag.contains("nextDestination")?tag.getInt("nextDestination"):1;
         ListTag list = tag.getList("members", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             CompoundTag t = list.getCompound(i);

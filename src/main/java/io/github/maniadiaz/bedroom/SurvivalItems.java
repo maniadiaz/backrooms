@@ -42,7 +42,7 @@ final class SurvivalItems {
                 SurvivalState s = MatchData.get(p.server).members.get(p.getUUID()).survival;
                 switch (kind) {
                     case ALMOND_WATER -> {
-                        s.recover(30); p.getFoodData().eat(6, .2F);
+                        s.recover(30); p.getFoodData().eat(6, .2F);LevelZeroQuest.drank(p);
                         SurvivalSystem.removeOwnEffects(p, s);
                         p.removeEffect(MobEffects.HUNGER); p.removeEffect(MobEffects.CONFUSION); p.removeEffect(MobEffects.WEAKNESS);
                     }

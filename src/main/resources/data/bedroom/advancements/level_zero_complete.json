@@ -1,0 +1,1 @@
+{"display":{"icon":{"item":"bedroom:anomalous_compass"},"title":"Fuera de las habitaciones amarillas","description":"Completa las cinco misiones del Nivel 0 y elige una ruta de salida.","frame":"goal","show_toast":true,"announce_to_chat":true,"hidden":false},"criteria":{"escape":{"trigger":"minecraft:impossible"}}}

@@ -26,6 +26,8 @@ final class MissionSystem {
     static void prepare(net.minecraft.server.MinecraftServer server,MatchData d) {
         var level = Campaign.level(server,d.level); if (level==null) return;
         MatchArena.prepare(level,d);
+        if(d.level==0){LevelZeroQuest.prepare(level,d);return;}
+        if(d.level==2)return;
         for (int i=0;i<3;i++) {
             level.getChunkAt(cache(d,i)); level.getChunkAt(panel(d,i));
             level.setBlock(cache(d,i),cacheBlock(d).defaultBlockState().setValue(Node.INDEX,i),3);
@@ -56,7 +58,10 @@ final class MissionSystem {
         }
         return true;
     }
+    static boolean exitReady(MatchData d){return d.level==0?d.quest.ready():d.level==2||d.mission.ready();}
     static boolean interact(ServerPlayer p,BlockPos pos,net.minecraft.world.InteractionHand hand) {
+        if(MatchData.get(p.server).level==0)return LevelZeroQuest.interact(p,pos,hand);
+        if(MatchData.get(p.server).level==2)return false;
         if(!SurvivalSystem.active(p)||p.serverLevel()!=Campaign.level(p.server,MatchData.get(p.server).level)||p.distanceToSqr(pos.getCenter())>25)return false;
         var d=MatchData.get(p.server);
         for(int i=0;i<3;i++) {

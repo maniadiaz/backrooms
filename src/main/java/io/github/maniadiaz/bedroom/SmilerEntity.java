@@ -46,7 +46,7 @@ public final class SmilerEntity extends Monster {
         super.readAdditionalSaveData(tag); round = tag.contains("BedroomRound") ? tag.getInt("BedroomRound") : -1;
         matchLevel = tag.getInt("BedroomLevel"); lifetime = tag.getInt("BedroomLifetime");
     }
-    boolean valid(ServerPlayer p) { return p.isAlive() && !p.isSpectator() && p.level() == level() && SurvivalSystem.active(p); }
+    boolean valid(ServerPlayer p) { return p.isAlive() && !p.isSpectator() && p.level() == level() && LevelZeroQuest.targetable(p); }
     static boolean dark(Level level, BlockPos pos) { return level.getBrightness(LightLayer.BLOCK, pos) <= 7; }
     boolean looking(ServerPlayer p) {
         Vec3 delta = getEyePosition().subtract(p.getEyePosition());

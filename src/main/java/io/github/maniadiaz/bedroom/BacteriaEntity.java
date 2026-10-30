@@ -59,7 +59,7 @@ public final class BacteriaEntity extends Monster {
         super.readAdditionalSaveData(tag); round = tag.contains("BedroomRound") ? tag.getInt("BedroomRound") : -1;
         matchLevel = tag.getInt("BedroomLevel"); lifetime = tag.getInt("BedroomLifetime");
     }
-    boolean valid(ServerPlayer p) { return p.isAlive() && !p.isSpectator() && p.level() == level() && SurvivalSystem.active(p); }
+    boolean valid(ServerPlayer p) { return p.isAlive() && !p.isSpectator() && p.level() == level() && LevelZeroQuest.targetable(p); }
     Vec3 evidence(ServerPlayer p) {
         if (!valid(p)) return null;
         if (distanceToSqr(p) <= 144 && hasLineOfSight(p)) return p.position();
