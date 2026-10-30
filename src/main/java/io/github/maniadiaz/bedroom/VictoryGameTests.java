@@ -43,7 +43,7 @@ public final class VictoryGameTests {
                 h.assertTrue(d.phase==MatchData.Phase.ACTIVE&&d.exitDelay==1,"Level must remain active until blackout countdown ends");NoClipSystem.step(server,team);
                 if(level==0){
                     h.assertTrue(d.phase==MatchData.Phase.REST&&d.level==1,"First exit must lead to rest");
-                    for(var m:d.members.values())h.assertTrue(m.state==MatchData.State.REST&&m.deaths==0,"Team revives between levels");
+                    for(var m:d.members.values())h.assertTrue(m.state==MatchData.State.REST&&m.deaths==(m.id.equals(teammate)?1:0),"Team revives without restoring lost lives");
                     d.resume(host.getUUID());MissionSystem.prepare(server,d);for(var p:team.values())MatchController.apply(p,d,d.members.get(p.getUUID()),true);
                 }
             }

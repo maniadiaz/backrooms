@@ -199,5 +199,14 @@
         "attenuation_distance": 16
       }
     ]
+  },
+  "recovery_heartbeat": {
+    "subtitle": "subtitles.bedroom.recovery_heartbeat",
+    "sounds": [
+      {
+        "name": "bedroom:ambient/recovery_heartbeat",
+        "attenuation_distance": 16
+      }
+    ]
   }
 }

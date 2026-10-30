@@ -54,12 +54,12 @@ public final class CampaignGameTests {
         try{
             for(int i=0;i<4;i++){var p=new FakePlayer(Campaign.level(server,0),new GameProfile(UUID.randomUUID(),"Campaign"+i));MatchController.join(p);team.put(p.getUUID(),p);}
             var host=team.values().iterator().next();data.start(host.getUUID(),team.keySet());
-            var ids=new ArrayList<>(team.keySet());data.die(ids.get(1));data.die(ids.get(2));data.escape(ids.get(2));data.die(ids.get(2));data.escape(ids.get(2));data.die(ids.get(2));
+            var ids=new ArrayList<>(team.keySet());data.die(ids.get(1));for(int death=0;death<MatchData.MAX_DEATHS;death++){data.die(ids.get(2));if(death<MatchData.MAX_DEATHS-1)data.escape(ids.get(2));}
             h.assertTrue(MatchController.complete(host,false,team),"Normal Level 0 exit must start real progression");
             h.assertTrue(data.phase==MatchData.Phase.REST&&data.level==1&&data.restTicks==1800,"Ninety-second rest precedes Level 1");
-            for(var m:data.members.values())h.assertTrue(m.state==MatchData.State.REST&&m.deaths==0&&m.survival.sanity==100,"Limbo and eliminated participants revive");
+            for(var m:data.members.values())h.assertTrue(m.state==(m.deaths>=10?MatchData.State.SPECTATING:MatchData.State.REST)&&m.survival.sanity==100,"Only participants with lives revive; deaths are preserved across levels");
             h.assertTrue(data.resume(host.getUUID()),"Host button can skip rest");MissionSystem.prepare(server,data);
-            for(var p:team.values()){MatchController.apply(p,data,data.members.get(p.getUUID()),true);h.assertTrue(p.level().dimension().equals(Campaign.LEVEL_1),"Every participant actually teleports into warehouse dimension");}
+            for(var p:team.values()){MatchController.apply(p,data,data.members.get(p.getUUID()),true);h.assertTrue(data.members.get(p.getUUID()).deaths>=10?p.isSpectator():p.level().dimension().equals(Campaign.LEVEL_1),"Living participants enter warehouse; exhausted participants stay spectators");}
             h.succeed();
         }finally{for(var p:team.values()){if(MatchController.member(p))MatchController.leave(p);p.discard();}}
     }

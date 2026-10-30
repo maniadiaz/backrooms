@@ -50,6 +50,9 @@ public final class MatchController {
                 .then(Commands.literal("leave").executes(c -> leave(c.getSource().getPlayerOrException())))
                 .then(Commands.literal("objective").executes(c -> objective(c.getSource().getPlayerOrException())))
                 .then(Commands.literal("journal").executes(c->{LevelZeroQuest.journal(c.getSource().getPlayerOrException());return 1;}))
+                .then(Commands.literal("save").executes(c->CheckpointSystem.save(c.getSource().getPlayerOrException())?1:0))
+                .then(Commands.literal("continue").executes(c->CheckpointSystem.load(c.getSource().getPlayerOrException())?1:0))
+                .then(Commands.literal("start").executes(c->start(c.getSource().getPlayerOrException())))
                 .then(difficultyCommands())
                 .then(Commands.literal("restart").requires(s -> s.hasPermission(2)
                         || (s.getEntity() instanceof ServerPlayer p && (canRestart(p) || (MatchData.get(p.server).phase != MatchData.Phase.LOBBY && MatchData.get(p.server).members.containsKey(p.getUUID())))))
@@ -100,12 +103,25 @@ public final class MatchController {
     static int objective(ServerPlayer p){
         var d=MatchData.get(p.server);if(!SurvivalSystem.active(p))return 0;
         if(d.level==0){LevelZeroQuest.journal(p);tell(p,MatchArena.direction(p,LevelZeroQuest.target(p,d)));return 1;}
+        if(d.level==2){tell(p,"DARKROOMS: busca la pared de salida · "+MatchArena.direction(p,MatchArena.exit(d)));return 1;}
         BlockPos target=MatchArena.exit(d);
         String title="SALA DE CONTROL / SALIDA";
         for(int i=0;i<3;i++)if(!d.mission.done(i)){target=MissionSystem.panel(d,i);title="PANEL "+(i+1);break;}
-        tell(p,title+" · "+MatchArena.direction(p,target)+" · X "+target.getX()+" Z "+target.getZ());return 1;
+        tell(p,title+" · "+MatchArena.direction(p,target));return 1;
     }
 
+    static void starter(ServerPlayer p){
+        p.getInventory().add(new net.minecraft.world.item.ItemStack(Bedroom.ALMOND_WATER.get()));
+        p.getInventory().add(new net.minecraft.world.item.ItemStack(Bedroom.FLASHLIGHT.get()));
+    }
+    static int start(ServerPlayer p){
+        var d=MatchData.get(p.server);if(d.phase!=MatchData.Phase.LOBBY)return 0;
+        var store=CheckpointData.get(p.server);d.round=Math.max(d.round,store.highestRound);
+        if(!d.start(p.getUUID(),online(p.server))){tell(p,"Solo el anfitrión inicia, con todo el grupo conectado.");return 0;}
+        store.highestRound=d.round;store.setDirty();MissionSystem.prepare(p.server,d);
+        for(var member:d.members.values()){var player=p.server.getPlayerList().getPlayer(member.id);if(player!=null){player.getInventory().clearContent();starter(player);apply(player,d,member,false);}}
+        return 1;
+    }
     static int join(ServerPlayer p) {
         MatchData d = MatchData.get(p.server);
         if (dimension(p.server) == null) { tell(p, "La dimensión Backrooms no está disponible."); return 0; }
@@ -300,7 +316,7 @@ public final class MatchController {
         }
     }
 
-    private static CompoundTag inventorySnapshot(ServerPlayer p) {
+    static CompoundTag inventorySnapshot(ServerPlayer p) {
         CompoundTag t = new CompoundTag();
         t.put("items", p.getInventory().save(new ListTag()));
         t.putInt("food", p.getFoodData().getFoodLevel());
@@ -377,12 +393,12 @@ public final class MatchController {
             }
             p.setHealth(p.getMaxHealth());
             if (m.state == MatchData.State.REST) move(p, MatchRooms.REST, false, false);
-            else moveArena(p, d);
+            else {moveArena(p,d);var point=RecoverySystem.returnPoint(p,d,m);p.teleportTo(Campaign.level(p.server,d.level),point.x,point.y,point.z,p.getYRot(),0);}
         } else if(m.state==MatchData.State.VICTORY){
             p.getInventory().clearContent();Celebration.ensure(dimension(p.server));move(p,Celebration.ROOM,false,false);
         } else {
             p.getInventory().clearContent();
-            move(p, m.state == MatchData.State.LOBBY ? MatchRooms.LOBBY : MatchRooms.WHITE + m.slot * 32, true, m.state == MatchData.State.LIMBO);
+            if(m.state==MatchData.State.LIMBO)RecoverySystem.enter(p,d,m);else move(p,MatchRooms.LOBBY,true,false);
         }
         if (m.state == MatchData.State.LOBBY || m.state == MatchData.State.REST || m.state==MatchData.State.VICTORY) {
             p.getFoodData().setFoodLevel(20); p.getFoodData().setSaturation(5);
@@ -394,7 +410,7 @@ public final class MatchController {
         d.setDirty();
         BedroomNetwork.sync(p);
         MatchAnnouncements.state(p, m, d.level);
-        tell(p, "Backrooms: " + m.state + (m.state == MatchData.State.LIMBO ? " — 30 segundos: busca el botón de salida." : ""));
+        tell(p, "Backrooms: " + m.state + (m.state == MatchData.State.LIMBO ? " — 3 minutos: busca la puerta siguiendo el latido." : ""));
     }
 
     static boolean death(ServerPlayer p) {
@@ -445,6 +461,7 @@ public final class MatchController {
             return;
         }
         boolean handled = false;
+        if(m.state==MatchData.State.ACTIVE&&p.level().getBlockState(event.getPos()).is(QuestContent.CHECKPOINT.get())&&p.distanceToSqr(event.getPos().getCenter())<=25){handled=true;CheckpointSystem.save(p);}
         if (Campaign.dungeon(p.level().dimension()) && p.distanceToSqr(event.getPos().getCenter()) <= 25) {
             if (m.state == MatchData.State.ACTIVE && Campaign.exit(p.level().getBlockState(event.getPos()))) {
                 handled = true;
@@ -454,29 +471,9 @@ public final class MatchController {
                 handled=true;if(p.getUUID().equals(d.host))restart(p.server);
             }else if (m.state == MatchData.State.LOBBY && event.getPos().equals(MatchRooms.button(MatchRooms.LOBBY))) {
                 handled = true;
-                if (!(dimension(p.server).getChunkSource().getGenerator() instanceof Level0Generator)) {
-                    tell(p, "Este mundo conserva el generador antiguo. Crea un mundo nuevo para jugar al Nivel 0 procedural.");
-                } else if (d.start(p.getUUID(), online(p.server))) {
-                    MissionSystem.prepare(p.server,d);
-                    for (MatchData.Member other : d.members.values()) {
-                        ServerPlayer player = p.server.getPlayerList().getPlayer(other.id);
-                        if (player != null) {
-                            player.getInventory().clearContent();
-                            player.getInventory().add(new net.minecraft.world.item.ItemStack(Bedroom.NUTRITION_BAR.get(), 3));
-                            player.getInventory().add(new net.minecraft.world.item.ItemStack(Bedroom.ALMOND_WATER.get()));
-                            player.getInventory().add(new net.minecraft.world.item.ItemStack(Bedroom.FLASHLIGHT.get()));
-                            apply(player, d, other, false);
-                        }
-                    }
-                } else tell(p, "Solo el anfitrión puede iniciar y todos deben estar conectados.");
-            } else if (m.state == MatchData.State.LIMBO) {
-                if (event.getPos().equals(MatchRooms.button(MatchRooms.WHITE + m.slot * 32))) {
-                    handled = true;
-                    if (d.escape(p.getUUID())) {
-                        apply(p, d, m, true);
-                        MatchAnnouncements.show(p, "HAS VUELTO", "Aún tienes una oportunidad.", net.minecraft.ChatFormatting.GREEN);
-                    }
-                }
+                start(p);
+            } else if(m.state==MatchData.State.LOBBY&&event.getPos().equals(MatchRooms.continueButton())){
+                handled=true;CheckpointSystem.load(p);
             } else if (m.state == MatchData.State.ACTIVE && event.getPos().equals(MatchRooms.button(MatchRooms.arena(d)))) {
                 handled = true;
                 tell(p,"La salida ahora requiere tres paneles reparados y atravesar la pared anómala.");
@@ -659,7 +656,9 @@ public final class MatchController {
             ServerPlayer p = server.getPlayerList().getPlayer(m.id);
             if (p == null) continue;
             if(m.state==MatchData.State.ACTIVE&&p.serverLevel()==Campaign.level(server,d.level))MatchArena.contain(p,d);
+            MatchHunger.keepFull(p);
             SurvivalSystem.tick(p, m, d);
+            if(m.state==MatchData.State.LIMBO)RecoverySystem.tick(p,d,m);
             if(m.state==MatchData.State.ACTIVE)LevelZeroQuest.tick(p);else d.quest.hiding.remove(p.getUUID());
             if (before.get(m.id) != m.state) apply(p, d, m, true);
             if (previousPhase == MatchData.Phase.ACTIVE && d.phase == MatchData.Phase.LOBBY)

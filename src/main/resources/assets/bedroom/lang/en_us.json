@@ -69,5 +69,7 @@
   "item.bedroom.hazmat_helmet": "Casco Hazmat",
   "item.bedroom.hazmat_suit": "Traje Hazmat",
   "item.bedroom.hazmat_boots": "Botas Hazmat",
-  "subtitles.bedroom.geiger": "Contador Geiger"
+  "subtitles.bedroom.geiger": "Contador Geiger",
+  "block.bedroom.checkpoint_terminal": "Guardar checkpoint",
+  "subtitles.bedroom.recovery_heartbeat": "Latido hacia la puerta"
 }

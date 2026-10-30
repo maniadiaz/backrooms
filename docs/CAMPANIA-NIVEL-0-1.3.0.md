@@ -1,5 +1,7 @@
 # Las Habitaciones Amarillas — campaña 1.3.0
 
+> Actualización 1.4.0: las cinco misiones siguen vigentes, pero las reglas de vidas, recuperación y guardado descritas al final de este documento han sido sustituidas por REGLAS-Y-CHECKPOINTS-1.4.0.md.
+
 El usuario eligió **sustituir** los tres fusibles del Nivel 0 por las cinco misiones. Los relés del Nivel 1 continúan. Los identificadores antiguos de fusibles se conservan únicamente para cargar mundos e inventarios anteriores; no se generan ni son objetivos de la campaña nueva.
 
 ## Misión 1: llegada y primer escondite

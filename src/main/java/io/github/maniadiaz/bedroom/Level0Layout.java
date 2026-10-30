@@ -23,7 +23,17 @@ final class Level0Layout {
     boolean lamp(int x, int z) { return Math.floorMod(x, 8) == 0 && Math.floorMod(z, 8) == 0; }
     boolean deadLamp(int x, int z) { return Math.floorMod(hash(x, z, 23), 11) == 0; }
 
-    boolean wall(int x, int z) {
+    boolean wall(int x,int z){
+        int dx=Math.floorMod(x,16),dz=Math.floorMod(z,16);
+        if(exit(x,z))return true;
+        // Keep the two-wide connected circulation grid clear through thick walls.
+        if(dx==7||dx==8||dz==7||dz==8)return false;
+        // The exit's clearing remains approachable; do not encase its transition column.
+        if(Math.floorMod(x,128)>=112&&Math.floorMod(z,128)>=112)return false;
+        for(int ox=-1;ox<=1;ox++)for(int oz=-1;oz<=1;oz++)if(rawWall(x+ox,z+oz))return true;
+        return false;
+    }
+    private boolean rawWall(int x, int z) {
         int cx = Math.floorDiv(x, 16), cz = Math.floorDiv(z, 16);
         int dx = Math.floorMod(x, 16), dz = Math.floorMod(z, 16);
         if (exit(x, z)) return true;

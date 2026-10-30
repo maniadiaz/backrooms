@@ -23,7 +23,7 @@ public final class AtmosphereClient {
     static boolean scene() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || !Campaign.dungeon(mc.level.dimension())) return false;
-        return BedroomHud.activeLevel() || (BedroomHud.canCycleCamera() && mc.getCameraEntity() != null && mc.getCameraEntity() != mc.player);
+        return BedroomHud.activeLevel() || BedroomHud.recovering() || (BedroomHud.canCycleCamera() && mc.getCameraEntity() != null && mc.getCameraEntity() != mc.player);
     }
 
     @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {

@@ -9,6 +9,7 @@ import net.minecraftforge.registries.RegistryObject;
 final class BedroomSounds {
     static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Bedroom.MOD_ID);
     static final RegistryObject<SoundEvent> HUM = sound("fluorescent_hum");
+    static final RegistryObject<SoundEvent> HEARTBEAT=sound("recovery_heartbeat");
     static final RegistryObject<SoundEvent> GEIGER = sound("geiger");
     static final RegistryObject<SoundEvent> WET_STEP = sound("wet_step");
     static final RegistryObject<SoundEvent> DISTANT_STEPS = sound("distant_steps");

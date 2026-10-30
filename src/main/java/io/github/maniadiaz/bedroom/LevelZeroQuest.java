@@ -44,16 +44,16 @@ final class LevelZeroQuest {
     static void prepare(ServerLevel l,MatchData d){
         for(var center:List.of(puzzle(d),storage(d),security(d),radiation(d),door(d),locker(d)))room(l,center,4);
         var s=storage(d);
-        for(int x=-3;x<=3;x++)for(int z=-3;z<=3;z++)if(Math.abs(x)==3||Math.abs(z)==3)for(int y=0;y<3;y++)place(l,s.offset(x,y,z),Bedroom.WALL.get());
-        for(int y=0;y<3;y++)place(l,gate(d).above(y),d.quest.puzzle?Blocks.AIR:QuestContent.GATE.get());
+        for(int x=-5;x<=5;x++)for(int z=-5;z<=5;z++)if(Math.abs(x)>=3||Math.abs(z)>=3)for(int y=0;y<3;y++)place(l,s.offset(x,y,z),Bedroom.WALL.get());
+        for(int depth=0;depth<3;depth++)for(int y=0;y<3;y++)place(l,gate(d).offset(0,y,depth),d.quest.puzzle?Blocks.AIR:QuestContent.GATE.get());
         place(l,s.offset(-1,0,0),QuestContent.TOOLBOX.get());place(l,security(d),QuestContent.SECURITY.get());place(l,security(d).above(),QuestContent.SECURITY.get());
         place(l,locker(d),QuestContent.LOCKER.get());place(l,locker(d).above(),QuestContent.LOCKER.get());
         Block[] colors={QuestContent.BLUE.get(),QuestContent.YELLOW.get(),QuestContent.RED.get(),QuestContent.GREEN.get()};
-        for(int i=0;i<4;i++){place(l,color(d,i),colors[i]);place(l,color(d,i).above(),Blocks.IRON_BLOCK);}
+        for(int i=0;i<4;i++){place(l,color(d,i),colors[i]);place(l,color(d,i).above(),colors[i]);}
         for(int i=0;i<5;i++)place(l,note(d,i),QuestContent.NOTE.get());
         for(int x=-5;x<=5;x++)for(int z=-5;z<=5;z++)place(l,radiation(d).offset(x,-1,z),Blocks.GREEN_TERRACOTTA);
         place(l,radiation(d),QuestContent.CONSOLE.get());
-        for(int x=-4;x<=4;x++)for(int y=0;y<3;y++)place(l,door(d).offset(x,y,0),Math.abs(x)<=1?QuestContent.DOOR.get():Bedroom.WALL.get());
+        for(int x=-4;x<=4;x++)for(int depth=0;depth<3;depth++)for(int y=0;y<3;y++)place(l,door(d).offset(x,y,depth),Math.abs(x)<=1?QuestContent.DOOR.get():Bedroom.WALL.get());
         // Restore the Glitch wall if a compact map's radiation room overlaps its alcove.
         for(int y=0;y<3;y++)place(l,MatchArena.exit(d).above(y),Bedroom.EXIT.get());
         place(l,puzzle(d).above(3),Bedroom.LIGHT.get());place(l,security(d).above(3),Bedroom.LIGHT.get());
@@ -72,10 +72,14 @@ final class LevelZeroQuest {
             p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.INVISIBILITY,220,0,false,false));
             say(p,"ESCONDIDO — mantente dentro durante 10 segundos. Moverte fuera cancela el escondite.");return true;
         }
-        for(int i=0;i<4;i++)if(pos.equals(color(d,i))){
+        for(int i=0;i<4;i++)if(pos.equals(color(d,i))||pos.equals(color(d,i).above())){
+            if(hand!=net.minecraft.world.InteractionHand.MAIN_HAND)return true;
             if(!q.tutorial()||!q.note(1)){say(p,"Encuentra y lee la Nota #2 después de superar el escondite.");return true;}
             if(q.puzzle)return true;
-            if(i==q.sequence){if(++q.sequence==4){q.puzzle=true;q.sequence=0;for(int y=0;y<3;y++)place(p.serverLevel(),gate(d).above(y),Blocks.AIR);announce(p,"PANEL SECRETO ABIERTO","Almacenamiento accesible. Busca la caja de herramientas.");}}
+            var previous=q.colorClicks.get(p.getUUID());var pillar=color(d,i);
+            if(previous!=null&&previous.pos().equals(pillar)&&p.server.getTickCount()-previous.tick()<10)return true;
+            q.colorClicks.put(p.getUUID(),new QuestState.ColorClick(pillar,p.server.getTickCount()));
+            if(i==q.sequence){say(p,new String[]{"Azul","Amarillo","Rojo","Verde"}[i]+" aceptado: "+(q.sequence+1)+" / 4");if(++q.sequence==4){q.puzzle=true;q.sequence=0;for(int depth=0;depth<3;depth++)for(int y=0;y<3;y++)place(p.serverLevel(),gate(d).offset(0,y,depth),Blocks.AIR);announce(p,"PANEL SECRETO ABIERTO","Almacenamiento accesible. Busca la caja de herramientas.");}}
             else{q.sequence=0;p.serverLevel().playSound(null,pos,BedroomSounds.BACTERIA_ALERT.get(),net.minecraft.sounds.SoundSource.HOSTILE,1.4F,.8F);spawn(p,2);say(p,"SECUENCIA INCORRECTA — el ruido ha atraído a Bacteria.");}
             d.setDirty();return true;
         }
@@ -89,7 +93,7 @@ final class LevelZeroQuest {
             if(!q.equipped||!q.note(3)||!protectedBySuit(p)){say(p,"Necesitas leer la Nota #4 y llevar las tres piezas Hazmat equipadas.");return true;}
             q.console=true;give(p,QuestContent.KEY.get(),d);d.setDirty();announce(p,"PUERTA BLINDADA DESBLOQUEADA","Recoge la Nota #5 y elige tu ruta.");return true;
         }
-        if(Math.abs(pos.getX()-door(d).getX())<=1&&pos.getZ()==door(d).getZ()&&p.level().getBlockState(pos).is(QuestContent.DOOR.get())){
+        if(Math.abs(pos.getX()-door(d).getX())<=1&&pos.getZ()>=door(d).getZ()&&pos.getZ()<=door(d).getZ()+2&&p.level().getBlockState(pos).is(QuestContent.DOOR.get())){
             if(!q.ready()||!valid(p.getItemInHand(hand),QuestContent.KEY.get(),d)){say(p,"Completa las cinco notas y usa la llave de la consola maestra.");return true;}
             if(d.exitDelay==0){d.nextDestination=1;d.exitDelay=20;for(var m:d.members.values()){var other=m.id.equals(p.getUUID())?p:p.server.getPlayerList().getPlayer(m.id);if(other!=null)BedroomNetwork.blackout(other);}}return true;
         }
@@ -136,7 +140,7 @@ final class LevelZeroQuest {
         if(d.quest.puzzle&&d.quest.note(2)&&!protectedBySuit(p))return has(p,QuestContent.WRENCH.get(),d)?security(d):storage(d).offset(-1,0,0);
         return target(d);
     }
-    static String objective(MatchData d){var q=d.quest;return switch(q.stage()){case 0->!q.note(0)?"Busca la Nota #1":!q.water?"Bebe Agua: cordura >70%":"Escóndete 10 segundos";case 1->"Nota #2: Azul-Amarillo-Rojo-Verde";case 2->"Llave inglesa y traje Hazmat";case 3->"Nota #4 y consola radiactiva";default->q.ready()?"Elige puerta o pared Glitch":"Lee la Nota #5";};}
+    static String objective(MatchData d){var q=d.quest;return switch(q.stage()){case 0->!q.note(0)?"Busca la Nota #1":!q.water?"Bebe Agua: cordura >70%":"Escóndete 10 segundos";case 1->!q.note(1)?"Busca y lee la Nota #2":"Pulsa "+new String[]{"Azul","Amarillo","Rojo","Verde"}[q.sequence]+" ("+q.sequence+" / 4)";case 2->"Llave inglesa y traje Hazmat";case 3->"Nota #4 y consola radiactiva";default->q.ready()?"Elige puerta o pared Glitch":"Lee la Nota #5";};}
     static void journal(ServerPlayer p){var d=MatchData.get(p.server);say(p,"MISIÓN "+(d.quest.stage()+1)+"/5 — "+objective(d));for(int i=0;i<5;i++)if(d.quest.note(i))say(p,"NOTA #"+(i+1)+" — "+LORE[i]);}
     private LevelZeroQuest(){}
 }

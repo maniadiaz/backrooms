@@ -19,8 +19,8 @@ final class MatchAnnouncements {
     static void state(ServerPlayer p, MatchData.Member member, int level) {
         switch (member.state) {
             case ACTIVE -> show(p, Campaign.name(level), level==0?"Encuentra la Nota #1. Consulta /backrooms journal.":level==2?"Usa la linterna. Busca la salida entre las sombras.":"ZONA DE CARGA: recupera tres relés.", ChatFormatting.GOLD);
-            case LOBBY -> show(p, "BACKROOMS", "Reúne al equipo. Pulsa para empezar.", ChatFormatting.GOLD);
-            case LIMBO -> show(p, "NO ES EL FINAL", "30 segundos. Encuentra la salida.", ChatFormatting.WHITE);
+            case LOBBY -> show(p, "BACKROOMS", "Verde: desde cero. Azul: último checkpoint.", ChatFormatting.GOLD);
+            case LIMBO -> show(p, "NO ES EL FINAL", "3 minutos. Sigue el latido hasta la puerta.", ChatFormatting.WHITE);
             case SPECTATING -> show(p, "SIN RETORNO", "Tu equipo aún puede salvarte.", ChatFormatting.RED);
             case REST -> show(p, "UN RESPIRO", "90 segundos o pulsa para continuar.", ChatFormatting.AQUA);
             case VICTORY -> show(p,"¡ESCAPARON!","Nivel 0 y Zona de Carga completados.",ChatFormatting.GOLD);

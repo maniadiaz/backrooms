@@ -7,6 +7,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 final class QuestContent {
     static RegistryObject<Block> node(String name){return Bedroom.BLOCKS.register(name,()->new Block(BlockBehaviour.Properties.of().strength(-1,3600000).sound(SoundType.METAL)));}
+    static final RegistryObject<Block> CHECKPOINT=node("checkpoint_terminal");
     static final RegistryObject<Block> NOTE=Bedroom.BLOCKS.register("lore_note",()->new Block(BlockBehaviour.Properties.of().strength(-1,3600000).noCollission().noOcclusion().sound(SoundType.GRASS)){
         @Override public net.minecraft.world.phys.shapes.VoxelShape getShape(net.minecraft.world.level.block.state.BlockState s,net.minecraft.world.level.BlockGetter l,net.minecraft.core.BlockPos p,net.minecraft.world.phys.shapes.CollisionContext c){return Block.box(2,0,2,14,1,14);}
     });

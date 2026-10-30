@@ -14,7 +14,8 @@ import net.minecraft.world.level.saveddata.SavedData;
 public final class MatchData extends SavedData {
     enum Phase { LOBBY, ACTIVE, REST, VICTORY }
     enum State { LOBBY, ACTIVE, LIMBO, SPECTATING, REST, VICTORY }
-    static final int LIMBO_TICKS = 600;
+    static final int MAX_DEATHS=10;
+    static final int LIMBO_TICKS = 3600;
     static final int REST_TICKS = 1800;
     final Map<UUID, Member> members = new LinkedHashMap<>();
     final Map<UUID, CompoundTag> pendingReturns = new LinkedHashMap<>();
@@ -41,6 +42,9 @@ public final class MatchData extends SavedData {
         int deaths;
         int slot;
         int limboTicks;
+        int heartbeatTicks;
+        CompoundTag checkpoint=new CompoundTag();
+        CompoundTag recoveryDoor=new CompoundTag();
         CompoundTag external = new CompoundTag();
         CompoundTag inventory = new CompoundTag();
         CompoundTag location = new CompoundTag();
@@ -74,7 +78,7 @@ public final class MatchData extends SavedData {
         mission = new MissionState(); quest=new QuestState(); nextDestination=1; exitDelay=0;
         level = 0;
         phase = Phase.ACTIVE;
-        members.values().forEach(m -> { m.state = State.ACTIVE; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); m.ambient = new AmbientSchedule(); });
+        members.values().forEach(m -> { m.state = State.ACTIVE; m.deaths = 0; m.limboTicks = 0;m.checkpoint=new CompoundTag();m.recoveryDoor=new CompoundTag(); m.inventory = new CompoundTag(); m.survival = new SurvivalState(); m.ambient = new AmbientSchedule(); });
         setDirty();
         return true;
     }
@@ -82,8 +86,8 @@ public final class MatchData extends SavedData {
     boolean die(UUID id) {
         Member m = members.get(id);
         if (phase != Phase.ACTIVE || m == null || m.state != State.ACTIVE) return false;
-        m.deaths++;
-        m.state = m.deaths <= 2 ? State.LIMBO : State.SPECTATING;
+        m.deaths++;m.recoveryDoor=new CompoundTag();m.heartbeatTicks=0;
+        m.state = m.deaths < MAX_DEATHS ? State.LIMBO : State.SPECTATING;
         m.limboTicks = m.state == State.LIMBO ? LIMBO_TICKS : 0;
         setDirty();
         return true;
@@ -94,7 +98,7 @@ public final class MatchData extends SavedData {
         if (phase != Phase.ACTIVE || m == null || m.state != State.LIMBO || m.limboTicks <= 0) return false;
         m.state = State.ACTIVE;
         m.survival.sanity = Math.max(30, m.survival.sanity);
-        m.limboTicks = 0;
+        m.limboTicks = 0;m.recoveryDoor=new CompoundTag();
         setDirty();
         return true;
     }
@@ -109,7 +113,7 @@ public final class MatchData extends SavedData {
             level=nextDestination;
             mission = new MissionState(); quest=new QuestState(); nextDestination=1; exitDelay=0;
             vote.clear();
-            members.values().forEach(p -> { p.state = State.REST; p.deaths = 0; p.limboTicks = 0; p.survival.sanity = 100; p.survival.quietTicks = 0; p.ambient = new AmbientSchedule(); });
+            members.values().forEach(p -> { p.state = p.deaths>=MAX_DEATHS?State.SPECTATING:State.REST;p.checkpoint=new CompoundTag();p.recoveryDoor=new CompoundTag(); p.limboTicks = 0; p.survival.sanity = 100; p.survival.quietTicks = 0; p.ambient = new AmbientSchedule(); });
             setDirty();
         }
         return true;
@@ -119,7 +123,7 @@ public final class MatchData extends SavedData {
         if (phase != Phase.REST || !actor.equals(host)) return false;
         phase = Phase.ACTIVE;
         restTicks = 0;
-        members.values().forEach(m -> m.state = State.ACTIVE);
+        members.values().forEach(m -> {if(m.state==State.REST)m.state=State.ACTIVE;});
         setDirty();
         return true;
     }
@@ -138,7 +142,7 @@ public final class MatchData extends SavedData {
         phase = Phase.LOBBY;
         level = 0;
         restTicks = 0;
-        members.values().forEach(m -> { m.state = State.LOBBY; m.deaths = 0; m.limboTicks = 0; m.inventory = new CompoundTag(); m.survival = new SurvivalState(); m.ambient = new AmbientSchedule(); });
+        members.values().forEach(m -> { m.state = State.LOBBY; m.deaths = 0; m.limboTicks = 0;m.checkpoint=new CompoundTag();m.recoveryDoor=new CompoundTag(); m.inventory = new CompoundTag(); m.survival = new SurvivalState(); m.ambient = new AmbientSchedule(); });
         setDirty();
     }
 
@@ -176,7 +180,7 @@ public final class MatchData extends SavedData {
             if (--restTicks <= 0) {
                 phase = Phase.ACTIVE;
                 restTicks = 0;
-                members.values().forEach(m -> m.state = State.ACTIVE);
+                members.values().forEach(m -> {if(m.state==State.REST)m.state=State.ACTIVE;});
             }
             setDirty();
         } else if(phase==Phase.VICTORY){
@@ -200,7 +204,7 @@ public final class MatchData extends SavedData {
             t.putString("state", m.state.name());
             t.putInt("deaths", m.deaths);
             t.putInt("slot", m.slot);
-            t.putInt("limboTicks", m.limboTicks);
+            t.putInt("limboTicks", m.limboTicks);t.put("checkpoint",m.checkpoint.copy());t.put("recoveryDoor",m.recoveryDoor.copy());
             t.put("external", m.external.copy());
             t.put("inventory", m.inventory.copy());
             t.put("location", m.location.copy());
@@ -238,7 +242,7 @@ public final class MatchData extends SavedData {
             m.state = State.valueOf(t.getString("state"));
             m.deaths = t.getInt("deaths");
             m.slot = t.getInt("slot");
-            m.limboTicks = t.getInt("limboTicks");
+            m.limboTicks = t.getInt("limboTicks");m.checkpoint=t.getCompound("checkpoint").copy();m.recoveryDoor=t.getCompound("recoveryDoor").copy();
             m.external = t.getCompound("external").copy();
             m.inventory = t.getCompound("inventory").copy();
             m.location = t.getCompound("location").copy();

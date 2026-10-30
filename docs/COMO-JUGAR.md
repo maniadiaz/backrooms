@@ -1,6 +1,6 @@
-# Cómo jugar — Backrooms 1.3.0
+# Cómo jugar — Backrooms 1.4.0
 
-Uno a cuatro participantes. Al entrar aparecen en el lobby. El primer integrante es anfitrión y pulsa el botón del bloque verde para comenzar. Quienes lleguen tarde esperan o miran las cámaras de sus compañeros.
+Uno a cuatro participantes. Al entrar aparecen en el lobby. El primer integrante es anfitrión. El botón verde inicia desde cero y el azul carga el último checkpoint guardado. También se puede elegir desde Esc en el lobby. Quienes lleguen tarde esperan o miran las cámaras de sus compañeros.
 
 ## Dificultad
 
@@ -28,13 +28,19 @@ Para atravesar cualquier pared anómala habilitada: mirar hacia ella, estar en c
 
 Entre niveles revive todo el equipo, se reinician muertes y cordura y hay noventa segundos de descanso; el anfitrión puede pulsar el botón para empezar antes. Al terminar el festejo se vuelve al lobby.
 
-## Muertes, desconexiones y protección
+## Guardar, muertes y protección
 
-Primera y segunda muertes de cada nivel: limbo blanco, treinta segundos para encontrar el botón de salida. Agotar el tiempo elimina al jugador. Tercera muerte: espectador directamente. Si no queda nadie activo ni con una oportunidad recuperable de limbo, derrota y lobby.
+Cada jugador tiene **diez vidas para toda la partida**, sin reponerlas al pasar de nivel. Las primeras nueve muertes dan tres minutos dentro del mismo mapa para buscar una puerta personal. Seguir los latidos: se oyen desde la dirección de la puerta y se aceleran al acercarse. Caminar hacia ella devuelve al último punto guardado del nivel, o a la entrada si no existe. Se recuperan los objetos, pero no la vida gastada. Las entidades no atacan durante esta recuperación.
 
-Desconectarse pierde el intento personal. Al volver se espera: el equipo vota reiniciar o continuar. Cerrar/reabrir el mundo empieza de cero. `/backrooms leave` restaura el inventario externo protegido. No se puede romper ni construir libremente.
+Al agotar los tres minutos se espera como espectador hasta completar el nivel, si quedan vidas. La décima muerte elimina hasta el final del intento. Si todos quedan sin oportunidad, derrota y lobby; el checkpoint manual no se borra.
+
+**Antes de cerrar:** el anfitrión usa el terminal verde **GUARDAR**, Esc → **Checkpoint del mundo → Guardar checkpoint** o `/backrooms save`. Guarda progreso, inventarios, salud, cordura, vidas y posiciones seguras en el mundo. Al regresar al lobby, azul o `/backrooms continue` recupera el slot; verde o `/backrooms start` empieza desde cero. Es un slot manual del mundo: volver a guardar reemplaza el anterior. No se guarda durante una transición ni un escondite de la misión 1.
+
+Desconectarse de una partida activa sigue llevando al lobby de espera al volver; el equipo puede votar reiniciar. Para continuar el guardado se reúne el grupo en el lobby. `/backrooms leave` restaura el inventario externo protegido. No se puede romper ni construir libremente. F3 no muestra coordenadas durante la partida; la orientación usa dirección y distancia.
 
 ## Supervivencia
+
+La comida permanece llena: **no necesitas comer**. El Agua de Almendras se usa por cordura y las barras por su regeneración opcional.
 
 - Agua de Almendras: +30 de cordura y tres muslos de hambre.
 - Barra nutritiva: cuatro muslos y regeneración breve.
@@ -53,6 +59,7 @@ El ambiente drena algo de cordura incluso con luz. Oscuridad, monotonía y entid
 
 ## Comandos y controles
 
+- `/backrooms start`, `/backrooms save`, `/backrooms continue`.
 - `/backrooms lobby`, `/backrooms status`, `/backrooms leave`.
 - `/backrooms journal`, `/backrooms objective`.
 - `/backrooms restart`: propone votación durante la partida; `/backrooms vote restart` o `/backrooms vote continue`. Mayoría estricta, treinta segundos.

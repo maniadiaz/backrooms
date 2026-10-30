@@ -10,6 +10,8 @@ final class QuestState {
     int warning;
     UUID tutorialSmiler;
     final Map<UUID,Hide> hiding=new HashMap<>();
+    record ColorClick(BlockPos pos,int tick){}
+    final Map<UUID,ColorClick> colorClicks=new HashMap<>();
     static final class Hide { final BlockPos pos;int ticks;Hide(BlockPos pos){this.pos=pos.immutable();} }
     boolean note(int i){return (notes&(1<<i))!=0;}
     boolean tutorial(){return note(0)&&water&&hidden;}

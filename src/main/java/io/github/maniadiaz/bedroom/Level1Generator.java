@@ -16,6 +16,8 @@ public final class Level1Generator extends Level0Generator {
     static boolean aisle(int x,int z){int dx=Math.floorMod(x,16),dz=Math.floorMod(z,16);return dx==7||dx==8||dz==7||dz==8;}
     @Override BlockState stateAt(int x,int y,int z){
         if(y==0)return Blocks.BEDROCK.defaultBlockState();
+        if(y==62||y==63)return Bedroom.CONCRETE.get().defaultBlockState();
+        if(y==73||y==74)return Bedroom.STEEL.get().defaultBlockState();
         if(y==64)return(layout.wet(x,z)?Bedroom.WET_CONCRETE.get():Bedroom.CONCRETE.get()).defaultBlockState();
         if(y==72)return Bedroom.STEEL.get().defaultBlockState();
         if(y<65||y>71)return Blocks.AIR.defaultBlockState();
@@ -25,8 +27,8 @@ public final class Level1Generator extends Level0Generator {
         if(Math.floorMod(x,128)>=112&&Math.floorMod(z,128)>=112)return Blocks.AIR.defaultBlockState();
         if(aisle(x,z))return Blocks.AIR.defaultBlockState();
         int dx=Math.floorMod(x,32),dz=Math.floorMod(z,32);
-        if(dx==0||dz==0)return Bedroom.STEEL.get().defaultBlockState();
-        if(Math.floorMod(x,16)==0&&Math.floorMod(z,16)==0)return Bedroom.CONCRETE.get().defaultBlockState();
+        if(dx<=1||dx==31||dz<=1||dz==31)return Bedroom.STEEL.get().defaultBlockState();
+        if((Math.floorMod(x,16)<=1||Math.floorMod(x,16)==15)&&(Math.floorMod(z,16)<=1||Math.floorMod(z,16)==15))return Bedroom.CONCRETE.get().defaultBlockState();
         if(y<=66&&Math.floorMod(x,16)>=2&&Math.floorMod(x,16)<=4&&Math.floorMod(z,16)>=2&&Math.floorMod(z,16)<=4)return Bedroom.LOADING_CRATE.get().defaultBlockState();
         if(y<=67&&Math.floorMod(x,16)==11&&Math.floorMod(z,16)>=10&&Math.floorMod(z,16)<=14)return Bedroom.LOADING_CRATE.get().defaultBlockState();
         return Blocks.AIR.defaultBlockState();

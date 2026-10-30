@@ -46,17 +46,17 @@ public final class MatchGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void twoLimbosAndThirdDeath(GameTestHelper h) {
+    public static void nineRecoveriesAndTenthDeath(GameTestHelper h) {
         MatchData d = solo(h);
-        for (int death = 1; death <= 2; death++) {
+        for (int death = 1; death < MatchData.MAX_DEATHS; death++) {
             h.assertTrue(d.die(A), "Death must be handled");
-            h.assertTrue(d.members.get(A).limboTicks == 600, "Limbo starts with 30 seconds");
-            for (int i = 0; i < 580; i++) d.tick(Set.of(A));
+            h.assertTrue(d.members.get(A).limboTicks == MatchData.LIMBO_TICKS, "Recovery starts with three minutes");
+            for (int i = 0; i < MatchData.LIMBO_TICKS-20; i++) d.tick(Set.of(A));
             h.assertTrue(d.phase == MatchData.Phase.ACTIVE && d.escape(A), "Solo must escape limbo at 29 seconds");
             h.assertTrue(d.members.get(A).deaths == death, "Escaping cannot restore a life");
         }
-        h.assertTrue(d.die(A) && d.members.get(A).state == MatchData.State.SPECTATING, "Third death is spectator");
-        h.assertTrue(!d.escape(A), "Third death cannot escape");
+        h.assertTrue(d.die(A) && d.members.get(A).state == MatchData.State.SPECTATING, "Tenth death is spectator");
+        h.assertTrue(!d.escape(A), "Tenth death cannot escape");
         d.tick(Set.of(A));
         h.assertTrue(d.phase == MatchData.Phase.LOBBY, "Eliminated solo returns to lobby");
         h.assertTrue(d.start(A, Set.of(A)) && d.round == 2 && d.members.get(A).deaths == 0, "New game starts clean");
@@ -67,14 +67,14 @@ public final class MatchGameTests {
     public static void timeoutAndTeamRecovery(GameTestHelper h) {
         MatchData d = new MatchData(); d.join(A); d.join(B); d.start(A, Set.of(A, B));
         d.die(A); d.die(B);
-        for (int i = 0; i < 599; i++) d.tick(Set.of(A, B));
+        for (int i = 0; i < MatchData.LIMBO_TICKS-1; i++) d.tick(Set.of(A, B));
         h.assertTrue(d.phase == MatchData.Phase.ACTIVE && d.members.get(A).limboTicks == 1, "All-limbo team retains last tick");
         h.assertTrue(d.escape(B), "One teammate can return");
         d.tick(Set.of(A, B));
-        h.assertTrue(!d.escape(A) && d.members.get(A).state == MatchData.State.SPECTATING, "Exactly 30 seconds expires");
+        h.assertTrue(!d.escape(A) && d.members.get(A).state == MatchData.State.SPECTATING, "Exactly three minutes expires");
         h.assertTrue(d.phase == MatchData.Phase.ACTIVE, "Survivor keeps team alive");
         d.die(B);
-        for (int i = 0; i < 600; i++) d.tick(Set.of(A, B));
+        for (int i = 0; i < MatchData.LIMBO_TICKS; i++) d.tick(Set.of(A, B));
         h.assertTrue(d.phase == MatchData.Phase.LOBBY, "All exhausted returns team to lobby");
         h.succeed();
     }
@@ -85,7 +85,7 @@ public final class MatchGameTests {
         d.die(B);
         h.assertTrue(!d.complete(B, true), "Limbo cannot finish level");
         h.assertTrue(d.complete(A, true), "Survivor finishes level");
-        h.assertTrue(d.members.get(B).state == MatchData.State.REST && d.members.get(B).deaths == 0, "Completion revives limbo teammate");
+        h.assertTrue(d.members.get(B).state == MatchData.State.REST && d.members.get(B).deaths == 1, "Completion revives without refunding a life");
         h.assertTrue(!d.complete(A, true) && !d.resume(B), "No double complete or guest skip");
         for (int i = 0; i < 1799; i++) d.tick(Set.of(A, B));
         h.assertTrue(d.phase == MatchData.Phase.REST && d.restTicks == 1, "Rest lasts full 90 seconds");
@@ -107,13 +107,13 @@ public final class MatchGameTests {
         d.members.get(A).location.putDouble("x", 202.5);
         MatchData loaded = MatchData.load(d.save(new CompoundTag()));
         h.assertTrue(loaded.awaitingPlayers, "Restart must wait for a participant before resolving the saved match");
-        h.assertTrue(loaded.members.get(A).limboTicks == 599 && loaded.members.get(A).deaths == 1, "Reload preserves timer and deaths");
+        h.assertTrue(loaded.members.get(A).limboTicks == MatchData.LIMBO_TICKS-1 && loaded.members.get(A).deaths == 1, "Reload preserves timer and deaths");
         h.assertTrue(loaded.host.equals(B) && loaded.members.get(A).external.getString("test").equals("external inventory"), "Host and external snapshot persist");
         h.assertTrue(loaded.members.get(A).inventory.getString("test").equals("run inventory"), "Run snapshot persists separately");
         h.assertTrue(loaded.members.get(A).location.getDouble("x") == 202.5, "Location must persist independently of hidden inventory");
         loaded.tick(Set.of());
         h.assertTrue(loaded.phase == MatchData.Phase.ACTIVE, "Offline limbo continues");
-        for (int i = 0; i < 598; i++) loaded.tick(Set.of());
+        for (int i = 0; i < MatchData.LIMBO_TICKS-2; i++) loaded.tick(Set.of());
         h.assertTrue(loaded.phase == MatchData.Phase.LOBBY, "Offline active teammate cannot keep exhausted game alive");
         h.assertTrue(loaded.members.get(A).external.contains("test"), "Defeat cannot erase external inventory");
         MatchData slots = new MatchData(); slots.join(A); slots.join(B); int slot = slots.members.get(B).slot;
@@ -152,7 +152,7 @@ public final class MatchGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 200)
-    public static void deathEventsAndLimboButton(GameTestHelper h) {
+    public static void deathEventsAndPersonalRecoveryDoor(GameTestHelper h) {
         FakePlayer p = new FakePlayer(h.getLevel(), new GameProfile(UUID.randomUUID(), "BedroomDeath"));
         try {
             h.assertTrue(MatchController.join(p) == 1, "Join for event integration");
@@ -165,15 +165,11 @@ public final class MatchGameTests {
                 MatchData.Member m = d.members.get(p.getUUID());
                 h.assertTrue(death.isCanceled() && m.state == MatchData.State.LIMBO, "Lethal event must transfer to limbo instead of vanilla death");
                 h.assertTrue(p.getInventory().isEmpty(), "Limbo must hide run inventory");
-                var pos = MatchRooms.button(MatchRooms.WHITE + m.slot * 32);
-                p.setPos(pos.getX() + 0.5, 65, pos.getZ() - 0.5);
-                var click = new net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock(p,
-                        net.minecraft.world.InteractionHand.MAIN_HAND, pos,
-                        new net.minecraft.world.phys.BlockHitResult(pos.getCenter(), net.minecraft.core.Direction.UP, pos, false));
-                net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(click);
-                h.assertTrue(m.state == MatchData.State.ACTIVE && m.deaths == attempt, "Limbo button must restore active state without resetting deaths");
+                h.assertTrue(p.level().dimension().equals(Campaign.level(p.server,d.level).dimension()),"Recovery must remain in the current level map");
+                var target=RecoverySystem.door(m);p.setPos(target.x,65,target.z);RecoverySystem.tick(p,d,m);
+                h.assertTrue(m.state == MatchData.State.ACTIVE && m.deaths == attempt, "Personal door must restore active state without resetting deaths");
                 h.assertTrue(p.getInventory().getItem(0).is(Items.GOLD_INGOT) && p.getInventory().getItem(0).getCount() == 3,
-                        "Limbo button must restore run inventory once");
+                        "Personal door must restore run inventory once");
             }
             var blockPos = p.blockPosition();
             var breakEvent = new net.minecraftforge.event.level.BlockEvent.BreakEvent(p.level(), blockPos,
@@ -182,9 +178,11 @@ public final class MatchGameTests {
             h.assertTrue(breakEvent.isCanceled(), "Participant must not break blocks");
             h.assertTrue(p.server.getCommands().getDispatcher().getRoot().getChild("bedroom").canUse(p.createCommandSourceStack()),
                     "Public lobby command must not inherit operator-only root restriction");
-            var death = new net.minecraftforge.event.entity.living.LivingDeathEvent(p, p.damageSources().generic());
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(death);
-            h.assertTrue(d.members.get(p.getUUID()).state == MatchData.State.SPECTATING && p.isSpectator(), "Third death must activate spectator mode");
+            for(int deathCount=d.members.get(p.getUUID()).deaths;deathCount<MatchData.MAX_DEATHS;deathCount++){
+                var death=new net.minecraftforge.event.entity.living.LivingDeathEvent(p,p.damageSources().generic());net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(death);
+                var m=d.members.get(p.getUUID());if(m.state==MatchData.State.LIMBO){var target=RecoverySystem.door(m);p.setPos(target.x,65,target.z);RecoverySystem.tick(p,d,m);}
+            }
+            h.assertTrue(d.members.get(p.getUUID()).state==MatchData.State.SPECTATING&&p.isSpectator(),"Tenth death exhausts the entire run budget");
             h.succeed();
         } finally {
             if (MatchController.member(p)) MatchController.leave(p);

@@ -44,16 +44,13 @@ public class Level0Generator extends FlatLevelSource {
 
     BlockState stateAt(int x, int y, int z) {
         if (y == 0) return Blocks.BEDROCK.defaultBlockState();
+        if(y==62||y==63)return Bedroom.CARPET.get().defaultBlockState();
+        if(y==69||y==70)return Bedroom.CEILING.get().defaultBlockState();
         if (y == 64) return (layout.wet(x, z) ? Bedroom.WET_CARPET.get() : Bedroom.CARPET.get()).defaultBlockState();
         if (y == 68) return (layout.lamp(x, z) ? (layout.deadLamp(x, z) ? Bedroom.DEAD_LIGHT.get() : Bedroom.LIGHT.get()) : Bedroom.CEILING.get()).defaultBlockState();
         if (y == 65 && layout.supply(x, z)) return (layout.hash(x, z, 90) % 2 == 0 ? Bedroom.CARDBOARD_BOX.get() : Bedroom.FILING_CABINET.get()).defaultBlockState();
         if (y >= 65 && y <= 67 && layout.wall(x, z)) {
             if (layout.exit(x, z)) return Bedroom.EXIT.get().defaultBlockState();
-            int dx = Math.floorMod(x, 16), dz = Math.floorMod(z, 16);
-            if (dx == 0 || dz == 0) return Bedroom.PANEL.get().defaultBlockState().setValue(PanelBlock.AXIS,
-                    dx == 0 && dz == 0 ? Direction.Axis.Y : dx == 0 ? Direction.Axis.Z : Direction.Axis.X);
-            if (layout.template(Math.floorDiv(x, 16), Math.floorDiv(z, 16)) >= 3)
-                return Bedroom.PANEL.get().defaultBlockState().setValue(PanelBlock.AXIS, dx == 4 || dx == 11 ? Direction.Axis.Z : Direction.Axis.X);
             return Bedroom.WALL.get().defaultBlockState();
         }
         return Blocks.AIR.defaultBlockState();
@@ -66,7 +63,7 @@ public class Level0Generator extends FlatLevelSource {
         for (int dx = 0; dx < 16; dx++) for (int dz = 0; dz < 16; dz++) {
             int x = chunk.getPos().getMinBlockX() + dx, z = chunk.getPos().getMinBlockZ() + dz;
             chunk.setBlockState(pos.set(x, 0, z), Blocks.BEDROCK.defaultBlockState(), false);
-            for (int y = 64; y <= ceiling(); y++) chunk.setBlockState(pos.set(x, y, z), stateAt(x, y, z), false);
+            for (int y = 62; y <= ceiling()+2; y++) chunk.setBlockState(pos.set(x, y, z), stateAt(x, y, z), false);
             if (layout.supply(x, z)) {
                 net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
                 tag.putString("id", "bedroom:supply_container"); tag.putInt("x", x); tag.putInt("y", 65); tag.putInt("z", z);
@@ -81,7 +78,7 @@ public class Level0Generator extends FlatLevelSource {
     @Override public int getGenDepth() { return 128; }
     @Override public int getSeaLevel() { return 0; }
     @Override public int getSpawnHeight(LevelHeightAccessor level) { return 65; }
-    @Override public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level, RandomState random) { return ceiling()+1; }
+    @Override public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level, RandomState random) { return ceiling()+3; }
     @Override public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor level, RandomState random) {
         BlockState[] column = new BlockState[128];
         for (int y = 0; y < column.length; y++) column[y] = stateAt(x, y, z);

@@ -1,11 +1,11 @@
-# Entrega de la campaña inicial — 1.3.0
+# Entrega de la campaña inicial — 1.4.0
 
 ## Funcionalidad entregada
 
 | Área | Resultado |
 |---|---|
 | Partida | 1–4 participantes, lobby automático, botón, espera, voto y cámaras |
-| Recuperación | Dos oportunidades de limbo por nivel, tercera muerte elimina, derrota grupal, sin checkpoints |
+| Recuperación | Diez vidas por partida, recuperación de tres minutos en el mismo mapa, derrota grupal y checkpoint manual persistente |
 | Supervivencia | Cordura individual, drenajes con tope, consumibles, linterna con pilas y brújula |
 | Nivel 0 | Laberinto procedural conectado, paleta amarilla, moqueta, fluorescentes, niebla/audio |
 | Nivel 1 | Dimensión de almacenes, hormigón/acero, cajas, techo alto y lámparas suspendidas |
@@ -27,13 +27,16 @@ En 1.2.0 se rediseñan Sabueso, Bacteria y Smiler según las referencias del usu
 
 En 1.3.0 se sustituyen los fusibles del Nivel 0 por cinco misiones, se añade una puerta blindada al Nivel 1 y se dirige el Glitch a una dimensión Darkrooms real, conectada posteriormente a Zona de Carga. Se conserva Shift + avance y las reglas cooperativas. Ver CAMPANIA-NIVEL-0-1.3.0.md. El protocolo actual es 7.
 
+En 1.4.0 se conservan diez vidas entre niveles, se recupera en el mismo mapa mediante puerta personal y latidos y se puede guardar/cargar desde el lobby. Se corrigen los clics superiores/duplicados del puzle, se fija la comida y se oculta el panel F3. La estructura se refuerza a tres bloques. El protocolo actual es 8. Ver REGLAS-Y-CHECKPOINTS-1.4.0.md.
+
 ## Evidencia automática
 
-- `build runGameTestServer`: **75 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.3.0; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
+- `build runGameTestServer`: **81 pruebas obligatorias aprobadas** con JDK 17 y Forge 47.4.28 en 1.4.0; incluye dificultad, orientación, conexión de objetivos en los cinco tamaños y un encuentro real mediante el programador de producción.
 - Campaña de extremo a extremo con cuatro participantes simulados: resuelve notas, agua, escondite, colores, Hazmat y consola mediante interacciones reales, usa la puerta blindada, recupera los relés y valida la salida generada, cuarenta ticks de carga y veinte de transición, descansa, revive y cambia de dimensión, completa el Nivel 1 y llega al festejo.
 - Ruta alternativa completa por Darkrooms y vuelta a Zona de Carga. Escondite continuo/cancelación, Bacteria real por error de colores y daño de radiación evitado únicamente con el conjunto completo.
 - Conexión real de las salas de misión en Principiante, compuerta físicamente cerrada/abierta y límites de las salas para las cinco dificultades; modelos y OGG mono empaquetados.
-- Ataques, cordura, consumibles, inventarios protegidos, limbo, votos, espera, cámaras y recuperación de componentes.
+- Ataques, cordura, consumibles, inventarios protegidos, recuperación, votos, espera, cámaras y recuperación de componentes.
+- Checkpoint escrito a disco y restaurado desde lobby, incluyendo una recuperación en curso sin extender su tiempo; vidas conservadas entre niveles, hambre fija, interacción de pilares superiores y estructura de tres capas.
 - Bacteria asciende de verdad en contacto con pared, mediante movimiento con colisión; se verifica su límite de altura. No utiliza teletransporte o `noPhysics`.
 - Los ZIP se vuelven a abrir, pasan CRC, comprueban cada hash interno y excluyen mundos/logs/capturas. Las configuraciones se analizan como TOML antes de empaquetar.
 

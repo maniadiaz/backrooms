@@ -12,6 +12,10 @@ import net.minecraftforge.fml.common.Mod;
 public final class BedroomHud {
     private static BedroomNetwork.Hud current;
     public static void update(BedroomNetwork.Hud message) { current = message; }
+    static boolean inLobby(){return current!=null&&current.state().equals("LOBBY");}
+    static boolean recovering(){return current!=null&&current.visible()&&current.state().equals("LIMBO");}
+    static net.minecraft.world.phys.Vec3 recoveryDoor(){return current==null?net.minecraft.world.phys.Vec3.ZERO:new net.minecraft.world.phys.Vec3(current.recoveryX(),65,current.recoveryZ());}
+    static boolean inMatch(){return current!=null&&current.visible();}
     static boolean canCycleCamera() { return current != null && (current.state().equals("SPECTATING") || current.state().equals("OBSERVING")); }
     static boolean activeLevel() { return current != null && current.visible() && current.state().equals("ACTIVE"); }
     static boolean radioactive(){return current!=null&&activeLevel()&&current.objective().startsWith("RADIACIÓN");}
@@ -33,11 +37,11 @@ public final class BedroomHud {
             graphics.fill(x, y, x + 2, y + h, 0xFFE0C46E);
             graphics.fill(x + 8, y + 23, x + w - 8, y + 24, 0x665B5138);
             graphics.drawString(mc.font, "BACKROOMS: " + hud.state(), x + 10, y + 9, 0xFFE0C46E, false);
-            graphics.drawString(mc.font, "MUERTES  " + hud.deaths() + " / 3", x + 10, y + 32, 0xFFF3EDE0, false);
-            for (int i = 0; i < 3; i++) graphics.fill(x + 120 + i * 10, y + 33, x + 126 + i * 10, y + 39,
+            graphics.drawString(mc.font, "VIDAS  " + Math.max(0,10-hud.deaths()) + " / 10", x + 10, y + 32, 0xFFF3EDE0, false);
+            for (int i = 0; i < 10; i++) graphics.fill(x + 103 + i * 7, y + 33, x + 108 + i * 7, y + 39,
                     i < hud.deaths() ? 0xFFE46565 : 0xFF514A3D);
             String detail = switch (hud.state()) {
-                case "LIMBO" -> "SALIDA: " + timer(hud.seconds());
+                case "LIMBO" -> "PUERTA: " + timer(hud.seconds());
                 case "REST" -> "DESCANSO: " + timer(hud.seconds());
                 case "VICTORY" -> "¡VICTORIA!  "+timer(hud.seconds());
                 case "WAITING" -> "ESPERANDO UN PUESTO";
